@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.hclub.hyndai.mapper.SampleMapper">
+
+    <select id="getSampleList" resultType="site.hclub.hyndai.domain.SampleVO"
+            parameterType="site.hclub.hyndai.domain.SampleVO">
+        SELECT MEMBER_NO AS memberNo
+             , NICKNAME  AS nickName
+        FROM MEMBER
+    </select>
+
+    <select id="getEmployeeList" resultType="site.hclub.hyndai.dto.EmployeeDTO">
+        SELECT employee_no       AS employeeNo
+             , employee_name     AS employeeName
+             , employee_dept     AS employeeDept
+             , employee_position AS employeePosition
+        FROM EMPLOYEE
+    </select>
+
+</mapper>
