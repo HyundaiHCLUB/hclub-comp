@@ -62,6 +62,11 @@ public class DataConfig {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
 
+        // Register type aliases
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.getTypeAliasRegistry().registerAlias("Team", site.hclub.hyndai.domain.Team.class);
+        configuration.getTypeAliasRegistry().registerAlias("MemberTeam", site.hclub.hyndai.domain.MemberTeam.class);
+        sessionFactoryBean.setConfiguration(configuration);
 
         Resource[] resources = new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapper/*.xml");

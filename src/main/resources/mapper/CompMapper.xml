@@ -5,54 +5,68 @@
 <mapper namespace="site.hclub.hyndai.mapper.CompMapper">
     <select id="getMatchVO" resultType="site.hclub.hyndai.domain.MatchVO"
             parameterType="Long">
-            SELECT  match_hist_no       AS matchHistoryNo
-                    ,match_loc          AS  matchLoc
-                    ,win_team_score_no  AS winTeamScoreNo
-                    ,lose_team_score_no AS loseTeamScoreNo
-            FROM    match
-            WHERE   match_hist_no = #{matchHistoryNo}
+        SELECT match_hist_no      AS matchHistoryNo
+             , match_loc          AS matchLoc
+             , win_team_score_no  AS winTeamScoreNo
+             , lose_team_score_no AS loseTeamScoreNo
+        FROM match
+        WHERE match_hist_no = #{matchHistoryNo}
     </select>
 
     <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.domain.Team"
             parameterType="Long">
-            SELECT  team_no         AS teamNo
-                    ,team_loc       AS teamLoc
-                    ,team_name      AS teamName
-                    ,team_goods     AS teamGoods
-                    ,created_at     AS createdAt
-                    ,match_type     AS matchType
-                    ,match_capacity AS matchCapacity
-            FROM    team
-            WHERE   team_no =(
-                                SELECT  team_no
-                                FROM    score
-                                WHERE   score_no = #{score_no}
-                             )
+        SELECT team_no        AS teamNo
+             , team_loc       AS teamLoc
+             , team_name      AS teamName
+             , team_goods     AS teamGoods
+             , created_at     AS createdAt
+             , match_type     AS matchType
+             , match_capacity AS matchCapacity
+        FROM team
+        WHERE team_no = (SELECT team_no
+                         FROM score
+                         WHERE score_no = #{score_no})
     </select>
 
     <select id="getLeader" resultType="site.hclub.hyndai.domain.Member">
-        SELECT  member_no       AS memberNo
-                ,member_id      AS memberId
-                ,member_image   AS memberImage
-                ,member_rating  AS memberRating
-                ,employee_no    AS employeeNo
-        FROM    member
-        WHERE   member_no =  (SELECT  member_no
-                              FROM    member_team
-                              WHERE   team_no = #{teamNo}
-                              AND     is_leader = 'Y')
+        SELECT member_no     AS memberNo
+             , member_id     AS memberId
+             , member_image  AS memberImage
+             , member_rating AS memberRating
+             , employee_no   AS employeeNo
+        FROM member
+        WHERE member_no = (SELECT member_no
+                           FROM member_team
+                           WHERE team_no = #{teamNo}
+                             AND is_leader = 'Y')
     </select>
 
+    <insert id="addTeam" parameterType="Team">
+
+        <selectKey keyProperty="teamNo" order="BEFORE" resultType="long">
+            SELECT team_seq.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO team (team_no, team_loc, team_name, team_goods, created_at, match_type, match_capacity, team_image)
+        VALUES (#{teamNo}, #{teamLoc}, #{teamName}, #{teamGoods}, SYSDATE, #{matchType},
+        #{matchCapacity} , #{teamImage})
+    </insert>
+
+    <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
+        INSERT INTO member_team (member_team_no, member_no, team_no, is_leader)
+        values (member_team_seq.nextval, #{memberNo}, #{teamNo}, #{isLeader})
+    </insert>
+
+
     <select id="getMembers" resultType="site.hclub.hyndai.domain.Member">
-        SELECT  member_no       AS memberNo
-                ,member_id      AS memberId
-                ,member_image   AS memberImage
-                ,member_rating  AS memberRating
-                ,employee_no    AS employeeNo
-        FROM    member
-        WHERE   member_no IN (SELECT  member_no
-                              FROM    member_team
-                              WHERE   team_no = #{teamNo}
-                              AND     is_leader = 'N')
+        SELECT member_no     AS memberNo
+             , member_id     AS memberId
+             , member_image  AS memberImage
+             , member_rating AS memberRating
+             , employee_no   AS employeeNo
+        FROM member
+        WHERE member_no IN (SELECT member_no
+                            FROM member_team
+                            WHERE team_no = #{teamNo}
+                              AND is_leader = 'N')
     </select>
 </mapper>

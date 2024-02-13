@@ -1,27 +1,35 @@
 package site.hclub.hyndai.service;
 
-import lombok.extern.log4j.Log4j;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.domain.MatchVO;
 import site.hclub.hyndai.domain.Member;
+import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
+import site.hclub.hyndai.dto.CreateTeamDTO;
 import site.hclub.hyndai.dto.MatchDetailResponse;
 import site.hclub.hyndai.dto.TeamDetailResponse;
 import site.hclub.hyndai.mapper.CompMapper;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Log4j
+@Slf4j
 public class CompServiceImpl implements CompService {
 
     @Autowired
     CompMapper compMapper;
 
-   /*
-    * @작성자 : 송원선
-    */
+
+    @Autowired
+    AmazonS3Service amazonS3Service;
+
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
         MatchDetailResponse dto = new MatchDetailResponse();
@@ -43,7 +51,7 @@ public class CompServiceImpl implements CompService {
 
             log.info("team1 -> " + team1DTO.toString());
             log.info("team2 -> " + team2DTO.toString());
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 
@@ -54,7 +62,7 @@ public class CompServiceImpl implements CompService {
      * @작성자 : 송원선
      * Team(VO) -> TeamDetailResponse
      */
-    public TeamDetailResponse setTeamDTO(Team team){
+    public TeamDetailResponse setTeamDTO(Team team) {
         TeamDetailResponse dto = new TeamDetailResponse();
         // vo 에 있는 정보들
         dto.setTeamNo(team.getTeamNo());
@@ -73,11 +81,54 @@ public class CompServiceImpl implements CompService {
         // 팀 레이팅 -> 멤버들 레이팅 평균
         int teamRating = 0;
         teamRating += leader.getMemberRating();
-        for(Member member : members) {
+        for (Member member : members) {
             teamRating += member.getMemberRating();
         }
-        teamRating = (int)(teamRating / (members.size() + 1));
+        teamRating = (int) (teamRating / (members.size() + 1));
         dto.setTeamRating(teamRating);
         return dto;
+    }
+
+    @Override
+    public void makeTeam(CreateTeamDTO teamDTO, MultipartFile multipartFile) throws IOException {
+
+        List<MultipartFile> multipartFileList = new ArrayList<>();
+        List<String> urlList = new ArrayList<>();
+        if (multipartFile == null) {
+            urlList.add("https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png");
+        } else {
+            multipartFileList.add(multipartFile);
+            urlList = amazonS3Service.uploadFiles("team", multipartFileList);
+        }
+
+        Team team = Team.builder()
+                .teamLoc(teamDTO.getTeamLoc())
+                .teamName(teamDTO.getTeamName())
+                .teamGoods(teamDTO.getTeamGoods())
+                .matchCapacity(teamDTO.getMatchCapacity())
+                .teamImage(urlList.get(0))
+                .matchType(teamDTO.getMatchType()).build();
+
+        compMapper.addTeam(team);
+        Long teamNo = team.getTeamNo();
+        log.info(teamNo + "==================");
+
+        // 멤버 삽입
+        ArrayList<Long> memberList = teamDTO.getMemberList();
+
+
+        for (int i = 0; i < memberList.size(); i++) {
+            Long memberNo = memberList.get(i);
+            MemberTeam memberTeam = MemberTeam.builder()
+                    .teamNo(teamNo)
+                    .memberNo(memberNo).build();
+            if (i == 0) {
+                memberTeam.setIsLeader("Y");
+            } else {
+                memberTeam.setIsLeader("N");
+            }
+            compMapper.addTeamMemberToTeam(memberTeam);
+        }
+
     }
 }

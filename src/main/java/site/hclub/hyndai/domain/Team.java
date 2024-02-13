@@ -1,10 +1,12 @@
 package site.hclub.hyndai.domain;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class Team {
 
     private Long teamNo;
@@ -13,5 +15,6 @@ public class Team {
     private String teamGoods;
     private LocalDateTime createdAt;
     private String matchType;
+    private String teamImage;
     private Long matchCapacity;
 }
