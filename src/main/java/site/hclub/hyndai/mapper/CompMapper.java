@@ -1,5 +1,5 @@
 package site.hclub.hyndai.mapper;
 
-public class CompMapper {
+public interface CompMapper {
 
 }

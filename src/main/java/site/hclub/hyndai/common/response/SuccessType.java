@@ -11,7 +11,7 @@ public enum SuccessType {
     /**
      * 200 Ok
      */
-
+    GET_MATCH_DETAIL_SUCCESS(HttpStatus.OK, "경기 상세정보 조회 성공")
     /**
      * 201 Created
      */
