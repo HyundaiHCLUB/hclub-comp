@@ -14,6 +14,7 @@ import site.hclub.hyndai.dto.CreateTeamDTO;
 import site.hclub.hyndai.dto.MatchDetailResponse;
 import site.hclub.hyndai.dto.TeamDetailResponse;
 import site.hclub.hyndai.mapper.CompMapper;
+import site.hclub.hyndai.mapper.MemberMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,9 +27,11 @@ public class CompServiceImpl implements CompService {
     @Autowired
     CompMapper compMapper;
 
-
     @Autowired
     AmazonS3Service amazonS3Service;
+
+    @Autowired
+    MemberMapper memberMapper;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -100,15 +103,28 @@ public class CompServiceImpl implements CompService {
             urlList.add("https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png");
         } else {
             multipartFileList.add(multipartFile);
+            log.info(multipartFileList.toString());
             urlList = amazonS3Service.uploadFiles("team", multipartFileList);
         }
+        // 팀 레이팅 계산
+        ArrayList<Long> memberList = teamDTO.getMemberList();
+        Long memberRatingSum = 0L;
+        for (Long memberNo : memberList) {
+            log.info(memberNo + " --");
+            Long rating = memberMapper.getMemberRating(memberNo);
+            memberRatingSum += rating;
 
+        }
+        long teamRating = memberRatingSum / memberList.size();
+        teamRating = Math.round(teamRating);
+        log.info(teamRating + "");
         Team team = Team.builder()
                 .teamLoc(teamDTO.getTeamLoc())
                 .teamName(teamDTO.getTeamName())
                 .teamGoods(teamDTO.getTeamGoods())
                 .matchCapacity(teamDTO.getMatchCapacity())
                 .teamImage(urlList.get(0))
+                .teamRating(teamRating)
                 .matchType(teamDTO.getMatchType()).build();
 
         compMapper.addTeam(team);
@@ -116,7 +132,6 @@ public class CompServiceImpl implements CompService {
         log.info(teamNo + "==================");
 
         // 멤버 삽입
-        ArrayList<Long> memberList = teamDTO.getMemberList();
 
 
         for (int i = 0; i < memberList.size(); i++) {
@@ -124,6 +139,7 @@ public class CompServiceImpl implements CompService {
             MemberTeam memberTeam = MemberTeam.builder()
                     .teamNo(teamNo)
                     .memberNo(memberNo).build();
+            // 맨 처음 들어가는 사람 리더
             if (i == 0) {
                 memberTeam.setIsLeader("Y");
             } else {
@@ -131,6 +147,7 @@ public class CompServiceImpl implements CompService {
             }
             compMapper.addTeamMemberToTeam(memberTeam);
         }
+
 
     }
 

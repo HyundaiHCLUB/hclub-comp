@@ -17,4 +17,6 @@ public class Team {
     private String matchType;
     private String teamImage;
     private Long matchCapacity;
+    private Long teamRating;
+    private String isMatched;
 }

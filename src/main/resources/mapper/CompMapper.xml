@@ -46,9 +46,10 @@
         <selectKey keyProperty="teamNo" order="BEFORE" resultType="long">
             SELECT team_seq.NEXTVAL FROM DUAL
         </selectKey>
-        INSERT INTO team (team_no, team_loc, team_name, team_goods, created_at, match_type, match_capacity, team_image)
+        INSERT INTO team (team_no, team_loc, team_name, team_goods, created_at, match_type, match_capacity, team_image,
+        team_rating)
         VALUES (#{teamNo}, #{teamLoc}, #{teamName}, #{teamGoods}, SYSDATE, #{matchType},
-        #{matchCapacity} , #{teamImage})
+        #{matchCapacity} , #{teamImage} ,#{teamRating})
     </insert>
 
     <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
