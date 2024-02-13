@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="site.hclub.hyndai.mapper.CompMapper">
-    <select id="getMatchVO" resultType="site.hclub.hyndai.domain.MatchVO"
+    <select id="getMatchVO" resultType="site.hclub.hyndai.domain.Match"
             parameterType="Long">
         SELECT match_hist_no      AS matchHistoryNo
              , match_loc          AS matchLoc
@@ -71,8 +71,8 @@
     </select>
 
     <update id="updateScore">
-        UPDATE  score
-        SET     score_amount = #{score}
-        WHERE   team_no = #{teamNo}
+        UPDATE score
+        SET score_amount = #{score}
+        WHERE team_no = #{teamNo}
     </update>
 </mapper>

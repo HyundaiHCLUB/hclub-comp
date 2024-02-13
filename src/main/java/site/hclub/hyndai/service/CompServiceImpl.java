@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
-import site.hclub.hyndai.domain.MatchVO;
+import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
@@ -35,7 +35,7 @@ public class CompServiceImpl implements CompService {
         MatchDetailResponse dto = new MatchDetailResponse();
         try {
             dto.setMatchHistoryNo(matchHistoryNo);
-            MatchVO vo = compMapper.getMatchVO(matchHistoryNo); // 여기서 vo null 리턴
+            Match vo = compMapper.getMatchVO(matchHistoryNo); // 여기서 vo null 리턴
             // matchVO 의 win_team_score_no, lose_team_score_no 로 팀 정보 참조
             Long winTeamScoreNo = vo.getWinTeamScoreNo();
             Long loseTeamScoreNo = vo.getWinTeamScoreNo();
@@ -133,10 +133,11 @@ public class CompServiceImpl implements CompService {
         }
 
     }
+
     /*
-    * @작성자 : 송원선
-    * 경기 스코어 score 테이블에 기록(팀별)
-    * */
+     * @작성자 : 송원선
+     * 경기 스코어 score 테이블에 기록(팀별)
+     * */
     @Override
     public void updateScore(Long teamNo, Long score) {
         compMapper.updateScore(teamNo, score);

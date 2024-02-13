@@ -3,7 +3,7 @@ package site.hclub.hyndai.domain;
 import lombok.Data;
 
 @Data
-public class ScoreVO {
+public class Score {
 
     private long scoreNo;
 
