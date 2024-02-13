@@ -58,6 +58,7 @@ public class CompServiceImpl implements CompService {
         return dto;
     }
 
+
     /*
      * @작성자 : 송원선
      * Team(VO) -> TeamDetailResponse
@@ -88,6 +89,7 @@ public class CompServiceImpl implements CompService {
         dto.setTeamRating(teamRating);
         return dto;
     }
+
 
     @Override
     public void makeTeam(CreateTeamDTO teamDTO, MultipartFile multipartFile) throws IOException {
@@ -130,5 +132,13 @@ public class CompServiceImpl implements CompService {
             compMapper.addTeamMemberToTeam(memberTeam);
         }
 
+    }
+    /*
+    * @작성자 : 송원선
+    * 경기 스코어 score 테이블에 기록(팀별)
+    * */
+    @Override
+    public void updateScore(Long teamNo, Long score) {
+        compMapper.updateScore(teamNo, score);
     }
 }

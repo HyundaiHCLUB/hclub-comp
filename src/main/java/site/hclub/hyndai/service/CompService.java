@@ -11,7 +11,8 @@ public interface CompService {
 
     MatchDetailResponse getMatchDetail(Long matchHistoryNo);
 
-
     public void makeTeam(CreateTeamDTO teamDTO, MultipartFile multipartFile) throws IOException;
+
+    void updateScore(Long teamNo, Long score);
 
 }

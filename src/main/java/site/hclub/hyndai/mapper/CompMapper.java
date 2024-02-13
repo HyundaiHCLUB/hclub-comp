@@ -18,9 +18,10 @@ public interface CompMapper {
 
     List<Member> getMembers(Long teamNo);
 
-
     public Long addTeam(Team team);
 
     public void addTeamMemberToTeam(MemberTeam memberTeam);
+
+    void updateScore(Long teamNo, Long score);
 
 }

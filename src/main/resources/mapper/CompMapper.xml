@@ -69,4 +69,10 @@
                             WHERE team_no = #{teamNo}
                               AND is_leader = 'N')
     </select>
+
+    <update id="updateScore">
+        UPDATE  score
+        SET     score_amount = #{score}
+        WHERE   team_no = #{teamNo}
+    </update>
 </mapper>
