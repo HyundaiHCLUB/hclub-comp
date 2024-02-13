@@ -1,7 +1,7 @@
 package site.hclub.hyndai.service;
 
-import site.hclub.hyndai.dto.MatchDTO;
+import site.hclub.hyndai.dto.MatchDetailResponse;
 
 public interface CompService {
-    MatchDTO getMatchDetail(long matchHistoryNo);
+    MatchDetailResponse getMatchDetail(Long matchHistoryNo);
 }

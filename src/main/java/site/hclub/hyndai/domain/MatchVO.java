@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class MatchVO {
-    private long matchHistoryNo;
+    private Long matchHistoryNo;
     private String matchLoc;
-    private long winTeamScoreNo;
-    private long loseTeamScoreNo;
+    private Long winTeamScoreNo;
+    private Long loseTeamScoreNo;
 }

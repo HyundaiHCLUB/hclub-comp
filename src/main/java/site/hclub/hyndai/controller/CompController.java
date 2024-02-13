@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import site.hclub.hyndai.common.response.ApiResponse;
-import site.hclub.hyndai.domain.MatchVO;
-import site.hclub.hyndai.dto.MatchDTO;
+import site.hclub.hyndai.dto.MatchDetailResponse;
 import site.hclub.hyndai.service.CompService;
 
 import static site.hclub.hyndai.common.response.SuccessType.GET_MATCH_DETAIL_SUCCESS;
@@ -23,7 +22,7 @@ public class CompController {
     @Autowired
     CompService compService;
 
-    /* 매칭 상세페이지로 이동*/
+    /* 매칭 상세페이지로 이동 */
     @GetMapping("/matchDetail")
     public ModelAndView goMatchDetailPage(){
         ModelAndView mav = new ModelAndView();
@@ -34,14 +33,15 @@ public class CompController {
 
     /*
     * 경기 상세 정보 조회
-    * @param  : 경기번호 (match_hist_no)
+    * @request  : 경기번호 (match_hist_no)
     * @response : 경기 정보 (MatchDTO -> 안에 Team1 Team2 정보 담겨있음)
     *
     *  */
     @GetMapping("/match/{match_hist_no}")
-    public ResponseEntity<ApiResponse<MatchDTO>> getMatchDetail(@PathVariable long matchHistoryNo){
-        MatchDTO dto = compService.getMatchDetail(matchHistoryNo);
+    public ResponseEntity<ApiResponse<MatchDetailResponse>> getMatchDetail(@PathVariable("match_hist_no") Long matchHistoryNo){
+        MatchDetailResponse response = compService.getMatchDetail(matchHistoryNo);
+        log.info("Match Info : " + response.toString());
 
-        return ApiResponse.success(GET_MATCH_DETAIL_SUCCESS, dto);
+        return ApiResponse.success(GET_MATCH_DETAIL_SUCCESS, response);
     }
 }

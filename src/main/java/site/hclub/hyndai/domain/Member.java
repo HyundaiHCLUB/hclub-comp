@@ -9,6 +9,7 @@ public class Member {
     private String memberImage;
     private String memberInterest;
     private Long memberRating;
+    private String employeeNo;
     private String memberPw;
     private String adminYn;
 }

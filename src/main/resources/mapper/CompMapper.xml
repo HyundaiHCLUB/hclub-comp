@@ -3,7 +3,56 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="site.hclub.hyndai.mapper.CompMapper">
+    <select id="getMatchVO" resultType="site.hclub.hyndai.domain.MatchVO"
+            parameterType="Long">
+            SELECT  match_hist_no       AS matchHistoryNo
+                    ,match_loc          AS  matchLoc
+                    ,win_team_score_no  AS winTeamScoreNo
+                    ,lose_team_score_no AS loseTeamScoreNo
+            FROM    match
+            WHERE   match_hist_no = #{matchHistoryNo}
+    </select>
 
+    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.domain.Team"
+            parameterType="Long">
+            SELECT  team_no         AS teamNo
+                    ,team_loc       AS teamLoc
+                    ,team_name      AS teamName
+                    ,team_goods     AS teamGoods
+                    ,created_at     AS createdAt
+                    ,match_type     AS matchType
+                    ,match_capacity AS matchCapacity
+            FROM    team
+            WHERE   team_no =(
+                                SELECT  team_no
+                                FROM    score
+                                WHERE   score_no = #{score_no}
+                             )
+    </select>
 
+    <select id="getLeader" resultType="site.hclub.hyndai.domain.Member">
+        SELECT  member_no       AS memberNo
+                ,member_id      AS memberId
+                ,member_image   AS memberImage
+                ,member_rating  AS memberRating
+                ,employee_no    AS employeeNo
+        FROM    member
+        WHERE   member_no =  (SELECT  member_no
+                              FROM    member_team
+                              WHERE   team_no = #{teamNo}
+                              AND     is_leader = 'Y')
+    </select>
 
+    <select id="getMembers" resultType="site.hclub.hyndai.domain.Member">
+        SELECT  member_no       AS memberNo
+                ,member_id      AS memberId
+                ,member_image   AS memberImage
+                ,member_rating  AS memberRating
+                ,employee_no    AS employeeNo
+        FROM    member
+        WHERE   member_no IN (SELECT  member_no
+                              FROM    member_team
+                              WHERE   team_no = #{teamNo}
+                              AND     is_leader = 'N')
+    </select>
 </mapper>
