@@ -21,7 +21,10 @@
              , team_goods     AS teamGoods
              , created_at     AS createdAt
              , match_type     AS matchType
+             , team_image     AS teamImage
              , match_capacity AS matchCapacity
+             , team_rating    AS teamRating
+             , isMatched      AS isMatched
         FROM team
         WHERE team_no = (SELECT team_no
                          FROM score
@@ -72,8 +75,41 @@
     </select>
 
     <update id="updateScore">
-        UPDATE score
-        SET score_amount = #{score}
-        WHERE team_no = #{teamNo}
+        UPDATE  score
+        SET     score_amount = #{scoreAmount}
+        WHERE   score_no = #{teamScoreNo}
     </update>
+
+    <select id="getMatch" resultType="site.hclub.hyndai.domain.Match">
+        SELECT  match_hist_no   AS  matchHistoryNo
+                ,match_loc      AS  matchLoc
+                ,win_team_score_no  AS  winTeamScoreNo
+                ,lose_team_score_no AS  loseTeamScoreNo
+        FROM    match
+        WHERE   match_hist_no = #{matchHistNo}
+    </select>
+
+    <select id="getHistoryImageUrl">
+        SELECT  i.image_url   AS imageUrl
+        FROM    image i
+        JOIN    match_image mi
+        ON      i.image_no = mi.image_no
+        WHERE   mi.match_hist_no = #{matchHistNo}
+    </select>
+
+    <update id="changeRating">
+        UPDATE  member
+        SET     member_rating = member_rating + #{ratingChange}
+        WHERE   member_no   IN (
+                                SELECT  member_no
+                                FROM    member_team
+                                WHERE   team_no = #{teamNo}
+                                )
+    </update>
+
+    <select id="getTeamScoreNo" resultType="long">
+        SELECT  score_no
+        FROM    score
+        WHERE   team_no = #{team_no}
+    </select>
 </mapper>

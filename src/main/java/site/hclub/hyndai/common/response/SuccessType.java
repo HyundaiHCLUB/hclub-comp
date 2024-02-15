@@ -13,8 +13,9 @@ public enum SuccessType {
      */
     GET_MATCH_DETAIL_SUCCESS(HttpStatus.OK, "경기 상세정보 조회 성공"),
     CREATE_TEAM_SUCCESS(HttpStatus.OK, "팀 생성 성공"),
-    UPDATE_HISTORY_RECORD_SUCCESS(HttpStatus.OK, "경기 결과 기록 성공")
-
+    UPDATE_HISTORY_RECORD_SUCCESS(HttpStatus.OK, "경기 결과 기록 성공"),
+    GET_HISTORY_DETAIL_SUCCESS(HttpStatus.OK, "경기 기록 조회 성공"),
+    UPDATE_RATING_SUCCESS(HttpStatus.OK, "레이팅 변경 성공"),
     /**
      * 201 Created
      */

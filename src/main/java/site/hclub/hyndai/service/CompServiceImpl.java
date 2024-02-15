@@ -6,19 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
+import site.hclub.hyndai.common.util.EloService;
 import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
 import site.hclub.hyndai.dto.CreateTeamDTO;
-import site.hclub.hyndai.dto.MatchDetailResponse;
-import site.hclub.hyndai.dto.TeamDetailResponse;
+import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
+import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.dto.response.HistoryDetailResponse;
+import site.hclub.hyndai.dto.response.MatchDetailResponse;
+import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -32,6 +37,9 @@ public class CompServiceImpl implements CompService {
 
     @Autowired
     MemberMapper memberMapper;
+
+    @Autowired
+    EloService eloService;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -157,6 +165,89 @@ public class CompServiceImpl implements CompService {
      * */
     @Override
     public void updateScore(Long teamNo, Long score) {
-        compMapper.updateScore(teamNo, score);
+        Long teamScoreNo = compMapper.getTeamScoreNo(teamNo);
+        compMapper.updateScore(teamScoreNo, score);
+    }
+    // 경기 기록 이미지 업로드
+    @Override
+    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException{
+        String url;
+        if (multipartFile == null){ // 이미지 null 인 경우 -> 기본 이미지로 대체
+            url = "https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png";
+        }else {
+            String filePath = "team";
+            List<MultipartFile> multipartFiles = new ArrayList<>();
+            multipartFiles.add(multipartFile);
+            // uploadFiles 메서드를 사용하여 파일 업로드
+            List<String> urls = amazonS3Service.uploadFiles(filePath, multipartFiles);
+
+            // 반환된 URL 리스트에서 첫 번째 URL을 사용
+            url = urls.get(0);
+        }
+        log.info(url);
+        System.out.println("url -> : " + url);
+    }
+
+    // 경기 상세 기록 조회
+    @Override
+    public HistoryDetailResponse getHistoryDetail(Long matchHistNo) {
+
+        HistoryDetailResponse response = new HistoryDetailResponse();
+        Match match = compMapper.getMatch(matchHistNo);
+        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        String imageUrl = compMapper.getHistoryImageUrl(matchHistNo);
+
+        response.setMatchHistoryNo(matchHistNo);
+        response.setMatchLoc(match.getMatchLoc());
+        response.setWinTeam(winTeam);
+        response.setLoseTeam(loseTeam);
+        response.setImageUrl(imageUrl);
+
+        return  response;
+    }
+
+    // 경기 기록 수정
+    @Override
+    public void modifyMatchHistory(HistoryModifyRequest request) {
+        /* score 테이블에 있는 점수 컬럼(score_amount) 변경 */
+        // 1. 이긴 팀 점수 변경
+        Long winTeamScoreNo = request.getWinTeamScoreNo();
+        Long winTeamScoreAmount = request.getWinTeamScoreAmount();
+        compMapper.updateScore(winTeamScoreNo, winTeamScoreAmount);
+        // 2. 진 팀 점수 변경
+        Long loseTeamScoreNo = request.getLoseTeamScoreNo();
+        Long loseTeamScoreAmount = request.getLoseTeamScoreAmount();
+        compMapper.updateScore(loseTeamScoreNo, loseTeamScoreAmount);
+    }
+
+    // 경기 종료 후 레이팅 변경
+    @Override
+    public List<Long> updateRating(AfterMatchRatingRequest request) {
+        // 경기 및 팀 정보
+        Match match = compMapper.getMatch(request.getMatchHistNo());
+        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        // 각 팀 기존 레이팅
+        Long winTeamRating = winTeam.getTeamRating();
+        Long loseTeamRating = loseTeam.getTeamRating();
+        // 점수 비교
+        String result = "";
+        if(request.getWinTeamScore() == request.getLoseTeamScore()) {
+            result = "DRAW";
+        }else{
+            result = "WIN";
+        }
+        log.info("match result ==> " + request.getWinTeamNo() + " team " + result);
+        Long ratingChange = eloService.getRatingChange(winTeamRating, loseTeamRating, result);
+        Long winTeamChange = ratingChange - winTeamRating;
+        Long loseTeamChange = (ratingChange - loseTeamRating) * (-1);
+
+        compMapper.changeRating(winTeam.getTeamNo(), winTeamChange);
+        compMapper.changeRating(loseTeam.getTeamNo(), loseTeamChange);
+        List<Long> changes = new ArrayList<>();
+        changes.add(winTeamChange);
+        changes.add(loseTeamChange);
+        return changes;
     }
 }

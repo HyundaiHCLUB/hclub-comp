@@ -48,5 +48,4 @@ public class AmazonS3Service {
         return returnURL;
     }
 
-
 }

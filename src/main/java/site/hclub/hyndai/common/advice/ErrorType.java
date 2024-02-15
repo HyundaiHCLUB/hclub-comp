@@ -17,8 +17,15 @@ public enum ErrorType {
     INDEX_OUT_OF_BOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "인덱스 범위를 넘어선 값입니다."),
     NULL_POINTER_ACCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "널 포인터에 접근했습니다."),
 
+    /**
+     * 400 Bad Request
+     * */
+    INVALID_MATCH_RESULT_ERROR(HttpStatus.BAD_REQUEST, "경기 결과 입력값이 올바르지 않습니다."),
 
-
+    /**
+     * 404 Not Foound
+     * */
+    MATCH_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "해당하는 경기를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
