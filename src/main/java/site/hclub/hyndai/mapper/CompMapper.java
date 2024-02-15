@@ -6,6 +6,8 @@ import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
+import site.hclub.hyndai.dto.GetTeamDetailResponse;
+import site.hclub.hyndai.dto.MemberInfo;
 
 import java.util.List;
 
@@ -29,6 +31,10 @@ public interface CompMapper {
     public Match getMatch(Long matchHistNo);
 
     public String getHistoryImageUrl(Long matchHistNo);
+
+    public GetTeamDetailResponse getTeamByTeamNo(Long teamNo);
+
+    public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 
     public void changeRating(@Param("teamNo") Long teamNo, @Param("ratingChange") Long ratingChange);
 

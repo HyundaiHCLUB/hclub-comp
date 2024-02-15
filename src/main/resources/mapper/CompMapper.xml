@@ -112,4 +112,31 @@
         FROM    score
         WHERE   team_no = #{team_no}
     </select>
+
+    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.GetTeamDetailResponse">
+        SELECT team_no        AS teamNo
+             , team_name      AS teamName
+             , match_type     AS matchType
+             , team_rating    AS teamRating
+             , team_loc       AS teamLoc
+             , team_goods     AS teamGoods
+             , match_capacity AS matchCapacity
+        FROM TEAM
+        WHERE team_no = #{teamNo}
+    </select>
+
+    <select id="getMemberInfoWithMemberName"
+            resultType="site.hclub.hyndai.dto.MemberInfo">
+        SELECT m.member_no AS memberNo,
+        e.employee_name AS memberName
+        FROM member m
+        JOIN
+        employee e ON m.employee_no = e.employee_no
+        <where>
+            e.employee_name LIKE '%${memberNameInput}%'
+        </where>
+
+    </select>
+
+
 </mapper>

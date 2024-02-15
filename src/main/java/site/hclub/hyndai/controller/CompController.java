@@ -11,10 +11,11 @@ import site.hclub.hyndai.common.advice.ErrorType;
 import site.hclub.hyndai.common.response.ApiResponse;
 import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
 import site.hclub.hyndai.dto.request.CompHistoryRequest;
-import site.hclub.hyndai.dto.CreateTeamDTO;
+
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
+import site.hclub.hyndai.dto.*;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
@@ -65,13 +66,29 @@ public class CompController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<CreateTeamDTO>> makeTeam(@RequestPart(value = "teamDTO") CreateTeamDTO teamDTO,
-                                                               @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<ApiResponse<CreateTeamResponse>> makeTeam(@RequestPart(value = "teamDTO") CreateTeamRequest teamDTO,
+                                                                    @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
         log.info("createTeam=======>");
         log.info(teamDTO.toString());
         log.info(multipartFile);
         compService.makeTeam(teamDTO, multipartFile);
-        return ApiResponse.success(CREATE_TEAM_SUCCESS);
+        return ApiResponse.success(CREATE_TEAM_SUCCESS, compService.makeTeam(teamDTO, multipartFile));
+    }
+
+    @GetMapping("/{teamNo}")
+    public ResponseEntity<ApiResponse<GetTeamDetailResponse>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
+        log.info("getTeamInfo=======>");
+
+
+        return ApiResponse.success(GET_TEAM_DETAIL_SUCCESS, compService.getTeamDetail(teamNo));
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<ApiResponse<GetMemberInfoResponse>> getMemberInfo(@RequestParam(value = "memberName") String memberName) {
+        log.info("getMemberInfo=======>");
+
+
+        return ApiResponse.success(GET_MEMBER_DETAIL_SUCCESS, compService.getMemberInfo(memberName));
     }
 
     /*

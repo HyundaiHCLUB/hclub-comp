@@ -11,12 +11,13 @@ import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
-import site.hclub.hyndai.dto.CreateTeamDTO;
+
 import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
+import site.hclub.hyndai.dto.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 
@@ -103,7 +104,7 @@ public class CompServiceImpl implements CompService {
 
 
     @Override
-    public void makeTeam(CreateTeamDTO teamDTO, MultipartFile multipartFile) throws IOException {
+    public CreateTeamResponse makeTeam(CreateTeamRequest teamDTO, MultipartFile multipartFile) throws IOException {
 
         List<MultipartFile> multipartFileList = new ArrayList<>();
         List<String> urlList = new ArrayList<>();
@@ -156,7 +157,30 @@ public class CompServiceImpl implements CompService {
             compMapper.addTeamMemberToTeam(memberTeam);
         }
 
+        CreateTeamResponse teamResponse = CreateTeamResponse.builder()
+                .teamNo(team.getTeamNo())
+                .teamName(team.getTeamName())
+                .teamLoc(team.getTeamLoc())
+                .teamGoods(team.getTeamGoods())
+                .matchType(team.getMatchType())
+                .matchCapacity(team.getMatchCapacity()).build();
 
+        return teamResponse;
+    }
+
+    @Override
+    public GetTeamDetailResponse getTeamDetail(Long teamNo) {
+        GetTeamDetailResponse teamDetailResponse = compMapper.getTeamByTeamNo(teamNo);
+
+        return teamDetailResponse;
+    }
+
+    @Override
+    public GetMemberInfoResponse getMemberInfo(String memberName) {
+        GetMemberInfoResponse res = new GetMemberInfoResponse();
+        List<MemberInfo> rDTO = compMapper.getMemberInfoWithMemberName(memberName);
+        res.setMemberList(rDTO);
+        return res;
     }
 
     /*
@@ -250,4 +274,6 @@ public class CompServiceImpl implements CompService {
         changes.add(loseTeamChange);
         return changes;
     }
+
+
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CreateTeamDTO {
+public class CreateTeamRequest {
 
     private String teamName;
     private ArrayList<Long> memberList;
