@@ -2,9 +2,10 @@ package site.hclub.hyndai.service;
 
 
 import org.springframework.web.multipart.MultipartFile;
-import site.hclub.hyndai.dto.*;
 import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
+import site.hclub.hyndai.dto.request.CreateTeamRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
@@ -29,6 +30,7 @@ public interface CompService {
     public void modifyMatchHistory(HistoryModifyRequest request);
 
     public List<Long> updateRating(AfterMatchRatingRequest request);
+
     public GetMemberInfoResponse getMemberInfo(String memberName);
 
 

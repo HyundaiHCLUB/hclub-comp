@@ -11,21 +11,22 @@ import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
-
+import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
+import site.hclub.hyndai.dto.request.CreateTeamRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -193,9 +194,10 @@ public class CompServiceImpl implements CompService {
         Long teamScoreNo = compMapper.getTeamScoreNo(teamNo);
         compMapper.updateScore(teamScoreNo, score);
     }
+
     // 경기 기록 이미지 업로드
     @Override
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException{
+    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException {
         String url;
         /* S3 에 파일 업로드 */
         if (multipartFile == null){ // 이미지 null 인 경우 -> 기본 이미지로 대체

@@ -1,4 +1,4 @@
-package site.hclub.hyndai.dto;
+package site.hclub.hyndai.dto.request;
 
 import lombok.*;
 
@@ -10,11 +10,10 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CreateTeamResponse {
+public class CreateTeamRequest {
 
-
-    private Long teamNo;
     private String teamName;
+    private ArrayList<Long> memberList;
     private String matchType;
     private String teamLoc;
     private String teamGoods;

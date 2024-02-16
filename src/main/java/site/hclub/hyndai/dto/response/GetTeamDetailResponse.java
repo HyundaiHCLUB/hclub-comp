@@ -1,4 +1,4 @@
-package site.hclub.hyndai.dto;
+package site.hclub.hyndai.dto.response;
 
 import lombok.*;
 

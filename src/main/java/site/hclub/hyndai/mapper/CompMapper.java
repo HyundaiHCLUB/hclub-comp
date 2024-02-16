@@ -6,8 +6,8 @@ import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
-import site.hclub.hyndai.dto.GetTeamDetailResponse;
 import site.hclub.hyndai.dto.MemberInfo;
+import site.hclub.hyndai.dto.response.GetTeamDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 
 import java.util.List;
