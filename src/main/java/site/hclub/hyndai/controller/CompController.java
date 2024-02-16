@@ -2,16 +2,15 @@ package site.hclub.hyndai.controller;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import site.hclub.hyndai.common.response.ApiResponse;
-import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
-import site.hclub.hyndai.dto.request.CompHistoryRequest;
-import site.hclub.hyndai.dto.request.CreateTeamRequest;
-import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.common.util.PageUtil;
+import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
@@ -20,6 +19,7 @@ import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
@@ -33,6 +33,9 @@ public class CompController {
 
     @Autowired
     CompService compService;
+
+    @Autowired
+    PageUtil pageUtil;
 
     /* 매칭 상세페이지로 이동 */
     @GetMapping("/matchDetail")
@@ -68,7 +71,6 @@ public class CompController {
         log.info("createTeam=======>");
         log.info(teamDTO.toString());
         log.info(multipartFile);
-        compService.makeTeam(teamDTO, multipartFile);
         return ApiResponse.success(CREATE_TEAM_SUCCESS, compService.makeTeam(teamDTO, multipartFile));
     }
 
@@ -86,6 +88,22 @@ public class CompController {
 
 
         return ApiResponse.success(GET_MEMBER_DETAIL_SUCCESS, compService.getMemberInfo(memberName));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<GetTeamListResponse>> getTeamList(@RequestParam(value = "gameType", required = false) String gameType,
+                                                                        @RequestParam(value = "players", required = false) Long players,
+                                                                        @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                        @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+                                                                        @RequestParam(value = "sortBy", required = false) String sortBy,
+                                                                        @RequestParam(value = "inOrder", required = false) Integer inOrder,
+                                                                        @RequestParam(value = "page", required = false) Long page) {
+        PageRequestDTO pageRequestDTO = pageUtil.parsePaginationComponents(gameType, players, page, sortBy, inOrder);
+
+        log.info("getTeamList=======>");
+
+
+        return ApiResponse.success(GET_TEAM_LIST_SUCCESS, compService.getTeamList(pageRequestDTO));
     }
 
     /*

@@ -20,6 +20,7 @@ import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.dto.request.PageRequestDTO;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
@@ -183,6 +184,13 @@ public class CompServiceImpl implements CompService {
         List<MemberInfo> rDTO = compMapper.getMemberInfoWithMemberName(memberName);
         res.setMemberList(rDTO);
         return res;
+    }
+
+    // 팀 페이지 네이션
+    @Override
+    public GetTeamListResponse getTeamList(PageRequestDTO pageRequestDTO) {
+
+        return null;
     }
 
     /*
