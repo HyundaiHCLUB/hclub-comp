@@ -138,5 +138,25 @@
 
     </select>
 
+    <insert id="uploadImage">
+        INSERT INTO image (image_no, upload_name, image_url)
+        VALUES (image_seq.nextval, ${fileName}, ${url})
+    </insert>
 
+    <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
+        SELECT  member_no   AS  memberNo
+                ,member_id  AS  memberId
+                ,rownum     AS  rank
+                ,member_image AS memberImage
+                ,member_rating AS memberRating
+        FROM    (
+                 SELECT member_no
+                        ,member_id
+                        ,member_image
+                        ,member_rating
+                 FROM   member
+                 ORDER BY member_rating DESC
+                )
+        WHERE   <![CDATA[ ROWNUM <= 10 ]]>
+    </select>
 </mapper>

@@ -16,6 +16,7 @@ import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
@@ -166,4 +167,12 @@ public class CompController {
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
 
+    // 상위 10명의 랭크
+    @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList() {
+
+        List<RankResponse> list = compService.getRankList();
+        log.info("Top 10 ranking ==> " + list.toString());
+        return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
+    }
 }

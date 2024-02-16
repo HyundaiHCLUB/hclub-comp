@@ -16,6 +16,7 @@ import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
+import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
 import site.hclub.hyndai.mapper.CompMapper;
@@ -196,6 +197,7 @@ public class CompServiceImpl implements CompService {
     @Override
     public void uploadHistoryImage(MultipartFile multipartFile) throws IOException{
         String url;
+        /* S3 에 파일 업로드 */
         if (multipartFile == null){ // 이미지 null 인 경우 -> 기본 이미지로 대체
             url = "https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png";
         }else {
@@ -204,11 +206,13 @@ public class CompServiceImpl implements CompService {
             multipartFiles.add(multipartFile);
             // uploadFiles 메서드를 사용하여 파일 업로드
             List<String> urls = amazonS3Service.uploadFiles(filePath, multipartFiles);
-
             // 반환된 URL 리스트에서 첫 번째 URL을 사용
             url = urls.get(0);
         }
         log.info(url);
+        /* DB 에 파일 URL 업로드*/
+        String fileName = multipartFile.getOriginalFilename();
+        compMapper.uploadImage(fileName, url);
         System.out.println("url -> : " + url);
     }
 
@@ -275,5 +279,11 @@ public class CompServiceImpl implements CompService {
         return changes;
     }
 
-
+    // 상위 10명 리스트 리턴
+    @Override
+    public List<RankResponse> getRankList() {
+        List<RankResponse> list = new ArrayList<>();
+        list = compMapper.getRankList();
+        return list;
+    }
 }

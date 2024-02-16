@@ -7,6 +7,7 @@ import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
+import site.hclub.hyndai.dto.response.RankResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,4 +32,5 @@ public interface CompService {
     public GetMemberInfoResponse getMemberInfo(String memberName);
 
 
+    List<RankResponse> getRankList();
 }
