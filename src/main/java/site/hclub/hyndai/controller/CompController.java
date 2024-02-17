@@ -188,4 +188,21 @@ public class CompController {
         log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }
+    @RequestMapping(value="/chatPage")
+    public ModelAndView getChatViewPage(ModelAndView mav) {
+        mav.setViewName("chatPage");
+        return mav;
+    }
+    @RequestMapping(value="/chatPage2")
+    public ModelAndView getChatViewPage2(ModelAndView mav) {
+        mav.setViewName("chatPage2");
+        return mav;
+    }
+    @RequestMapping(value="/test")
+    public ModelAndView getTest(ModelAndView mav) {
+    	System.out.println("show page");
+        mav.setViewName("testPage");
+        return mav;
+    }
+    
 }
