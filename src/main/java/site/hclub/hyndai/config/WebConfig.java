@@ -45,6 +45,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         MultipartConfigElement multipartConfig = new MultipartConfigElement(
                 null, 20_971_520, 41_943_040, 20_971_520);
         registration.setMultipartConfig(multipartConfig);
+        registration.setAsyncSupported(true);
     }
+    
+    
 }
 
