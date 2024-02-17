@@ -142,19 +142,28 @@
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
-        SELECT  member_no   AS  memberNo
-                ,member_id  AS  memberId
-                ,rownum     AS  rank
-                ,member_image AS memberImage
-                ,member_rating AS memberRating
+        SELECT  m.member_no     AS  memberNo
+                ,m.member_id    AS  memberId
+                ,ROWNUM         AS  rank
+                ,m.member_image AS memberImage
+                ,m.member_rating AS memberRating
+                ,e.employee_name AS employeeName
+                ,(SELECT    count(mt.member_no)
+                  FROM      member_team mt
+                  WHERE     mt.member_no = m.member_no
+                ) AS  matchNum
         FROM    (
                  SELECT member_no
                         ,member_id
                         ,member_image
                         ,member_rating
+                        ,employee_no
                  FROM   member
                  ORDER BY member_rating DESC
-                )
-        WHERE   <![CDATA[ ROWNUM <= 10 ]]>
+                ) m
+        JOIN    employee e
+        ON      e.employee_no = m.employee_no
+        WHERE   <![CDATA[ ROWNUM <= #{num} ]]>
+
     </select>
 </mapper>

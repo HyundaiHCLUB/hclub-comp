@@ -37,5 +37,5 @@ public interface CompService {
     public GetTeamListResponse getTeamList(PageRequestDTO pageRequestDTO);
 
 
-    List<RankResponse> getRankList();
+    List<RankResponse> getRankList(int num);
 }

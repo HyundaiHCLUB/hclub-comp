@@ -291,9 +291,9 @@ public class CompServiceImpl implements CompService {
 
     // 상위 10명 리스트 리턴
     @Override
-    public List<RankResponse> getRankList() {
+    public List<RankResponse> getRankList(int num) {
         List<RankResponse> list = new ArrayList<>();
-        list = compMapper.getRankList();
+        list = compMapper.getRankList(num);
         return list;
     }
 }

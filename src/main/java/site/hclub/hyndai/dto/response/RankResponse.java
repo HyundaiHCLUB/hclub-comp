@@ -9,5 +9,6 @@ public class RankResponse {
     private Long    memberRating;
     private String  memberId;
     private String  memberImage;
-
+    private String  employeeName;
+    private Long    matchNum; // 참여한 경기 수
 }

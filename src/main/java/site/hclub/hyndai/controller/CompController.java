@@ -180,11 +180,11 @@ public class CompController {
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
 
-    // 상위 10명의 랭크
+    // 상위 num 명의 랭크 (레이팅 순)
     @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList() {
+    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num")int num) {
 
-        List<RankResponse> list = compService.getRankList();
+        List<RankResponse> list = compService.getRankList(num);
         log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }

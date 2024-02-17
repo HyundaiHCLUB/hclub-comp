@@ -43,5 +43,5 @@ public interface CompMapper {
 
     public void uploadImage(@Param("fileName") String fileName, @Param("url") String url);
 
-    public List<RankResponse> getRankList();
+    public List<RankResponse> getRankList(int num);
 }
