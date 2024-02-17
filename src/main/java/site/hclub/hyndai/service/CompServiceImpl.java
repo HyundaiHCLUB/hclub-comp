@@ -7,24 +7,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
+import site.hclub.hyndai.common.util.TimeService;
 import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
 import site.hclub.hyndai.domain.Team;
-
+import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
+import site.hclub.hyndai.dto.request.CreateTeamRequest;
 import site.hclub.hyndai.dto.request.HistoryModifyRequest;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
+import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.dto.request.PageRequestDTO;
+import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -38,6 +42,9 @@ public class CompServiceImpl implements CompService {
 
     @Autowired
     MemberMapper memberMapper;
+
+    @Autowired
+    TimeService timeService;
 
     @Autowired
     EloService eloService;
@@ -126,12 +133,13 @@ public class CompServiceImpl implements CompService {
         }
         long teamRating = memberRatingSum / memberList.size();
         teamRating = Math.round(teamRating);
-        log.info(teamRating + "");
+
         Team team = Team.builder()
                 .teamLoc(teamDTO.getTeamLoc())
                 .teamName(teamDTO.getTeamName())
                 .teamGoods(teamDTO.getTeamGoods())
                 .matchCapacity(teamDTO.getMatchCapacity())
+                .matchDate(timeService.parseStringToLocalDateTime(teamDTO.getMatchDate()))
                 .teamImage(urlList.get(0))
                 .teamRating(teamRating)
                 .matchType(teamDTO.getMatchType()).build();
@@ -183,6 +191,13 @@ public class CompServiceImpl implements CompService {
         return res;
     }
 
+    // 팀 페이지 네이션
+    @Override
+    public GetTeamListResponse getTeamList(PageRequestDTO pageRequestDTO) {
+
+        return null;
+    }
+
     /*
      * @작성자 : 송원선
      * 경기 스코어 score 테이블에 기록(팀별)
@@ -192,10 +207,12 @@ public class CompServiceImpl implements CompService {
         Long teamScoreNo = compMapper.getTeamScoreNo(teamNo);
         compMapper.updateScore(teamScoreNo, score);
     }
+
     // 경기 기록 이미지 업로드
     @Override
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException{
+    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException {
         String url;
+        /* S3 에 파일 업로드 */
         if (multipartFile == null){ // 이미지 null 인 경우 -> 기본 이미지로 대체
             url = "https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png";
         }else {
@@ -204,11 +221,13 @@ public class CompServiceImpl implements CompService {
             multipartFiles.add(multipartFile);
             // uploadFiles 메서드를 사용하여 파일 업로드
             List<String> urls = amazonS3Service.uploadFiles(filePath, multipartFiles);
-
             // 반환된 URL 리스트에서 첫 번째 URL을 사용
             url = urls.get(0);
         }
         log.info(url);
+        /* DB 에 파일 URL 업로드*/
+        String fileName = multipartFile.getOriginalFilename();
+        compMapper.uploadImage(fileName, url);
         System.out.println("url -> : " + url);
     }
 
@@ -275,5 +294,11 @@ public class CompServiceImpl implements CompService {
         return changes;
     }
 
-
+    // 상위 10명 리스트 리턴
+    @Override
+    public List<RankResponse> getRankList(int num) {
+        List<RankResponse> list = new ArrayList<>();
+        list = compMapper.getRankList(num);
+        return list;
+    }
 }

@@ -2,28 +2,26 @@ package site.hclub.hyndai.controller;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import site.hclub.hyndai.common.advice.ErrorType;
 import site.hclub.hyndai.common.response.ApiResponse;
-import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
-import site.hclub.hyndai.dto.request.CompHistoryRequest;
-
-import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.common.util.PageUtil;
+import site.hclub.hyndai.dto.request.*;
+import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
-import static site.hclub.hyndai.common.advice.ErrorType.INVALID_MATCH_RESULT_ERROR;
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
 
@@ -36,6 +34,9 @@ public class CompController {
     @Autowired
     CompService compService;
 
+    @Autowired
+    PageUtil pageUtil;
+
     /* 매칭 상세페이지로 이동 */
     @GetMapping("/matchDetail")
     public ModelAndView goMatchDetailPage() {
@@ -46,18 +47,17 @@ public class CompController {
     }
 
     /*
-    * @작성자 : 송원선
-    * 경기 상세 정보 조회 API
-    * @request  : 경기번호 (match_hist_no)
-    * @response : 경기 정보 (MatchDetailRespnse -> 안에 Team1 Team2 정보 담겨있음)
-    * - 현재 createdAt (경기 생성 일자) null 로 반환
-    */
+     * @작성자 : 송원선
+     * 경기 상세 정보 조회 API
+     * @request  : 경기번호 (match_hist_no)
+     * @response : 경기 정보 (MatchDetailRespnse -> 안에 Team1 Team2 정보 담겨있음)
+     * - 현재 createdAt (경기 생성 일자) null 로 반환
+     */
     @GetMapping("/match/{match_hist_no}")
     public ResponseEntity<ApiResponse<MatchDetailResponse>> getMatchDetail(@PathVariable("match_hist_no") Long matchHistoryNo) {
         MatchDetailResponse response = compService.getMatchDetail(matchHistoryNo);
         log.info("Match Info =======> " + response.toString());
-        if(response.getTeam1() == null || response.getTeam2() == null)
-        {
+        if (response.getTeam1() == null || response.getTeam2() == null) {
             return ApiResponse.fail(MATCH_NOT_FOUND_ERROR, response);
         }
         return ApiResponse.success(GET_MATCH_DETAIL_SUCCESS, response);
@@ -71,7 +71,6 @@ public class CompController {
         log.info("createTeam=======>");
         log.info(teamDTO.toString());
         log.info(multipartFile);
-        compService.makeTeam(teamDTO, multipartFile);
         return ApiResponse.success(CREATE_TEAM_SUCCESS, compService.makeTeam(teamDTO, multipartFile));
     }
 
@@ -91,6 +90,22 @@ public class CompController {
         return ApiResponse.success(GET_MEMBER_DETAIL_SUCCESS, compService.getMemberInfo(memberName));
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<GetTeamListResponse>> getTeamList(@RequestParam(value = "gameType", required = false) String gameType,
+                                                                        @RequestParam(value = "players", required = false) Long players,
+                                                                        @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                        @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+                                                                        @RequestParam(value = "sortBy", required = false) String sortBy,
+                                                                        @RequestParam(value = "inOrder", required = false) Integer inOrder,
+                                                                        @RequestParam(value = "page", required = false) Long page) {
+        PageRequestDTO pageRequestDTO = pageUtil.parsePaginationComponents(gameType, players, page, sortBy, inOrder);
+
+        log.info("getTeamList=======>");
+
+
+        return ApiResponse.success(GET_TEAM_LIST_SUCCESS, compService.getTeamList(pageRequestDTO));
+    }
+
     /*
      * @작성자 : 송원선
      * 경기 결과 기록 API
@@ -98,22 +113,21 @@ public class CompController {
      * @response : ?
      */
     @PostMapping(value = "/history",
-                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ApiResponse<Void>> recordMatchHistory(@RequestPart(value="historyRequest") CompHistoryRequest request,
-                                                                @RequestPart(value="multipartFile") MultipartFile multipartFile)
-    {
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse<Void>> recordMatchHistory(@RequestPart(value = "historyRequest") CompHistoryRequest request,
+                                                                @RequestPart(value = "multipartFile") MultipartFile multipartFile) {
         log.info("record History ====>");
-        try{
+        try {
             // 1. 경기 스코어 등록
             Long matchHistNo = request.getMatchHistNo();
             compService.updateScore(request.getTeamANo(), request.getScoreA());
             compService.updateScore(request.getTeamBNo(), request.getScoreB());
             // 2. 경기 사진 등록
             compService.uploadHistoryImage(multipartFile);
-        }catch (IOException e){
-            log.error("사진 업로드 실패 : " +e.getMessage());
+        } catch (IOException e) {
+            log.error("사진 업로드 실패 : " + e.getMessage());
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
@@ -126,9 +140,9 @@ public class CompController {
     @request : 경기 번호
     @ response : MatchDetailResponse
      */
-    @GetMapping(value="/history/{match_hist_no}",
-                produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<HistoryDetailResponse>> getMatchHistoryDetail(@PathVariable("match_hist_no") Long matchHistNo){
+    @GetMapping(value = "/history/{match_hist_no}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<HistoryDetailResponse>> getMatchHistoryDetail(@PathVariable("match_hist_no") Long matchHistNo) {
 
         log.info("getMatchHistoryDetail ====> ");
         HistoryDetailResponse response = compService.getHistoryDetail(matchHistNo);
@@ -136,29 +150,29 @@ public class CompController {
     }
 
     /*
-    * 경기 기록 수정 API -> 변경 가능 정보 : 점수 only
-    * @request : 이긴 팀 번호&점수, 진 팀 번호&점수
-    * */
-    @PatchMapping(value="/history",
-                consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Void>> modifyMatchHistory(@RequestBody HistoryModifyRequest request){
+     * 경기 기록 수정 API -> 변경 가능 정보 : 점수 only
+     * @request : 이긴 팀 번호&점수, 진 팀 번호&점수
+     * */
+    @PatchMapping(value = "/history",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Void>> modifyMatchHistory(@RequestBody HistoryModifyRequest request) {
         log.info("modifyMatchHistory ====> ");
-        log.info("winTeam >> scoreNo : " + request.getWinTeamScoreNo() + " | scoreAmount : " +request.getWinTeamScoreAmount());
-        log.info("loseTeam >> scoreNo : " + request.getLoseTeamScoreNo() + " | scoreAmount : " +request.getLoseTeamScoreAmount());
+        log.info("winTeam >> scoreNo : " + request.getWinTeamScoreNo() + " | scoreAmount : " + request.getWinTeamScoreAmount());
+        log.info("loseTeam >> scoreNo : " + request.getLoseTeamScoreNo() + " | scoreAmount : " + request.getLoseTeamScoreAmount());
         compService.modifyMatchHistory(request);
         return ApiResponse.success(UPDATE_HISTORY_RECORD_SUCCESS);
     }
 
     /*
-    * 레이팅 반영 API (경기 종료후 결과 입력 -> Elo 알고리즘에 따라 개인 레이팅 변경)
-    * @request : AfterMatchRatingRequest
-    * - Long matchHistNo : 경기 번호
-    * - winTeamNo / winTeamScore : 이긴 팀 번호 및 점수
-    * - loseTeamNo / loseTeamScore : 진 팀 번호 및 점수
-    * */
-    @PostMapping(value="/rating",
-                consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<List<Long>>> updateRating(@RequestBody AfterMatchRatingRequest request){
+     * 레이팅 반영 API (경기 종료후 결과 입력 -> Elo 알고리즘에 따라 개인 레이팅 변경)
+     * @request : AfterMatchRatingRequest
+     * - Long matchHistNo : 경기 번호
+     * - winTeamNo / winTeamScore : 이긴 팀 번호 및 점수
+     * - loseTeamNo / loseTeamScore : 진 팀 번호 및 점수
+     * */
+    @PostMapping(value = "/rating",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<Long>>> updateRating(@RequestBody AfterMatchRatingRequest request) {
         log.info("updateRating ====> ");
         // 레이팅 변경하고 변동값을 리턴
         List<Long> ratingChange = compService.updateRating(request);
@@ -166,4 +180,12 @@ public class CompController {
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
 
+    // 상위 num 명의 랭크 (레이팅 순)
+    @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num")int num) {
+
+        List<RankResponse> list = compService.getRankList(num);
+        log.info("Top 10 ranking ==> " + list.toString());
+        return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
+    }
 }
