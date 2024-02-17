@@ -19,4 +19,5 @@ public class Team {
     private Long matchCapacity;
     private Long teamRating;
     private String isMatched;
+    private LocalDateTime matchDate;
 }

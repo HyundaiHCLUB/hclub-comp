@@ -18,4 +18,5 @@ public class CreateTeamRequest {
     private String teamLoc;
     private String teamGoods;
     private Long matchCapacity;
+    private String matchDate;
 }
