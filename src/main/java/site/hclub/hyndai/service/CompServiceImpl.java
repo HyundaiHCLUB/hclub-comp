@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
+import site.hclub.hyndai.common.util.TimeService;
 import site.hclub.hyndai.domain.Match;
 import site.hclub.hyndai.domain.Member;
 import site.hclub.hyndai.domain.MemberTeam;
@@ -41,6 +42,9 @@ public class CompServiceImpl implements CompService {
 
     @Autowired
     MemberMapper memberMapper;
+
+    @Autowired
+    TimeService timeService;
 
     @Autowired
     EloService eloService;
@@ -129,12 +133,13 @@ public class CompServiceImpl implements CompService {
         }
         long teamRating = memberRatingSum / memberList.size();
         teamRating = Math.round(teamRating);
-        log.info(teamRating + "");
+
         Team team = Team.builder()
                 .teamLoc(teamDTO.getTeamLoc())
                 .teamName(teamDTO.getTeamName())
                 .teamGoods(teamDTO.getTeamGoods())
                 .matchCapacity(teamDTO.getMatchCapacity())
+                .matchDate(timeService.parseStringToLocalDateTime(teamDTO.getMatchDate()))
                 .teamImage(urlList.get(0))
                 .teamRating(teamRating)
                 .matchType(teamDTO.getMatchType()).build();
