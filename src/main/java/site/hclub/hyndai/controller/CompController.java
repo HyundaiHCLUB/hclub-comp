@@ -1,6 +1,8 @@
 package site.hclub.hyndai.controller;
 
+import io.swagger.annotations.Api;
 import lombok.extern.log4j.Log4j;
+import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -51,7 +53,7 @@ public class CompController {
      * 경기 상세 정보 조회 API
      * @request  : 경기번호 (match_hist_no)
      * @response : 경기 정보 (MatchDetailRespnse -> 안에 Team1 Team2 정보 담겨있음)
-     * - 현재 createdAt (경기 생성 일자) null 로 반환
+     *
      */
     @GetMapping("/match/{match_hist_no}")
     public ResponseEntity<ApiResponse<MatchDetailResponse>> getMatchDetail(@PathVariable("match_hist_no") Long matchHistoryNo) {
@@ -110,7 +112,7 @@ public class CompController {
      * @작성자 : 송원선
      * 경기 결과 기록 API
      * @request : RequestBody
-     * @response : ?
+     *
      */
     @PostMapping(value = "/history",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -124,6 +126,8 @@ public class CompController {
             compService.updateScore(request.getTeamBNo(), request.getScoreB());
             // 2. 경기 사진 등록
             compService.uploadHistoryImage(multipartFile);
+            // 3. 경기 일자 등록
+            compService.updateMatchDate(request.getMatchDate(), request.getMatchHistNo());
         } catch (IOException e) {
             log.error("사진 업로드 실패 : " + e.getMessage());
             e.printStackTrace();
@@ -187,5 +191,26 @@ public class CompController {
         List<RankResponse> list = compService.getRankList(num);
         log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
+    }
+
+    /**
+     *  팀 매칭 API
+     *  - (웹 소켓 or 레디스) -> 2개의 팀 정보 -> match 테이블에 추가
+     * @reqyest
+     *  (1) 두 팀의 번호(team_no)
+     *  (2) 경기 장소(match_loc) : 두 팀의 team_loc 중 하나
+     * */
+    @PostMapping("/match")
+    public ResponseEntity<ApiResponse<Void>> createMatch(@RequestBody CreateMatchRequest request){
+
+        log.info("[POST] /comp/match : 경기 생성 ===> ");
+        log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " +request.getTeam2No());
+        try{
+            compService.generateMatch(request);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+
+        return ApiResponse.success(MATCH_CREATED);
     }
 }

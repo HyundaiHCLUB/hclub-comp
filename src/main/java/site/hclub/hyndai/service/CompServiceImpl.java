@@ -8,25 +8,20 @@ import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
 import site.hclub.hyndai.common.util.TimeService;
-import site.hclub.hyndai.domain.Match;
-import site.hclub.hyndai.domain.Member;
-import site.hclub.hyndai.domain.MemberTeam;
-import site.hclub.hyndai.domain.Team;
+import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
-import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
-import site.hclub.hyndai.dto.request.CreateTeamRequest;
-import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
-import site.hclub.hyndai.dto.request.PageRequestDTO;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -240,13 +235,13 @@ public class CompServiceImpl implements CompService {
         Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
         Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
         String imageUrl = compMapper.getHistoryImageUrl(matchHistNo);
-
+        String matchDate = timeService.parseLocalDateTimeToString(match.getMatchDate());
         response.setMatchHistoryNo(matchHistNo);
         response.setMatchLoc(match.getMatchLoc());
         response.setWinTeam(winTeam);
         response.setLoseTeam(loseTeam);
         response.setImageUrl(imageUrl);
-
+        response.setMatchDate(matchDate);
         return  response;
     }
 
@@ -297,8 +292,43 @@ public class CompServiceImpl implements CompService {
     // 상위 10명 리스트 리턴
     @Override
     public List<RankResponse> getRankList(int num) {
-        List<RankResponse> list = new ArrayList<>();
+        List<RankResponse> list;
         list = compMapper.getRankList(num);
         return list;
     }
+    // 경기 일자 등록
+    @Override
+    public void updateMatchDate(String matchDateString, Long matchHistNo) {
+        LocalDateTime matchDate = timeService.parseStringToLocalDateTime(matchDateString);
+
+        compMapper.updateMatchDate(matchDate, matchHistNo);
+    }
+
+    // 경기 생성
+    @Override
+    public void generateMatch(CreateMatchRequest request) {
+        Long team1No = request.getTeam1No();
+        Long team2No = request.getTeam2No();
+        try {
+            // 1. score 테이블에 추가
+            Score score1 = new Score();
+            Score score2 = new Score();
+            score1.setTeamNo(team1No);
+            score2.setTeamNo(team2No);
+            compMapper.insertScore(score1);
+            compMapper.insertScore(score2);
+            Long scoreNo1 = score1.getScoreNo();
+            Long scoreNo2 = score2.getScoreNo();
+            log.info(" === Service ===");
+            log.info("scoreNo1 : " + scoreNo1);
+            log.info("scoreNo2 : " + scoreNo2);
+            // 2. match 테이블에 연결
+            compMapper.generateMatch(scoreNo1, scoreNo2, request.getMatchLoc());
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+
+    }
+
+
 }

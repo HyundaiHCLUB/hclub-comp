@@ -11,4 +11,5 @@ public class HistoryDetailResponse {
     private Team                winTeam;
     private Team                loseTeam;
     private String              imageUrl;
+    private String              matchDate;
 }

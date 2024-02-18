@@ -25,6 +25,7 @@
              , match_capacity AS matchCapacity
              , team_rating    AS teamRating
              , isMatched      AS isMatched
+             , match_date     AS matchDate
         FROM team
         WHERE team_no = (SELECT team_no
                          FROM score
@@ -81,10 +82,11 @@
     </update>
 
     <select id="getMatch" resultType="site.hclub.hyndai.domain.Match">
-        SELECT match_hist_no      AS matchHistoryNo
-             , match_loc          AS matchLoc
-             , win_team_score_no  AS winTeamScoreNo
-             , lose_team_score_no AS loseTeamScoreNo
+        SELECT  match_hist_no      AS matchHistoryNo
+                ,match_loc          AS matchLoc
+                ,win_team_score_no  AS winTeamScoreNo
+                ,lose_team_score_no AS loseTeamScoreNo
+                ,match_date         AS matchDate
         FROM match
         WHERE match_hist_no = #{matchHistNo}
     </select>
@@ -166,4 +168,24 @@
         WHERE   <![CDATA[ ROWNUM <= #{num} ]]>
 
     </select>
+
+    <update id="updateMatchDate">
+        UPDATE  match
+        SET     match_date = ${matchDate}
+        WHERE   match_hist_no = #{matchHistNo}
+    </update>
+
+    <insert id="insertScore">
+        <selectKey keyProperty="scoreNo" resultType="Long" order="BEFORE">
+            SELECT score_seq.nextval FROM dual
+        </selectKey>
+        INSERT INTO score(score_no, team_no, score_amount)
+        VALUES (#{scoreNo}, #{teamNo}, 0)
+
+    </insert>
+
+    <insert id="generateMatch">
+        INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
+        VALUES (match_seq.nextval, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
+    </insert>
 </mapper>
