@@ -59,4 +59,11 @@ public class TimeService {
         return localDateTime.format(formatter);
     }
 
+    // LocalDateTime -> String 파싱
+    public String parseLocalDateTimeToString(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd:HH:mm");
+        String formattedDate = dateTime.format(formatter);
+
+        return formattedDate;
+    }
 }

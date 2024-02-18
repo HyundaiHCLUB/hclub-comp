@@ -2,14 +2,12 @@ package site.hclub.hyndai.mapper;
 
 
 import org.apache.ibatis.annotations.Param;
-import site.hclub.hyndai.domain.Match;
-import site.hclub.hyndai.domain.Member;
-import site.hclub.hyndai.domain.MemberTeam;
-import site.hclub.hyndai.domain.Team;
+import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.response.GetTeamDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CompMapper {
@@ -44,4 +42,10 @@ public interface CompMapper {
     public void uploadImage(@Param("fileName") String fileName, @Param("url") String url);
 
     public List<RankResponse> getRankList(int num);
+
+    void updateMatchDate(@Param("matchDate") LocalDateTime matchDate, @Param("matchHistNo") Long matchHistNo);
+
+    Long insertScore(Score score);
+
+    void generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2,@Param("matchLoc") String matchLoc);
 }

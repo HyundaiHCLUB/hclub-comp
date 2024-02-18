@@ -11,4 +11,5 @@ public class CompHistoryRequest {
     private Long            ScoreA;
     private Long            teamBNo;
     private Long            ScoreB;
+    private String          matchDate;
 }
