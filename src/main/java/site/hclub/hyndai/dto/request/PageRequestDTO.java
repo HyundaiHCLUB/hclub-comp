@@ -7,9 +7,17 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class PageRequestDTO {
-    private Long page;
-    private String sortBy;
-    private int inOrder;
+
+    private String gameType;
+    private Long players;
+    private String date;
+    private Long minRating;
+    private Long maxRating;
+    private String sortOption;
+    private String keyword;
+    // private Long page;
+
 
 }

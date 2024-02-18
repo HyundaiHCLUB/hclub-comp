@@ -3,6 +3,32 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="site.hclub.hyndai.mapper.CompMapper">
+
+    <resultMap id="teamResultMap" type="site.hclub.hyndai.dto.TeamDTO">
+        <result property="teamNo" column="team_no"/>
+        <result property="teamName" column="team_name"/>
+        <result property="teamCapacity" column="match_capacity"/>
+        <result property="teamLoc" column="team_loc"/>
+        <result property="teamRating" column="team_rating"/>
+        <result property="matchType" column="match_type"/>
+        <result property="matchAt" column="match_date"/>
+        <result property="teamGoods" column="team_goods"/>
+    </resultMap>
+
+    <select id="getTeamList" parameterType="java.util.Map" statementType="CALLABLE" resultMap="teamResultMap">
+        {call team_pkg.fetch_team_cur(
+                #{gameType, jdbcType=VARCHAR, mode=IN},
+                #{players, jdbcType=NUMERIC, mode=IN},
+                #{date, jdbcType=VARCHAR, mode=IN},
+                #{minRating, jdbcType=NUMERIC, mode=IN},
+                #{maxRating, jdbcType=NUMERIC, mode=IN},
+                #{sortOption, jdbcType=VARCHAR, mode=IN},
+                #{keyword, jdbcType=VARCHAR, mode=IN},
+                #{key, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=teamResultMap}
+              )}
+    </select>
+
+
     <select id="getMatchVO" resultType="site.hclub.hyndai.domain.Match"
             parameterType="Long">
         SELECT match_hist_no      AS matchHistoryNo
@@ -144,28 +170,26 @@
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
-        SELECT  m.member_no     AS  memberNo
-                ,m.member_id    AS  memberId
-                ,ROWNUM         AS  rank
-                ,m.member_image AS memberImage
-                ,m.member_rating AS memberRating
-                ,e.employee_name AS employeeName
-                ,(SELECT    count(mt.member_no)
-                  FROM      member_team mt
-                  WHERE     mt.member_no = m.member_no
-                ) AS  matchNum
-        FROM    (
-                 SELECT member_no
-                        ,member_id
-                        ,member_image
-                        ,member_rating
-                        ,employee_no
-                 FROM   member
-                 ORDER BY member_rating DESC
-                ) m
-        JOIN    employee e
-        ON      e.employee_no = m.employee_no
-        WHERE   <![CDATA[ ROWNUM <= #{num} ]]>
+        SELECT m.member_no                        AS memberNo
+             , m.member_id                        AS memberId
+             , ROWNUM                             AS rank
+             , m.member_image                     AS memberImage
+             , m.member_rating                    AS memberRating
+             , e.employee_name                    AS employeeName
+             , (SELECT count(mt.member_no)
+                FROM member_team mt
+                WHERE mt.member_no = m.member_no) AS matchNum
+        FROM (SELECT member_no
+                   , member_id
+                   , member_image
+                   , member_rating
+                   , employee_no
+              FROM member
+              ORDER BY member_rating DESC) m
+                 JOIN employee e
+                      ON e.employee_no = m.employee_no
+        WHERE   <![CDATA[ ROWNUM <= #{num}
+        ]]>
 
     </select>
 

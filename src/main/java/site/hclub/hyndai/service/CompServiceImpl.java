@@ -1,9 +1,11 @@
 package site.hclub.hyndai.service;
 
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
@@ -15,6 +17,16 @@ import site.hclub.hyndai.dto.response.MatchDetailResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.dto.response.TeamDetailResponse;
 import site.hclub.hyndai.dto.*;
+import site.hclub.hyndai.domain.Match;
+import site.hclub.hyndai.domain.Member;
+import site.hclub.hyndai.domain.MemberTeam;
+import site.hclub.hyndai.domain.Team;
+import site.hclub.hyndai.dto.MemberInfo;
+
+import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
+import site.hclub.hyndai.dto.request.CreateTeamRequest;
+import site.hclub.hyndai.dto.request.HistoryModifyRequest;
+import site.hclub.hyndai.dto.request.PageRequestDTO;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
@@ -23,29 +35,30 @@ import site.hclub.hyndai.mapper.SettleMapper;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-@Service
+
 @Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CompServiceImpl implements CompService {
 
-    @Autowired
-    CompMapper compMapper;
+    private final MemberMapper memberMapper;
 
-    @Autowired
-    AmazonS3Service amazonS3Service;
+    private final CompMapper compMapper;
 
-    @Autowired
-    MemberMapper memberMapper;
+    private final AmazonS3Service amazonS3Service;
 
-    @Autowired
-    TimeService timeService;
+    private final TimeService timeService;
 
-    @Autowired
-    EloService eloService;
+    private final EloService eloService;
     
-    @Autowired
-    SettleMapper settleMapper;
+
+    private final SettleMapper settleMapper;
+
+
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -191,9 +204,26 @@ public class CompServiceImpl implements CompService {
 
     // 팀 페이지 네이션
     @Override
-    public GetTeamListResponse getTeamList(PageRequestDTO pageRequestDTO) {
+    public List<TeamDTO> getTeamList(PageRequestDTO pageRequestDTO) {
+        log.info("PageRequestDTO " + pageRequestDTO.toString());
+        //GetTeamListResponse teamListResponse = new GetTeamListResponse();
+        //teamListResponse.setTeamList(compMapper.getTeamList(pageRequestDTO));
+        // pagination set
+        // PL/SQL Map 오브젝트 Set
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("gameType", pageRequestDTO.getGameType());
+        map.put("players", pageRequestDTO.getPlayers());
+        map.put("date", pageRequestDTO.getDate());
+        map.put("minRating", pageRequestDTO.getMinRating());
+        map.put("maxRating", pageRequestDTO.getMaxRating());
+        map.put("sortOption", pageRequestDTO.getSortOption());
+        map.put("keyword", pageRequestDTO.getKeyword());
+        log.info(map.toString());
+        compMapper.getTeamList(map);
+        List<TeamDTO> list = (List<TeamDTO>) map.get("key");
+        log.info("==========" + list.size() + "");
 
-        return null;
+        return list;
     }
 
     /*
@@ -245,7 +275,8 @@ public class CompServiceImpl implements CompService {
         response.setLoseTeam(loseTeam);
         response.setImageUrl(imageUrl);
         response.setMatchDate(matchDate);
-        return  response;
+
+        return response;
     }
 
     // 경기 기록 수정
@@ -274,9 +305,9 @@ public class CompServiceImpl implements CompService {
         Long loseTeamRating = loseTeam.getTeamRating();
         // 점수 비교
         String result = "";
-        if(request.getWinTeamScore() == request.getLoseTeamScore()) {
+        if (request.getWinTeamScore() == request.getLoseTeamScore()) {
             result = "DRAW";
-        }else{
+        } else {
             result = "WIN";
         }
         log.info("match result ==> " + request.getWinTeamNo() + " team " + result);

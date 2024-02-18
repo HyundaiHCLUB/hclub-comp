@@ -1,6 +1,7 @@
 package site.hclub.hyndai.mapper;
 
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
@@ -9,7 +10,9 @@ import site.hclub.hyndai.dto.response.RankResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+@Mapper
 public interface CompMapper {
 
     Match getMatchVO(Long matchHistoryNo);
@@ -26,6 +29,7 @@ public interface CompMapper {
 
     public void updateScore(@Param("teamScoreNo") Long teamScoreNo, @Param("scoreAmount") Long scoreAmount);
 
+    public void getTeamList(Map<String, Object> map);
 
     public Match getMatch(Long matchHistNo);
 

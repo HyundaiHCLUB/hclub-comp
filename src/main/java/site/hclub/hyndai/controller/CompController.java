@@ -1,41 +1,36 @@
 package site.hclub.hyndai.controller;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import site.hclub.hyndai.common.response.ApiResponse;
-import site.hclub.hyndai.common.util.PageUtil;
+import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
-import site.hclub.hyndai.dto.response.HistoryDetailResponse;
-import site.hclub.hyndai.dto.response.MatchDetailResponse;
-import site.hclub.hyndai.dto.*;
-import site.hclub.hyndai.dto.response.RankResponse;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
 
 
+@Log4j
 @RestController
 @RequestMapping("/comp")
-@Log4j
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+
 public class CompController {
 
-    @Autowired
-    CompService compService;
 
-    @Autowired
-    PageUtil pageUtil;
+    private final CompService compService;
+
 
     /* 매칭 상세페이지로 이동 */
     @GetMapping("/matchDetail")
@@ -91,14 +86,14 @@ public class CompController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<GetTeamListResponse>> getTeamList(@RequestParam(value = "gameType", required = false) String gameType,
-                                                                        @RequestParam(value = "players", required = false) Long players,
-                                                                        @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                                                        @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
-                                                                        @RequestParam(value = "sortBy", required = false) String sortBy,
-                                                                        @RequestParam(value = "inOrder", required = false) Integer inOrder,
-                                                                        @RequestParam(value = "page", required = false) Long page) {
-        PageRequestDTO pageRequestDTO = pageUtil.parsePaginationComponents(gameType, players, page, sortBy, inOrder);
+    public ResponseEntity<ApiResponse<List<TeamDTO>>> getTeamList(@RequestParam(value = "gameType", required = false, defaultValue = "ALL") String gameType,
+                                                                  @RequestParam(value = "players", required = false, defaultValue = "0") Long players,
+                                                                  @RequestParam(value = "date", required = false, defaultValue = "ALL") String date,
+                                                                  @RequestParam(value = "minRating", required = false, defaultValue = "0") Long minRating,
+                                                                  @RequestParam(value = "maxRating", required = false, defaultValue = "30000") Long maxRating,
+                                                                  @RequestParam(value = "sortOption", required = false, defaultValue = "dates") String sortOption,
+                                                                  @RequestParam(value = "keyword", required = false, defaultValue = "NONE") String keyword) {
+        PageRequestDTO pageRequestDTO = new PageRequestDTO(gameType, players, date, minRating, maxRating, sortOption, keyword);
 
         log.info("getTeamList=======>");
 
@@ -184,7 +179,7 @@ public class CompController {
 
     // 상위 num 명의 랭크 (레이팅 순)
     @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num")int num) {
+    public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
 
         List<RankResponse> list = compService.getRankList(num);
         log.info("Top 10 ranking ==> " + list.toString());
