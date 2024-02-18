@@ -17,6 +17,7 @@
 //
 //@Log4j 
 //@Controller
+//기본 소켓 통신 설정 테스트용. 추후 삭제 예정
 //@ServerEndpoint(value="/socket")
 //public class WebSocketChat {
 //	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<>());

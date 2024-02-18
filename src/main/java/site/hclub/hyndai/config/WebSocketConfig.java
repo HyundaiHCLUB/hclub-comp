@@ -7,21 +7,29 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import site.hclub.hyndai.service.SocketHandler;
 
+
 /**
- *  웹소켓 설정
+ * @author 김은솔
+ * @description: 웹소켓을 위한 Configuration 설정
+ * ===========================
+	   AUTHOR      NOTE
+ * ---------------------------
+ *
+ * ===========================
  */
-@Configuration // 설정 클래스 선언
-@EnableWebSocket // 웹소켓 설정 활성화
+@Configuration 
+@EnableWebSocket 
 public class WebSocketConfig implements WebSocketConfigurer {
     private final SocketHandler webSocketHandler;
 
     public WebSocketConfig(SocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
     }
-
-    /*
-        WebSocketHandler 요청 매핑 을 구성
-     */
+    
+    /**
+	 작성자: 김은솔 
+	 처리 내용:   WebSocketHandler 요청 매핑 을 구성한다.
+	*/
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
