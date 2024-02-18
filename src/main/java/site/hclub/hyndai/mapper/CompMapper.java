@@ -3,6 +3,7 @@ package site.hclub.hyndai.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.response.GetTeamDetailResponse;
@@ -51,5 +52,8 @@ public interface CompMapper {
 
     Long insertScore(Score score);
 
-    void generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2,@Param("matchLoc") String matchLoc);
+    void generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2, @Param("matchLoc") String matchLoc);
+
+    @Update("UPDATE team SET ISMATCHED = 'Y' WHERE MATCH_DATE < SYSDATE")
+    void updateMatchStatus();
 }
