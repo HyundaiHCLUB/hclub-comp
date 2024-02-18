@@ -11,22 +11,10 @@ import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
 import site.hclub.hyndai.common.util.TimeService;
 import site.hclub.hyndai.domain.*;
-import site.hclub.hyndai.dto.request.*;
-import site.hclub.hyndai.dto.response.HistoryDetailResponse;
-import site.hclub.hyndai.dto.response.MatchDetailResponse;
-import site.hclub.hyndai.dto.response.RankResponse;
-import site.hclub.hyndai.dto.response.TeamDetailResponse;
-import site.hclub.hyndai.dto.*;
-import site.hclub.hyndai.domain.Match;
-import site.hclub.hyndai.domain.Member;
-import site.hclub.hyndai.domain.MemberTeam;
-import site.hclub.hyndai.domain.Team;
 import site.hclub.hyndai.dto.MemberInfo;
-
-import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
-import site.hclub.hyndai.dto.request.CreateTeamRequest;
-import site.hclub.hyndai.dto.request.HistoryModifyRequest;
-import site.hclub.hyndai.dto.request.PageRequestDTO;
+import site.hclub.hyndai.dto.SettleDTO;
+import site.hclub.hyndai.dto.TeamDTO;
+import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
@@ -54,10 +42,9 @@ public class CompServiceImpl implements CompService {
     private final TimeService timeService;
 
     private final EloService eloService;
-    
+
 
     private final SettleMapper settleMapper;
-
 
 
     @Override
@@ -241,9 +228,9 @@ public class CompServiceImpl implements CompService {
     public void uploadHistoryImage(MultipartFile multipartFile) throws IOException {
         String url;
         /* S3 에 파일 업로드 */
-        if (multipartFile == null){ // 이미지 null 인 경우 -> 기본 이미지로 대체
+        if (multipartFile == null) { // 이미지 null 인 경우 -> 기본 이미지로 대체
             url = "https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png";
-        }else {
+        } else {
             String filePath = "team";
             List<MultipartFile> multipartFiles = new ArrayList<>();
             multipartFiles.add(multipartFile);
@@ -330,6 +317,7 @@ public class CompServiceImpl implements CompService {
         list = compMapper.getRankList(num);
         return list;
     }
+
     // 경기 일자 등록
     @Override
     public void updateMatchDate(String matchDateString, Long matchHistNo) {
@@ -358,17 +346,22 @@ public class CompServiceImpl implements CompService {
             log.info("scoreNo2 : " + scoreNo2);
             // 2. match 테이블에 연결
             compMapper.generateMatch(scoreNo1, scoreNo2, request.getMatchLoc());
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 
     }
 
-	@Override
-	public int insertSettle(SettleDTO sdto) {
-		
-		return settleMapper.insertSettle(sdto);
-	}
+    @Override
+    public void updateMatchStatus() {
+        compMapper.updateMatchStatus();
+    }
+
+    @Override
+    public int insertSettle(SettleDTO sdto) {
+
+        return settleMapper.insertSettle(sdto);
+    }
 
 
 }

@@ -2,14 +2,9 @@ package site.hclub.hyndai.service;
 
 
 import org.springframework.web.multipart.MultipartFile;
-
 import site.hclub.hyndai.dto.SettleDTO;
-import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.TeamDTO;
-import site.hclub.hyndai.dto.request.AfterMatchRatingRequest;
-import site.hclub.hyndai.dto.request.CreateTeamRequest;
-import site.hclub.hyndai.dto.request.HistoryModifyRequest;
-import site.hclub.hyndai.dto.request.PageRequestDTO;
+import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 
 import java.io.IOException;
@@ -44,9 +39,13 @@ public interface CompService {
 
     void generateMatch(CreateMatchRequest request);
 
+    // 3분 단위로 시간이 지난 경기를 제거합니다.
+    public void updateMatchStatus();
+
+
     /**
-	 작성자: 김은솔 
-	 처리 내용: 결제 정보를 삽입한다.
-	*/
-	int insertSettle(SettleDTO sdto);
+     * 작성자: 김은솔
+     * 처리 내용: 결제 정보를 삽입한다.
+     */
+    int insertSettle(SettleDTO sdto);
 }
