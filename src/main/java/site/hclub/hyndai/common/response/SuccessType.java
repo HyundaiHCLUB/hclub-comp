@@ -23,7 +23,7 @@ public enum SuccessType {
     /**
      * 201 Created
      */
-
+    MATCH_CREATED(HttpStatus.CREATED, "경기 생성 성공"),
     ;
     private final HttpStatus httpStatus;
     private final String message;
