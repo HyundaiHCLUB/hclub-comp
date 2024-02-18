@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import site.hclub.hyndai.common.response.ApiResponse;
+import site.hclub.hyndai.dto.SettleDTO;
 import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
@@ -185,49 +186,53 @@ public class CompController {
         log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }
-    @RequestMapping(value="/chatPage")
+
+    @RequestMapping(value = "/chatPage")
     public ModelAndView getChatViewPage(ModelAndView mav) {
         mav.setViewName("chatPage");
         return mav;
     }
-    @RequestMapping(value="/chatPage2")
+
+    @RequestMapping(value = "/chatPage2")
     public ModelAndView getChatViewPage2(ModelAndView mav) {
         mav.setViewName("chatPage2");
         return mav;
     }
-    @RequestMapping(value="/test")
+
+    @RequestMapping(value = "/test")
     public ModelAndView getTest(ModelAndView mav) {
-    	System.out.println("show page");
+        System.out.println("show page");
         mav.setViewName("testPage");
         return mav;
     }
 
 
     /**
-     *  팀 매칭 API
-     *  - (웹 소켓 or 레디스) -> 2개의 팀 정보 -> match 테이블에 추가
-     * @reqyest
-     *  (1) 두 팀의 번호(team_no)
-     *  (2) 경기 장소(match_loc) : 두 팀의 team_loc 중 하나
-     * */
+     * 팀 매칭 API
+     * - (웹 소켓 or 레디스) -> 2개의 팀 정보 -> match 테이블에 추가
+     *
+     * @reqyest (1) 두 팀의 번호(team_no)
+     * (2) 경기 장소(match_loc) : 두 팀의 team_loc 중 하나
+     */
     @PostMapping("/match")
-    public ResponseEntity<ApiResponse<Void>> createMatch(@RequestBody CreateMatchRequest request){
+    public ResponseEntity<ApiResponse<Void>> createMatch(@RequestBody CreateMatchRequest request) {
 
         log.info("[POST] /comp/match : 경기 생성 ===> ");
-        log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " +request.getTeam2No());
-        try{
+        log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " + request.getTeam2No());
+        try {
             compService.generateMatch(request);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 
         return ApiResponse.success(MATCH_CREATED);
     }
+
     @PostMapping("/settle")
-    public ResponseEntity<ApiResponse<Void>> insertSettle(@RequestBody SettleDTO sdto){
-    	 
-    	compService.insertSettle(sdto);
-    	
-    	return ApiResponse.success(INSERT_SETTLE_SUCCESS);
+    public ResponseEntity<ApiResponse<Void>> insertSettle(@RequestBody SettleDTO sdto) {
+
+        compService.insertSettle(sdto);
+
+        return ApiResponse.success(INSERT_SETTLE_SUCCESS);
     }
 }
