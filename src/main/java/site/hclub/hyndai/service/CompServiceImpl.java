@@ -9,7 +9,6 @@ import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
 import site.hclub.hyndai.common.util.TimeService;
 import site.hclub.hyndai.domain.*;
-import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.HistoryDetailResponse;
 import site.hclub.hyndai.dto.response.MatchDetailResponse;
@@ -19,6 +18,7 @@ import site.hclub.hyndai.dto.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
+import site.hclub.hyndai.mapper.SettleMapper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -43,6 +43,9 @@ public class CompServiceImpl implements CompService {
 
     @Autowired
     EloService eloService;
+    
+    @Autowired
+    SettleMapper settleMapper;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -329,6 +332,12 @@ public class CompServiceImpl implements CompService {
         }
 
     }
+
+	@Override
+	public int insertSettle(SettleDTO sdto) {
+		
+		return settleMapper.insertSettle(sdto);
+	}
 
 
 }

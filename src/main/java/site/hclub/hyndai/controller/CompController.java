@@ -228,4 +228,11 @@ public class CompController {
 
         return ApiResponse.success(MATCH_CREATED);
     }
+    @PostMapping("/settle")
+    public ResponseEntity<ApiResponse<Void>> insertSettle(@RequestBody SettleDTO sdto){
+    	 
+    	compService.insertSettle(sdto);
+    	
+    	return ApiResponse.success(INSERT_SETTLE_SUCCESS);
+    }
 }
