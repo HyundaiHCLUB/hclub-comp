@@ -32,6 +32,13 @@ public class CompController {
 
     private final CompService compService;
 
+    // 경쟁 메인 페이지로 이동
+    @GetMapping("/main")
+    public ModelAndView goCompMain() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("comp/compMain");
+        return mav;
+    }
 
     /* 매칭 상세페이지로 이동 */
     @GetMapping("/matchDetail")
