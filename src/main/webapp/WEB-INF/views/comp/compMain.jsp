@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>고백공격 들어간다ddd </title>
+    <title>ssss </title>
 </head>
 <body>
 
