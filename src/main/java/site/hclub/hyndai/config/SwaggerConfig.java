@@ -39,7 +39,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .groupName(groupName)
                 .apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage("site.hclub.hyndai"))
-                .paths(predicate)
+                .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.any())
                 .build();
     }
