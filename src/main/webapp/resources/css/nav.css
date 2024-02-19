@@ -24,7 +24,8 @@ a {
 }
 
 .navbar_menu li {
-    margin: 0 10px;
+    font-size: 1em;
+    margin: 0 auto;
 }
 
 .navbar_menu li:hover {
@@ -33,7 +34,7 @@ a {
 }
 
 .navbar_menu h1 {
-    font-size: 30px;
+    font-size: 1em;
     display: flex;
     align-items: center;
 }

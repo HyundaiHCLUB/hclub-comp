@@ -44,8 +44,7 @@ public class CompController {
     @GetMapping("/matchDetail")
     public ModelAndView goMatchDetailPage() {
         ModelAndView mav = new ModelAndView();
-
-        mav.setViewName("/MatchDetail");
+        mav.setViewName("comp/MatchDetail");
         return mav;
     }
 
@@ -241,5 +240,21 @@ public class CompController {
         compService.insertSettle(sdto);
 
         return ApiResponse.success(INSERT_SETTLE_SUCCESS);
+    }
+
+    /* 경기 기록 페이지로 이동*/
+    @GetMapping("/matchRecord")
+    public ModelAndView goMatchRecordPage(){
+        ModelAndView mav = new ModelAndView();
+
+        mav.setViewName("comp/matchRecord");
+        return mav;
+    }
+    /* 메인페이지 - 오늘의 TOP10 랭킹 페이지로 이동 */
+    @GetMapping("/todayRanking")
+    public ModelAndView goTodayRanking(){
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("comp/todayRanking");
+        return mav;
     }
 }

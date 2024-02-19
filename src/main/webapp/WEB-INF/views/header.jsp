@@ -22,9 +22,9 @@
 </nav>
 <div class="navbar_menu">
     <li><a href="home.jsp"><h1>투데이</h1></a></li>
-    <li><a href=""><h1>인기 동아리</h1></a></li>
-    <li><a href=""><h1>신규 동아리</h1></a></li>
-    <li><a href=""><h1>오늘의 랭킹</h1></a></li>
+    <li><a href=""><h1>인기동아리</h1></a></li>
+    <li><a href=""><h1>신규동아리</h1></a></li>
+    <li><a href=""><h1>오늘의랭킹</h1></a></li>
     <li><a href=""><h1>내 모임</h1></a></li>
 </div>
 </body>
