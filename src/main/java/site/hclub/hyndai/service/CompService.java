@@ -16,7 +16,7 @@ public interface CompService {
 
     public CreateTeamResponse makeTeam(CreateTeamRequest teamDTO, MultipartFile multipartFile) throws IOException;
 
-    public GetTeamDetailResponse getTeamDetail(Long teamNo);
+    public TeamDTO getTeamDetail(Long teamNo);
 
     public void updateScore(Long teamNo, Long score);
 

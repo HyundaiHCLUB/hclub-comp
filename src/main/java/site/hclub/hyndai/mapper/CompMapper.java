@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
-import site.hclub.hyndai.dto.response.GetTeamDetailResponse;
+import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.response.RankResponse;
 
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public interface CompMapper {
 
     public String getHistoryImageUrl(Long matchHistNo);
 
-    public GetTeamDetailResponse getTeamByTeamNo(Long teamNo);
+    public TeamDTO getTeamByTeamNo(Long teamNo);
 
     public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 

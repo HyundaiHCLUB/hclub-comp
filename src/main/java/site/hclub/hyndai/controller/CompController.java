@@ -77,7 +77,7 @@ public class CompController {
     }
 
     @GetMapping("/{teamNo}")
-    public ResponseEntity<ApiResponse<GetTeamDetailResponse>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
+    public ResponseEntity<ApiResponse<TeamDTO>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
         log.info("getTeamInfo=======>");
 
 
@@ -244,15 +244,16 @@ public class CompController {
 
     /* 경기 기록 페이지로 이동*/
     @GetMapping("/matchRecord")
-    public ModelAndView goMatchRecordPage(){
+    public ModelAndView goMatchRecordPage() {
         ModelAndView mav = new ModelAndView();
 
         mav.setViewName("comp/matchRecord");
         return mav;
     }
+
     /* 메인페이지 - 오늘의 TOP10 랭킹 페이지로 이동 */
     @GetMapping("/todayRanking")
-    public ModelAndView goTodayRanking(){
+    public ModelAndView goTodayRanking() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("comp/todayRanking");
         return mav;

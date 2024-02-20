@@ -14,5 +14,5 @@ public class GetTeamDetailResponse {
     private String teamLoc;
     private String teamGoods;
     private Long matchCapacity;
-    private Long teamRating;
+
 }

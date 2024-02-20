@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.hclub.hyndai.common.util.AmazonS3Service;
 import site.hclub.hyndai.common.util.EloService;
+import site.hclub.hyndai.common.util.ParseService;
 import site.hclub.hyndai.common.util.TimeService;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
@@ -46,6 +47,7 @@ public class CompServiceImpl implements CompService {
 
     private final SettleMapper settleMapper;
 
+    private final ParseService parseService;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -175,10 +177,13 @@ public class CompServiceImpl implements CompService {
     }
 
     @Override
-    public GetTeamDetailResponse getTeamDetail(Long teamNo) {
-        GetTeamDetailResponse teamDetailResponse = compMapper.getTeamByTeamNo(teamNo);
+    public TeamDTO getTeamDetail(Long teamNo) {
 
-        return teamDetailResponse;
+        TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        // 파싱
+
+        teamDTO.setMatchType(parseService.parseSportsToImage(teamDTO.getMatchType()));
+        return teamDTO;
     }
 
     @Override
@@ -209,7 +214,9 @@ public class CompServiceImpl implements CompService {
         compMapper.getTeamList(map);
         List<TeamDTO> list = (List<TeamDTO>) map.get("key");
         log.info("==========" + list.size() + "");
-
+        for (TeamDTO t : list) {
+            t.setMatchType(parseService.parseSportsToImage(t.getMatchType()));
+        }
         return list;
     }
 

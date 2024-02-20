@@ -11,7 +11,7 @@ import lombok.*;
 public class TeamDTO {
     private Long teamNo;
     private String teamName;
-    private Long teamCapacity;
+    private String teamCapacity;
     private String teamLoc;
     private Long teamRating;
     private String matchType;
