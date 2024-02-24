@@ -48,4 +48,7 @@ public interface CompService {
      * 처리 내용: 결제 정보를 삽입한다.
      */
     int insertSettle(SettleDTO sdto);
+
+    // 팀의 멤버 목록 리턴
+    List<Long> getTeamMemberList(Long teamNo);
 }

@@ -16,6 +16,7 @@ import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.service.CompService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
@@ -213,10 +214,11 @@ public class CompController {
     }
 
 
+
     /**
      * 팀 매칭 API
-     * - (웹 소켓 or 레디스) -> 2개의 팀 정보 -> match 테이블에 추가
-     *
+     * (웹 소켓 or 레디스) -> 2개의 팀 정보 꺼내면 -> match 테이블에 추가
+     * + 두 팀에 같은 사람 있으면 매칭 안되게 하는 로직 추가
      * @reqyest (1) 두 팀의 번호(team_no)
      * (2) 경기 장소(match_loc) : 두 팀의 team_loc 중 하나
      */
@@ -226,7 +228,26 @@ public class CompController {
         log.info("[POST] /comp/match : 경기 생성 ===> ");
         log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " + request.getTeam2No());
         try {
-            compService.generateMatch(request);
+            // 1. 중복 팀원 검사
+            List<Long> memberList1 = compService.getTeamMemberList(request.getTeam1No()); // 1팀 명단
+            List<Long> memberList2 = compService.getTeamMemberList(request.getTeam2No()); // 2팀 명단
+            // memberList1을 복사하여 중복 검사를 수행
+            List<Long> duplicates = new ArrayList<>(memberList2);
+            // duplicates 리스트에 memberList2와 겹치는 원소만 남기기
+            boolean hasDuplicates = duplicates.retainAll(memberList2); // 겹치는 원소 있다면 true
+            if (hasDuplicates) {
+                /**
+                 *  중복된 팀원 있는 경우
+                 *  => 매칭 취소 로직 구현 필요 (예 : 레디스 큐에서 꺼내지 않는다)
+                 * */
+                log.info("두 팀에 중복된 팀원이 있습니다.");
+                log.info("중복된 팀원의 ID: " + duplicates);
+            } else {
+                // 중복된 팀원 없음 => 정상적으로 매치 진행
+                // 2. match 테이블에 추가
+                compService.generateMatch(request);
+            }
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -256,5 +277,19 @@ public class CompController {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("comp/todayRanking");
         return mav;
+    }
+
+    /****** 마이페이지 뷰 이동 ******/
+    /* 마이페이지로 이동 */
+    @GetMapping("/mypage")
+    public ModelAndView goMyPage(){
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("comp/mypageMain");
+        return mav;
+    }
+    /* 회원정보 수정페이지로 이동*/
+    @GetMapping("/updateProfileView")
+    public ModelAndView goUpdateProfileView(){
+        return new ModelAndView("comp/updateProfile");
     }
 }

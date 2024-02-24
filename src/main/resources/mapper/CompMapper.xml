@@ -212,4 +212,10 @@
         INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
         VALUES (match_seq.nextval, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
     </insert>
+
+    <select id="getTeamMemberList" resultType="Long">
+        SELECT  member_no
+        FROM    member_team
+        WHERE   team_no = #{teamNo}
+    </select>
 </mapper>

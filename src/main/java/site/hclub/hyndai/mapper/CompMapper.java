@@ -56,4 +56,6 @@ public interface CompMapper {
 
     @Update("UPDATE team SET ISMATCHED = 'Y' WHERE MATCH_DATE < SYSDATE")
     void updateMatchStatus();
+
+    List<Long> getTeamMemberList(Long teamNo);
 }
