@@ -44,7 +44,6 @@ public class CompServiceImpl implements CompService {
 
     private final EloService eloService;
 
-
     private final SettleMapper settleMapper;
 
     private final ParseService parseService;
@@ -371,4 +370,9 @@ public class CompServiceImpl implements CompService {
     }
 
 
+    @Override
+    public List<Long> getTeamMemberList(Long teamNo) {
+        List<Long> list = compMapper.getTeamMemberList(teamNo);
+        return list;
+    }
 }
