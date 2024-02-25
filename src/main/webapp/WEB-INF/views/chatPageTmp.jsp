@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -15,7 +15,7 @@
     </div>
     <div>
         <button type="button" onclick="openSocket();">Open</button>
-        <button type="button" onclick="createRoom();">방생성</button>
+        <button type="button" onclick="createRoom();">諛⑹����</button>
         <button type="button" onclick="send();">Send</button>
         <button type="button" onclick="closeSocket();">Close</button>
     </div>
@@ -31,7 +31,7 @@
                 writeResponse("WebSocket is already opened.");
                 return;
             }
-            //웹소켓 객체 만드는 코드
+            //�뱀��耳� 媛�泥� 留����� 肄���
             ws = new WebSocket("ws://localhost:8080/socket");
             
             ws.onopen=function(event){

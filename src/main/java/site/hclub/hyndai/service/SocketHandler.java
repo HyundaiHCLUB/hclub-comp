@@ -1,4 +1,6 @@
 package site.hclub.hyndai.service;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -193,7 +195,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                     }
                 }
             } catch (Exception e) {
-                
+            	log.info("sendMessageToMeAllBrowser err: "+e.getMessage()+" : "+ idx);
             }
         }           
     }
@@ -268,8 +270,16 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             //상대방대화내역 put하기
             //newObj.put("toUser", otherUseridx);
             
+            //채팅보낸걸 디비에 저장해야함, 
+            //이때 서버에서 현재시간 구해서 저장 
+            //그리고 분 초만 잘라서 newObj.put("time", "2:55 PM"); 패킷전송
+            LocalDateTime now = LocalDateTime.now();
+
+            // 분과 초를 잘라서 필요한 형식으로 변환합니다.
+            String time = now.format(DateTimeFormatter.ofPattern("h:mm a"));
+            newObj.put("time",time);
             this.sendMessageToMeAllBrowser(newObj);	//상대방에게 전송
-            sendMessageToMe(session, newObj);//나에게 전송
+            this.sendMessageToMe(session, newObj);//나에게 전송
         } catch (Exception e) {
         	log.error("sendChat error: "+e.getMessage());
         }
