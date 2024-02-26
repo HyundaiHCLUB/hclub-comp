@@ -15,6 +15,7 @@ public class TeamDetailResponse {
     private LocalDateTime createdAt;
     private String      matchType;
     private Long        matchCapacity;
+    private String      teamImage;
     private Member      leader;
     private List<Member> members;
     private int         teamRating;
