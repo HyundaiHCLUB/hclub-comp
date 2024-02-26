@@ -18,4 +18,5 @@ public class TeamDetailResponse {
     private Member      leader;
     private List<Member> members;
     private int         teamRating;
+    private String      matchDate;
 }
