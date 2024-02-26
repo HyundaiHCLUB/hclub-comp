@@ -61,4 +61,6 @@ public interface CompMapper {
     List<Long> getTeamMemberList(Long teamNo);
 
     List<MatchingResponse> getTeams();
+
+    void updateMatchLoc(@Param("matchHistoryNo") Long matchHistoryNo, @Param("matchLoc") String matchLoc);
 }

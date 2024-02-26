@@ -21,6 +21,7 @@ public enum SuccessType {
     GET_TEAM_LIST_SUCCESS(HttpStatus.OK, "팀 리스트 가져오기 성공"),
     GET_RANK_LIST_SUCCESS(HttpStatus.OK, "랭킹 리스트 조회 성공"),
     INSERT_SETTLE_SUCCESS(HttpStatus.OK, "결제 정보 삽입 성공"),
+    UPDATE_MATCH_LOC_SUCCESS(HttpStatus.OK, "경기 장소 변경 성공"),
     /**
      * 201 Created
      */

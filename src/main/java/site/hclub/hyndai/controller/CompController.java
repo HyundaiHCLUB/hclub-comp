@@ -18,6 +18,7 @@ import site.hclub.hyndai.service.CompService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
@@ -292,5 +293,18 @@ public class CompController {
     @GetMapping("/updateProfileView")
     public ModelAndView goUpdateProfileView(){
         return new ModelAndView("comp/updateProfile");
+    }
+
+
+    // 경기 상세 정보 페이지 -> 경기 기록 페이지 넘어갈 때 경기 장소(matchLoc) DB에 저장하는 API
+    @PostMapping(value= "matchLocation", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<UpdateMatchLocationRequest>> setMatchLocation(@RequestBody UpdateMatchLocationRequest request){
+        log.info("request.matchLoc -> " + request.toString());
+        try {
+            compService.updateMatchLocation(request);
+        }catch (Exception e) {
+            log.error(e);
+        }
+        return ApiResponse.success(UPDATE_MATCH_LOC_SUCCESS);
     }
 }

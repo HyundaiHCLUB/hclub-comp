@@ -51,4 +51,6 @@ public interface CompService {
 
     // 팀의 멤버 목록 리턴
     List<Long> getTeamMemberList(Long teamNo);
+    // 경기 장소 업데이트
+    void updateMatchLocation(UpdateMatchLocationRequest request);
 }

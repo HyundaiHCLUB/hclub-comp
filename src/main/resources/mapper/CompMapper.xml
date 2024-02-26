@@ -232,4 +232,10 @@
                 JOIN
             Member_team mt ON t.team_no = mt.team_no
     </select>
+
+    <update id="updateMatchLoc">
+        UPDATE  match
+        SET     match_loc = #{matchLoc}
+        WHERE   match_hist_no = #{matchHistoryNo}
+    </update>
 </mapper>

@@ -376,4 +376,12 @@ public class CompServiceImpl implements CompService {
         List<Long> list = compMapper.getTeamMemberList(teamNo);
         return list;
     }
+
+
+    @Override
+    public void updateMatchLocation(UpdateMatchLocationRequest request) {
+        Long matchHistoryNo = request.getMatchHistoryNo();
+        String matchLoc = request.getMatchLoc();
+        compMapper.updateMatchLoc(matchHistoryNo, matchLoc);
+    }
 }
