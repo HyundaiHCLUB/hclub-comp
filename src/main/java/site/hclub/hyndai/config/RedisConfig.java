@@ -20,7 +20,7 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
-        lettuceConnectionFactory.setHostName("localhost");
+//        lettuceConnectionFactory.setHostName(address);
         lettuceConnectionFactory.setPort(6379);
         lettuceConnectionFactory.setPassword(password);
         return lettuceConnectionFactory;
