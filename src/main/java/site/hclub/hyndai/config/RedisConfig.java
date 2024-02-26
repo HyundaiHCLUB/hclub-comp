@@ -1,5 +1,6 @@
 package site.hclub.hyndai.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,10 +11,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    @Value("${redis-address}")
+    private String address;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("localhost");
+        jedisConnectionFactory.setHostName(address);
         jedisConnectionFactory.setPort(6379);
         return jedisConnectionFactory;
     }
