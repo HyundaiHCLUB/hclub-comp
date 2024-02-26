@@ -14,11 +14,15 @@ public class RedisConfig {
     @Value("${redis-address}")
     private String address;
 
+    @Value("${redis-pw}")
+    private String password;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setHostName(address);
         jedisConnectionFactory.setPort(6379);
+        jedisConnectionFactory.setPassword(password);
         return jedisConnectionFactory;
     }
 
