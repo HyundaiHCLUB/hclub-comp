@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
-public class RedisConfig {
+public class
+RedisConfig {
 
     @Value("${SPRING-DATA-REDIS-HOST}")
     private String address;
@@ -19,6 +21,11 @@ public class RedisConfig {
 
     @Bean
     public JedisConnectionFactory connectionFactory() {
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        jedisPoolConfig.setMaxTotal(30);
+        jedisPoolConfig.setMaxIdle(10);
+        jedisPoolConfig.setMaxWaitMillis(3000);
+
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory();
         connectionFactory.setHostName(address);
         connectionFactory.setPort(6379);
@@ -26,6 +33,8 @@ public class RedisConfig {
         connectionFactory.getPoolConfig().setMaxIdle(20000);
 
         connectionFactory.setPassword(password);
+        connectionFactory.setUsePool(true);
+        connectionFactory.setPoolConfig(jedisPoolConfig);
         return connectionFactory;
     }
 
