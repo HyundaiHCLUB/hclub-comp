@@ -90,6 +90,7 @@ public class CompServiceImpl implements CompService {
         dto.setTeamGoods(team.getTeamGoods());
         dto.setMatchType(team.getMatchType());
         dto.setMatchCapacity(team.getMatchCapacity());
+        dto.setMatchDate(timeService.parseLocalDateTimeToString(team.getCreatedAt()));
         /* vo 에 없는 정보들 */
         // 리더
         Member leader = compMapper.getLeader(team.getTeamNo());
@@ -268,7 +269,6 @@ public class CompServiceImpl implements CompService {
         response.setLoseTeam(loseTeam);
         response.setImageUrl(imageUrl);
         response.setMatchDate(matchDate);
-
         return response;
     }
 
