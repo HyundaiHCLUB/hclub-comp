@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.TeamDTO;
+import site.hclub.hyndai.dto.response.MatchingResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 
 import java.time.LocalDateTime;
@@ -58,4 +59,6 @@ public interface CompMapper {
     void updateMatchStatus();
 
     List<Long> getTeamMemberList(Long teamNo);
+
+    List<MatchingResponse> getTeams();
 }

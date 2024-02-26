@@ -46,6 +46,9 @@ public class DataConfig {
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.getTypeAliasRegistry().registerAlias("Team", site.hclub.hyndai.domain.Team.class);
         configuration.getTypeAliasRegistry().registerAlias("MemberTeam", site.hclub.hyndai.domain.MemberTeam.class);
+
+        configuration.getTypeAliasRegistry().registerAlias("matchingResponse", site.hclub.hyndai.dto.response.MatchingResponse.class);
+
         sessionFactoryBean.setConfiguration(configuration);
 
         Resource[] resources = new PathMatchingResourcePatternResolver()

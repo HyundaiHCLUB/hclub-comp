@@ -219,4 +219,17 @@
         FROM    member_team
         WHERE   team_no = #{teamNo}
     </select>
+
+    <select id="getTeams" resultType="matchingResponse">
+        SELECT
+            t.team_no AS teamNo
+          , mt.member_no AS teamMemberNo
+          , t.match_type AS matchType
+          , t.match_capacity AS matchCapacity
+          , t.team_rating AS teamRating
+        FROM
+            Team t
+                JOIN
+            Member_team mt ON t.team_no = mt.team_no
+    </select>
 </mapper>
