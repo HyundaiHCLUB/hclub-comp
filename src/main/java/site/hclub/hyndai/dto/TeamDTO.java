@@ -17,5 +17,6 @@ public class TeamDTO {
     private String matchType;
     private String matchAt;
     private String teamGoods;
+    private String teamImage;
 
 }

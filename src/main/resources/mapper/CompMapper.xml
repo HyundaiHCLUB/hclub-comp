@@ -146,8 +146,9 @@
              , team_rating                                                  AS teamRating
              , team_loc                                                     AS teamLoc
              , team_goods                                                   AS teamGoods
-             , TO_CHAR(match_capacity) || ' ON ' || TO_CHAR(match_capacity) AS teamCapacity
-             , TO_CHAR(match_date, 'YYYY/MM/DD HH24:mm')                    AS matchAt
+             , TO_CHAR(match_capacity) || ' VS ' || TO_CHAR(match_capacity) AS teamCapacity
+             , TO_CHAR(match_date, 'YYYY/MM/DD HH24"시" MI"분"')              AS matchAt
+             , team_image                                                   AS teamImage
         FROM TEAM
         WHERE team_no = #{teamNo}
     </select>
@@ -215,22 +216,20 @@
     </insert>
 
     <select id="getTeamMemberList" resultType="Long">
-        SELECT  member_no
-        FROM    member_team
-        WHERE   team_no = #{teamNo}
+        SELECT member_no
+        FROM member_team
+        WHERE team_no = #{teamNo}
     </select>
 
     <select id="getTeams" resultType="matchingResponse">
-        SELECT
-            t.team_no AS teamNo
-          , mt.member_no AS teamMemberNo
-          , t.match_type AS matchType
-          , t.match_capacity AS matchCapacity
-          , t.team_rating AS teamRating
-        FROM
-            Team t
-                JOIN
-            Member_team mt ON t.team_no = mt.team_no
+        SELECT t.team_no        AS teamNo
+             , mt.member_no     AS teamMemberNo
+             , t.match_type     AS matchType
+             , t.match_capacity AS matchCapacity
+             , t.team_rating    AS teamRating
+        FROM Team t
+                 JOIN
+             Member_team mt ON t.team_no = mt.team_no
     </select>
 
     <update id="updateMatchLoc">
