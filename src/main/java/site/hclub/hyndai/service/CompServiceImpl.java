@@ -397,7 +397,7 @@ public class CompServiceImpl implements CompService {
 
 
 	@Override
-	public String kakaopay(HttpSession session) {
+	public String kakaopay(HttpSession session, SettleDTO sdto) {
 		try {
 			
 			URL address = new URL("https://kapi.kakao.com/v1/payment/ready");

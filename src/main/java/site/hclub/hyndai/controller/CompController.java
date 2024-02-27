@@ -311,9 +311,9 @@ public class CompController {
     }
     
     @RequestMapping("/kakaopay")
-    public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session) {
+    public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session, @RequestBody SettleDTO sdto) {
     	
-    	 return ApiResponse.success(GET_KAKAOPAY_CALL, compService.kakaopay(session));
+    	 return ApiResponse.success(GET_KAKAOPAY_CALL, compService.kakaopay(session, sdto));
 
     }
 }

@@ -56,5 +56,9 @@ public interface CompService {
     // 경기 장소 업데이트
     void updateMatchLocation(UpdateMatchLocationRequest request);
 
-	String kakaopay(HttpSession session);
+    /**
+     * 작성자: 김은솔
+     * 처리 내용: 카카오페이 API를 호출한다.
+     */
+	String kakaopay(HttpSession session, SettleDTO sdto);
 }
