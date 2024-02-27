@@ -22,6 +22,7 @@ public enum SuccessType {
     GET_RANK_LIST_SUCCESS(HttpStatus.OK, "랭킹 리스트 조회 성공"),
     INSERT_SETTLE_SUCCESS(HttpStatus.OK, "결제 정보 삽입 성공"),
     UPDATE_MATCH_LOC_SUCCESS(HttpStatus.OK, "경기 장소 변경 성공"),
+    GET_KAKAOPAY_CALL(HttpStatus.OK, "카카오페이 API CALL 성공"),
     /**
      * 201 Created
      */

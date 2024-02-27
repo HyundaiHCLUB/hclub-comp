@@ -21,11 +21,21 @@ import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 import site.hclub.hyndai.mapper.SettleMapper;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 
 @Slf4j
@@ -384,4 +394,64 @@ public class CompServiceImpl implements CompService {
         String matchLoc = request.getMatchLoc();
         compMapper.updateMatchLoc(matchHistoryNo, matchLoc);
     }
+
+
+	@Override
+	public String kakaopay(HttpSession session) {
+		try {
+			
+			URL address = new URL("https://kapi.kakao.com/v1/payment/ready");
+				
+			HttpURLConnection connection = (HttpURLConnection) address.openConnection(); 
+			connection.setRequestMethod("POST");
+			//connection.setRequestProperty("Authorization", "KakaoAK 8d0ba42fb4ca1001d7004e52945fc844");
+			connection.setRequestProperty("Authorization", "KakaoAK 0b1efc751d51b0b323a23113a2f11104");
+			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+			connection.setDoOutput(true);
+								
+			String parameter = "cid=TC0ONETIME" // 가맹점 코드
+					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
+					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
+					+ "&item_name=rice" // 상품명
+					+ "&quantity=1" // 상품 수량
+					+ "&total_amount="+2000 // 총 금액
+					+ "&vat_amount=200" // 부가세
+					+ "&tax_free_amount=0" // 상품 비과세 금액
+					+ "&approval_url=http://localhost" // 결제 성공 시
+					+ "&fail_url=http://localhost" // 결제 실패 시
+					+ "&cancel_url=http://localhost";
+				
+			OutputStream out = connection.getOutputStream();	
+			DataOutputStream data =new DataOutputStream(out);
+			data.writeBytes(parameter);
+					
+			data.close();			
+							
+			int  result = connection.getResponseCode();
+					
+			InputStream in;
+			if(result ==200) {
+				in = connection.getInputStream();
+				System.out.println("ajax 통신성공");
+			}
+			else {
+				in = connection.getErrorStream();
+				System.out.println("ajax 통신실패");
+			}
+			System.out.println("result값은 "+result);
+					
+			InputStreamReader inRead = new InputStreamReader(in); 
+			BufferedReader change = new BufferedReader(inRead);
+			System.out.println(parameter);
+			
+				return change.readLine();
+			} catch (MalformedURLException e) {
+					
+				e.printStackTrace();
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+						}	
+				return "";
+	}
 }

@@ -10,6 +10,8 @@ import site.hclub.hyndai.dto.response.*;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 public interface CompService {
 
     MatchDetailResponse getMatchDetail(Long matchHistoryNo);
@@ -53,4 +55,6 @@ public interface CompService {
     List<Long> getTeamMemberList(Long teamNo);
     // 경기 장소 업데이트
     void updateMatchLocation(UpdateMatchLocationRequest request);
+
+	String kakaopay(HttpSession session);
 }

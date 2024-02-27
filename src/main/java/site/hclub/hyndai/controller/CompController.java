@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
 
@@ -306,5 +308,12 @@ public class CompController {
             log.error(e);
         }
         return ApiResponse.success(UPDATE_MATCH_LOC_SUCCESS);
+    }
+    
+    @RequestMapping("/kakaopay")
+    public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session) {
+    	
+    	 return ApiResponse.success(GET_KAKAOPAY_CALL, compService.kakaopay(session));
+
     }
 }
