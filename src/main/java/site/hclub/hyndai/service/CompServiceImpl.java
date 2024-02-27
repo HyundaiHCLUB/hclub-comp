@@ -4,6 +4,9 @@ package site.hclub.hyndai.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +45,7 @@ import javax.servlet.http.HttpSession;
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@PropertySource("classpath:application.yml")
 public class CompServiceImpl implements CompService {
 
     private final MemberMapper memberMapper;
@@ -57,6 +61,9 @@ public class CompServiceImpl implements CompService {
     private final SettleMapper settleMapper;
 
     private final ParseService parseService;
+    
+    @Value("${kakao-admin}") 
+    private String kakaoAdmin;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -404,18 +411,17 @@ public class CompServiceImpl implements CompService {
 				
 			HttpURLConnection connection = (HttpURLConnection) address.openConnection(); 
 			connection.setRequestMethod("POST");
-			//connection.setRequestProperty("Authorization", "KakaoAK 8d0ba42fb4ca1001d7004e52945fc844");
-			connection.setRequestProperty("Authorization", "KakaoAK 0b1efc751d51b0b323a23113a2f11104");
+			connection.setRequestProperty("Authorization", "KakaoAK "+kakaoAdmin);
 			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setDoOutput(true);
 								
 			String parameter = "cid=TC0ONETIME" // 가맹점 코드
 					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
 					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
-					+ "&item_name=rice" // 상품명
+					+ "&item_name="+sdto.getSettleName() // 상품명
 					+ "&quantity=1" // 상품 수량
-					+ "&total_amount="+2000 // 총 금액
-					+ "&vat_amount=200" // 부가세
+					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
+					+ "&vat_amount=0" // 부가세
 					+ "&tax_free_amount=0" // 상품 비과세 금액
 					+ "&approval_url=http://localhost" // 결제 성공 시
 					+ "&fail_url=http://localhost" // 결제 실패 시
