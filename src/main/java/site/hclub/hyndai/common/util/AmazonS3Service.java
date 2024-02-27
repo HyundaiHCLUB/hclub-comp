@@ -19,19 +19,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AmazonS3Service {
 
+    @Autowired
+    private final AmazonS3 amazonS3Client;
     @Value("${cloud-aws-s3-bucket}")
     private String S3Bucket;
 
-    @Autowired
-    private final AmazonS3 amazonS3Client;
+    public List<String> uploadFiles(String folderName, List<MultipartFile> multipartFiles) throws IOException {
 
-    public List<String> uploadFile(String boardNo, List<MultipartFile> multipartFiles) throws IOException {
-
-        String filePath = boardNo+"/";
+        String filePath = folderName + "/";
         List<String> returnURL = new ArrayList<>();
-        for(MultipartFile multipartFile : multipartFiles) {
+        for (MultipartFile multipartFile : multipartFiles) {
             String fileName = multipartFile.getOriginalFilename();
-            String originalName = filePath+ URLEncoder.encode(fileName,"UTF-8");
+            String originalName = filePath + URLEncoder.encode(fileName, "UTF-8");
 
             ObjectMetadata objectMetaData = new ObjectMetadata();
 
@@ -39,7 +38,7 @@ public class AmazonS3Service {
             objectMetaData.setContentLength(multipartFile.getSize());
 
             amazonS3Client.putObject(
-                    new PutObjectRequest(S3Bucket, originalName, multipartFile.getInputStream(),objectMetaData)
+                    new PutObjectRequest(S3Bucket, originalName, multipartFile.getInputStream(), objectMetaData)
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
 
@@ -48,6 +47,5 @@ public class AmazonS3Service {
 
         return returnURL;
     }
-
 
 }

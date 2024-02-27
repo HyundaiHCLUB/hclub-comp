@@ -149,6 +149,7 @@ replay_pid*
 application.yml
 
 # TOMCAT WAR 파일들
+.idea/
 
 .idea/compiler.xml
 target/

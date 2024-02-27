@@ -8,4 +8,6 @@ public class SampleVO {
     private String memberNo;
 
     private String nickName;
+
+
 }

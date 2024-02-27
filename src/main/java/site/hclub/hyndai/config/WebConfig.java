@@ -9,6 +9,7 @@ import javax.servlet.ServletRegistration.Dynamic;
 
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
 
+
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
@@ -35,7 +36,6 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-
         return new Filter[]{characterEncodingFilter};
     }
 
@@ -45,6 +45,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         MultipartConfigElement multipartConfig = new MultipartConfigElement(
                 null, 20_971_520, 41_943_040, 20_971_520);
         registration.setMultipartConfig(multipartConfig);
+        registration.setAsyncSupported(true);
     }
+
+
 }
 

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.hclub.hyndai.mapper.CompMapper">
+
+    <resultMap id="teamResultMap" type="site.hclub.hyndai.dto.TeamDTO">
+        <result property="teamNo" column="team_no"/>
+        <result property="teamName" column="team_name"/>
+        <result property="teamCapacity" column="match_capacity"/>
+        <result property="teamLoc" column="team_loc"/>
+        <result property="teamRating" column="team_rating"/>
+        <result property="matchType" column="match_type"/>
+        <result property="matchAt" column="match_date"/>
+        <result property="teamGoods" column="team_goods"/>
+    </resultMap>
+
+    <select id="getTeamList" parameterType="java.util.Map" statementType="CALLABLE" resultMap="teamResultMap">
+        {call team_pkg.fetch_team_cur(
+                #{gameType, jdbcType=VARCHAR, mode=IN},
+                #{players, jdbcType=NUMERIC, mode=IN},
+                #{date, jdbcType=VARCHAR, mode=IN},
+                #{minRating, jdbcType=NUMERIC, mode=IN},
+                #{maxRating, jdbcType=NUMERIC, mode=IN},
+                #{sortOption, jdbcType=VARCHAR, mode=IN},
+                #{keyword, jdbcType=VARCHAR, mode=IN},
+                #{key, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=teamResultMap}
+              )}
+    </select>
+
+
+    <select id="getMatchVO" resultType="site.hclub.hyndai.domain.Match"
+            parameterType="Long">
+        SELECT match_hist_no      AS matchHistoryNo
+             , match_loc          AS matchLoc
+             , win_team_score_no  AS winTeamScoreNo
+             , lose_team_score_no AS loseTeamScoreNo
+        FROM match
+        WHERE match_hist_no = #{matchHistoryNo}
+    </select>
+
+    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.domain.Team"
+            parameterType="Long">
+        SELECT team_no        AS teamNo
+             , team_loc       AS teamLoc
+             , team_name      AS teamName
+             , team_goods     AS teamGoods
+             , created_at     AS createdAt
+             , match_type     AS matchType
+             , team_image     AS teamImage
+             , match_capacity AS matchCapacity
+             , team_rating    AS teamRating
+             , isMatched      AS isMatched
+             , match_date     AS matchDate
+        FROM team
+        WHERE team_no = (SELECT team_no
+                         FROM score
+                         WHERE score_no = #{score_no})
+    </select>
+
+    <select id="getLeader" resultType="site.hclub.hyndai.domain.Member">
+        SELECT member_no     AS memberNo
+             , member_id     AS memberId
+             , member_image  AS memberImage
+             , member_rating AS memberRating
+             , employee_no   AS employeeNo
+        FROM member
+        WHERE member_no = (SELECT member_no
+                           FROM member_team
+                           WHERE team_no = #{teamNo}
+                             AND is_leader = 'Y')
+    </select>
+
+    <insert id="addTeam" parameterType="Team">
+
+        <selectKey keyProperty="teamNo" order="BEFORE" resultType="long">
+            SELECT team_seq.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO team (team_no, team_loc, team_name, team_goods, created_at, match_type, match_capacity, team_image,
+        team_rating,match_date)
+        VALUES (#{teamNo}, #{teamLoc}, #{teamName}, #{teamGoods}, SYSDATE, #{matchType},
+        #{matchCapacity} , #{teamImage} ,#{teamRating},#{matchDate})
+    </insert>
+
+    <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
+        INSERT INTO member_team (member_team_no, member_no, team_no, is_leader)
+        values (member_team_seq.nextval, #{memberNo}, #{teamNo}, #{isLeader})
+    </insert>
+
+
+    <select id="getMembers" resultType="site.hclub.hyndai.domain.Member">
+        SELECT member_no     AS memberNo
+             , member_id     AS memberId
+             , member_image  AS memberImage
+             , member_rating AS memberRating
+             , employee_no   AS employeeNo
+        FROM member
+        WHERE member_no IN (SELECT member_no
+                            FROM member_team
+                            WHERE team_no = #{teamNo}
+                              AND is_leader = 'N')
+    </select>
+
+    <update id="updateScore">
+        UPDATE score
+        SET score_amount = #{scoreAmount}
+        WHERE score_no = #{teamScoreNo}
+    </update>
+
+    <select id="getMatch" resultType="site.hclub.hyndai.domain.Match">
+        SELECT match_hist_no      AS matchHistoryNo
+             , match_loc          AS matchLoc
+             , win_team_score_no  AS winTeamScoreNo
+             , lose_team_score_no AS loseTeamScoreNo
+             , match_date         AS matchDate
+        FROM match
+        WHERE match_hist_no = #{matchHistNo}
+    </select>
+
+    <select id="getHistoryImageUrl">
+        SELECT i.image_url AS imageUrl
+        FROM image i
+                 JOIN match_image mi
+                      ON i.image_no = mi.image_no
+        WHERE mi.match_hist_no = #{matchHistNo}
+    </select>
+
+    <update id="changeRating">
+        UPDATE member
+        SET member_rating = member_rating + #{ratingChange}
+        WHERE member_no IN (SELECT member_no
+                            FROM member_team
+                            WHERE team_no = #{teamNo})
+    </update>
+
+    <select id="getTeamScoreNo" resultType="long">
+        SELECT score_no
+        FROM score
+        WHERE team_no = #{team_no}
+    </select>
+
+    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
+        SELECT team_no                                                      AS teamNo
+             , team_name                                                    AS teamName
+             , match_type                                                   AS matchType
+             , team_rating                                                  AS teamRating
+             , team_loc                                                     AS teamLoc
+             , team_goods                                                   AS teamGoods
+             , TO_CHAR(match_capacity) || ' VS ' || TO_CHAR(match_capacity) AS teamCapacity
+             , TO_CHAR(match_date, 'YYYY/MM/DD HH24"시" MI"분"')              AS matchAt
+             , team_image                                                   AS teamImage
+        FROM TEAM
+        WHERE team_no = #{teamNo}
+    </select>
+
+    <select id="getMemberInfoWithMemberName"
+            resultType="site.hclub.hyndai.dto.MemberInfo">
+        SELECT m.member_no AS memberNo,
+        e.employee_name AS memberName
+        FROM member m
+        JOIN
+        employee e ON m.employee_no = e.employee_no
+        <where>
+            e.employee_name LIKE '%${memberNameInput}%'
+        </where>
+
+    </select>
+
+    <insert id="uploadImage">
+        INSERT INTO image (image_no, upload_name, image_url)
+        VALUES (image_seq.nextval, ${fileName}, ${url})
+    </insert>
+
+    <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
+        SELECT m.member_no                        AS memberNo
+             , m.member_id                        AS memberId
+             , ROWNUM                             AS rank
+             , m.member_image                     AS memberImage
+             , m.member_rating                    AS memberRating
+             , e.employee_name                    AS employeeName
+             , (SELECT count(mt.member_no)
+                FROM member_team mt
+                WHERE mt.member_no = m.member_no) AS matchNum
+        FROM (SELECT member_no
+                   , member_id
+                   , member_image
+                   , member_rating
+                   , employee_no
+              FROM member
+              ORDER BY member_rating DESC) m
+                 JOIN employee e
+                      ON e.employee_no = m.employee_no
+        WHERE   <![CDATA[ ROWNUM <= #{num}
+        ]]>
+
+    </select>
+
+    <update id="updateMatchDate">
+        UPDATE match
+        SET match_date = ${matchDate}
+        WHERE match_hist_no = #{matchHistNo}
+    </update>
+
+    <insert id="insertScore">
+        <selectKey keyProperty="scoreNo" resultType="Long" order="BEFORE">
+            SELECT score_seq.nextval FROM dual
+        </selectKey>
+        INSERT INTO score(score_no, team_no, score_amount)
+        VALUES (#{scoreNo}, #{teamNo}, 0)
+
+    </insert>
+
+    <insert id="generateMatch">
+        INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
+        VALUES (match_seq.nextval, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
+    </insert>
+
+    <select id="getTeamMemberList" resultType="Long">
+        SELECT member_no
+        FROM member_team
+        WHERE team_no = #{teamNo}
+    </select>
+
+    <select id="getTeams" resultType="matchingResponse">
+        SELECT t.team_no        AS teamNo
+             , mt.member_no     AS teamMemberNo
+             , t.match_type     AS matchType
+             , t.match_capacity AS matchCapacity
+             , t.team_rating    AS teamRating
+        FROM Team t
+                 JOIN
+             Member_team mt ON t.team_no = mt.team_no
+    </select>
+
+    <update id="updateMatchLoc">
+        UPDATE  match
+        SET     match_loc = #{matchLoc}
+        WHERE   match_hist_no = #{matchHistoryNo}
+    </update>
+</mapper>

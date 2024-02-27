@@ -68,4 +68,13 @@ public class ApiResponse<T> {
                         .success(false)
                         .data(data).build());
     }
+
+    public static <T> ResponseEntity<ApiResponse<T>> fail(ErrorType errorType) {
+        return ResponseEntity.status(errorType.getHttpStatus())
+                .body(ApiResponse.<T>builder()
+                        .code(errorType.getHttpStatusCode())
+                        .message(errorType.message())
+                        .success(false)
+                        .build());
+    }
 }

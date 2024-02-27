@@ -1,9 +1,10 @@
 package site.hclub.hyndai.common.advice;
-import org.springframework.http.HttpStatus;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum CommonExceptionType implements BusinessExceptionType {
@@ -15,6 +16,7 @@ public enum CommonExceptionType implements BusinessExceptionType {
     VALIDATION_WRONG_HTTP_REQUEST(HttpStatus.BAD_REQUEST, "허용되지 않는 문자열이 입력되었습니다."),
     UNSUPPORTED_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "이미지 확장자는 jpg, png, webp만 가능합니다."),
     UNSUPPORTED_IMAGE_SIZE(HttpStatus.BAD_REQUEST, "이미지 사이즈는 5MB를 넘을 수 없습니다."),
+    NO_VALID_TEAM_NO(HttpStatus.BAD_REQUEST, "해당하는 팀이 존재하지 않습니다"),
 
     /**
      * 401 Unauthorized

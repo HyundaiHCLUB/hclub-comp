@@ -1,4 +1,4 @@
-package site.hclub.hyndai.common.respone.dto;
+package site.hclub.hyndai.common.response.dto;
 
 import lombok.Data;
 import site.hclub.hyndai.domain.SampleVO;

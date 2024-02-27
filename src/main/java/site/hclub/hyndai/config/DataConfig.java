@@ -13,10 +13,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
 @Configuration
+@EnableTransactionManagement
 @MapperScan(value = "site.hclub.hyndai.mapper")
 @PropertySource("classpath:application.yml")
 public class DataConfig {
@@ -30,28 +32,6 @@ public class DataConfig {
     @Value("${password}")
     private String password;
 
-    //    @Bean
-//    public HikariConfig hikariConfig() {
-//        HikariConfig config = new HikariConfig();
-//        config.setDriverClassName(driverClassName);
-//        config.setJdbcUrl(jdbcUrl);
-//        config.setUsername(userName);
-//        config.setPassword(password);
-//        return config;
-//    }
-//
-//    @Bean
-//    public DataSource dataSource(HikariConfig hikariConfig) {
-//        return new HikariDataSource(hikariConfig);
-//    }
-//
-//    @Bean
-//    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-//        SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
-//        sessionFactoryBean.setDataSource(dataSource);
-//        sessionFactoryBean.setTypeAliasesPackage("site.hclub.hyndai");
-//        return sessionFactoryBean.getObject();
-//    }
     @Bean
     public SqlSessionTemplate sqlSessionTemplate() throws Exception {
         return new SqlSessionTemplate(sqlSessionFactory(dataSource()));
@@ -62,6 +42,14 @@ public class DataConfig {
         SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource);
 
+        // Register type aliases
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.getTypeAliasRegistry().registerAlias("Team", site.hclub.hyndai.domain.Team.class);
+        configuration.getTypeAliasRegistry().registerAlias("MemberTeam", site.hclub.hyndai.domain.MemberTeam.class);
+
+        configuration.getTypeAliasRegistry().registerAlias("matchingResponse", site.hclub.hyndai.dto.response.MatchingResponse.class);
+
+        sessionFactoryBean.setConfiguration(configuration);
 
         Resource[] resources = new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapper/*.xml");
