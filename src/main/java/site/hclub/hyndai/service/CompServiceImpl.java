@@ -160,6 +160,7 @@ public class CompServiceImpl implements CompService {
                 .matchDate(timeService.parseStringToLocalDateTime(teamDTO.getMatchDate()))
                 .teamImage(urlList.get(0))
                 .teamRating(teamRating)
+                .productsNo(teamDTO.getProductNo())
                 .matchType(teamDTO.getMatchType()).build();
 
         compMapper.addTeam(team);
@@ -189,6 +190,8 @@ public class CompServiceImpl implements CompService {
                 .teamLoc(team.getTeamLoc())
                 .teamGoods(team.getTeamGoods())
                 .matchType(team.getMatchType())
+                .memberList(teamDTO.getMemberList())
+                .teamRating(teamRating)
                 .matchCapacity(team.getMatchCapacity()).build();
 
         return teamResponse;
