@@ -423,7 +423,8 @@ public class CompServiceImpl implements CompService {
 					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
 					+ "&vat_amount=0" // 부가세
 					+ "&tax_free_amount=0" // 상품 비과세 금액
-					+ "&approval_url=http://localhost" // 결제 성공 시
+					//+ "&approval_url=http://localhost/competition/paySuccess" // 로컬 결제 성공 시
+					+ "&approval_url=https://www.h-club.site/competition/paySuccess" //서버 결제 성공 시
 					+ "&fail_url=http://localhost" // 결제 실패 시
 					+ "&cancel_url=http://localhost";
 				

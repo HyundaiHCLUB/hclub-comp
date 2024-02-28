@@ -31,7 +31,15 @@ public class SettleDTO {
 	 */
 	private String settleName;
 	/**
+	 상품번호
+	 */
+	private String productsNo;
+	/**
 	 결제자: 결제한 사람 멤버 아이디
 	 */
 	private String settleMemberId;
+	/**
+	 받는 사람 번호
+	 */
+	private String recipentMemberNo;
 }
