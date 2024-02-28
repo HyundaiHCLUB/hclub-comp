@@ -63,5 +63,5 @@ public interface CompService {
      */
 	String kakaopay(HttpSession session, SettleDTO sdto);
 
-    LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
+    SettleResponse getSettleInfo(Long matchHistNo);
 }

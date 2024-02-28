@@ -322,13 +322,13 @@ public class CompController {
 
     }
 
-    // 패배팀 결제에 필요한 정보 -> 200은 뜨지만 데이터 없어서 추후 다시 테스트 필요
+    // 패배팀 결제에 필요한 정보
     @GetMapping(value = "settle/{matchHistNo}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoseTeamSettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
+    public ResponseEntity<SettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
         log.info("loseTeamSettleInfo => matchHistNo : " + matchHistNo);
-        LoseTeamSettleResponse response = new LoseTeamSettleResponse();
+        SettleResponse response = new SettleResponse();
         try {
-            response = compService.getLoseTeamSettleInfo(matchHistNo);
+            response = compService.getSettleInfo(matchHistNo);
         }catch (Exception e){
             log.error(e.getMessage());
             e.printStackTrace();
