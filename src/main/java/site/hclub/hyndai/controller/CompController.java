@@ -345,7 +345,6 @@ public class CompController {
 
     @GetMapping("/memberInfo")
     public ResponseEntity<Long> getMemberInfo(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>();
         String memberId = userService.getUserDetails(request);
         log.info(memberId);
 
