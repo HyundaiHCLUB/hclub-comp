@@ -18,7 +18,7 @@ public interface CompMapper {
 
     Match getMatchVO(Long matchHistoryNo);
 
-    Team getTeamFromScoreNo(Long winTeamScoreNo);
+    GetTeamFromScoreNoResponse getTeamFromScoreNo(Long winTeamScoreNo);
 
     Member getLeader(Long teamNo);
 
