@@ -35,7 +35,7 @@ public class MatchingService {
     private static final int MAX_FAILURE_ATTEMPTS = 3;
 
     public void addToQueue(MatchingRequest team) {
-        System.out.println(team.getTeamNo());
+        log.info(String.valueOf(team.getTeamNo()));
         myRealTeam = team;
 
         List<MatchingResponse> teams = compMapper.getTeams();
@@ -43,6 +43,11 @@ public class MatchingService {
         teams.stream()
                 .collect(Collectors.groupingBy(MatchingResponse::getTeamNo))
                 .forEach((teamNo, teamList) -> {
+                    if(!redisTemplate.opsForList().range("teamQueue", 0, -1)
+                            .stream()
+                            .map(this::convertJsonToMatchingRequest)
+                            .anyMatch(existingTeam ->
+                                    existingTeam != null && existingTeam.getTeamNo().equals(teamNo))){
                     List<Long> teamMemberNoList = teamList.stream()
                             .map(MatchingResponse::getTeamMemberNo)
                             .collect(Collectors.toList());
@@ -55,13 +60,13 @@ public class MatchingService {
                             .teamRating(teamList.get(0).getTeamRating())
                             .build();
 
-                    System.out.println("종목=" + matchingRequest.getMatchType());
-                    System.out.println("경기인원수=" + teamMemberNoList.size());
+                    log.info("종목=" + matchingRequest.getMatchType());
+                    log.info("경기인원수=" + teamMemberNoList.size());
 
                     // Redis의 List에 팀 정보 저장
                     String teamJson = convertMatchingRequestToJson(matchingRequest);
                     redisTemplate.opsForList().leftPush("teamQueue", teamJson);
-                });
+                }});
     }
 
     @Scheduled(fixedRate = 1000)
@@ -94,7 +99,7 @@ public class MatchingService {
             // Redis의 List에서 팀 정보 가져오기
             String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
             MatchingRequest potentialMatchFromRedis = convertJsonToMatchingRequest(potentialMatchJson);
-            System.out.println("myTeam="+myTeam.getTeamNo()+" potential="+potentialMatchFromRedis.getTeamNo());
+            log.info("myTeam="+myTeam.getTeamNo()+" potential="+potentialMatchFromRedis.getTeamNo());
             if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
                     !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
                     myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||

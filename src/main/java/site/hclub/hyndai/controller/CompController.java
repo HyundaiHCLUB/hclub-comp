@@ -15,9 +15,12 @@ import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.service.CompService;
+import site.hclub.hyndai.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,7 @@ public class CompController {
 
 
     private final CompService compService;
+    private final UserService userService;
 
     // 경쟁 메인 페이지로 이동
     @GetMapping("/main")
@@ -322,13 +326,13 @@ public class CompController {
 
     }
 
-    // 패배팀 결제에 필요한 정보 -> 200은 뜨지만 데이터 없어서 추후 다시 테스트 필요
+    // 패배팀 결제에 필요한 정보
     @GetMapping(value = "settle/{matchHistNo}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoseTeamSettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
+    public ResponseEntity<SettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
         log.info("loseTeamSettleInfo => matchHistNo : " + matchHistNo);
-        LoseTeamSettleResponse response = new LoseTeamSettleResponse();
+        SettleResponse response = new SettleResponse();
         try {
-            response = compService.getLoseTeamSettleInfo(matchHistNo);
+            response = compService.getSettleInfo(matchHistNo);
         }catch (Exception e){
             log.error(e.getMessage());
             e.printStackTrace();
@@ -338,4 +342,12 @@ public class CompController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @GetMapping("/memberInfo")
+    public ResponseEntity<Long> getMemberInfo(HttpServletRequest request) {
+        String memberId = userService.getUserDetails(request);
+        log.info(memberId);
+
+        return ResponseEntity.ok(compService.findMemberNo(memberId));
+    }
 }

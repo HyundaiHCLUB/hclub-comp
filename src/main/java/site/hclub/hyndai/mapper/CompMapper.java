@@ -7,10 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.TeamDTO;
-import site.hclub.hyndai.dto.response.GetProductResponse;
-import site.hclub.hyndai.dto.response.LoseTeamSettleResponse;
-import site.hclub.hyndai.dto.response.MatchingResponse;
-import site.hclub.hyndai.dto.response.RankResponse;
+import site.hclub.hyndai.dto.response.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,5 +67,9 @@ public interface CompMapper {
 
     void updateMatchLoc(@Param("matchHistoryNo") Long matchHistoryNo, @Param("matchLoc") String matchLoc);
 
+    Long findMemberNo(String memberId);
+
     LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
+
+    WinTeamSettleResponse getWinTeamSettleInfo(Long matchHistNo);
 }
