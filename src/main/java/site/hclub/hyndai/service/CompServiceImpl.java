@@ -61,8 +61,8 @@ public class CompServiceImpl implements CompService {
     private final SettleMapper settleMapper;
 
     private final ParseService parseService;
-    
-    @Value("${kakao-admin}") 
+
+    @Value("${kakao-admin}")
     private String kakaoAdmin;
 
     @Override
@@ -415,15 +415,15 @@ public class CompServiceImpl implements CompService {
 	@Override
 	public String kakaopay(HttpSession session, SettleDTO sdto) {
 		try {
-			
+
 			URL address = new URL("https://kapi.kakao.com/v1/payment/ready");
-				
-			HttpURLConnection connection = (HttpURLConnection) address.openConnection(); 
+
+			HttpURLConnection connection = (HttpURLConnection) address.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Authorization", "KakaoAK "+kakaoAdmin);
 			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setDoOutput(true);
-								
+
 			String parameter = "cid=TC0ONETIME" // 가맹점 코드
 					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
 					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
@@ -435,15 +435,15 @@ public class CompServiceImpl implements CompService {
 					+ "&approval_url=http://localhost" // 결제 성공 시
 					+ "&fail_url=http://localhost" // 결제 실패 시
 					+ "&cancel_url=http://localhost";
-				
-			OutputStream out = connection.getOutputStream();	
+
+			OutputStream out = connection.getOutputStream();
 			DataOutputStream data =new DataOutputStream(out);
 			data.writeBytes(parameter);
-					
-			data.close();			
-							
+
+			data.close();
+
 			int  result = connection.getResponseCode();
-					
+
 			InputStream in;
 			if(result ==200) {
 				in = connection.getInputStream();
@@ -454,19 +454,26 @@ public class CompServiceImpl implements CompService {
 				System.out.println("ajax 통신실패");
 			}
 			System.out.println("result값은 "+result);
-					
-			InputStreamReader inRead = new InputStreamReader(in); 
+
+			InputStreamReader inRead = new InputStreamReader(in);
 			BufferedReader change = new BufferedReader(inRead);
 			System.out.println(parameter);
-			
+
 				return change.readLine();
 			} catch (MalformedURLException e) {
-					
+
 				e.printStackTrace();
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
-						}	
+						}
 				return "";
 	}
+
+    @Override
+    public LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo) {
+        LoseTeamSettleResponse response = compMapper.getLoseTeamSettleInfo(matchHistNo);
+        log.info(response.toString());
+        return response;
+    }
 }

@@ -62,4 +62,6 @@ public interface CompService {
      * 처리 내용: 카카오페이 API를 호출한다.
      */
 	String kakaopay(HttpSession session, SettleDTO sdto);
+
+    LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
 }
