@@ -384,4 +384,11 @@ public class CompServiceImpl implements CompService {
         String matchLoc = request.getMatchLoc();
         compMapper.updateMatchLoc(matchHistoryNo, matchLoc);
     }
+
+    @Override
+    public LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo) {
+        LoseTeamSettleResponse response = compMapper.getLoseTeamSettleInfo(matchHistNo);
+        log.info(response.toString());
+        return response;
+    }
 }

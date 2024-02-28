@@ -53,4 +53,6 @@ public interface CompService {
     List<Long> getTeamMemberList(Long teamNo);
     // 경기 장소 업데이트
     void updateMatchLocation(UpdateMatchLocationRequest request);
+
+    LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
 }
