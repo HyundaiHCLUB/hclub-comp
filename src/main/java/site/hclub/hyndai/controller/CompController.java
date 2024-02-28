@@ -188,6 +188,13 @@ public class CompController {
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
 
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<List<GetProductResponse>>> getProducts() {
+
+
+        return ApiResponse.success(GET_PRODUCT_DETAIL_SUCCESS, compService.getProducts());
+    }
+
     // 상위 num 명의 랭크 (레이팅 순)
     @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
