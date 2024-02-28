@@ -67,6 +67,8 @@ public interface CompMapper {
 
     void updateMatchLoc(@Param("matchHistoryNo") Long matchHistoryNo, @Param("matchLoc") String matchLoc);
 
+    Long findMemberNo(String memberId);
+
     LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
 
     WinTeamSettleResponse getWinTeamSettleInfo(Long matchHistNo);

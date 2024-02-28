@@ -239,6 +239,7 @@
         FROM Team t
                  JOIN
              Member_team mt ON t.team_no = mt.team_no
+        WHERE t.isMatched = 'N'
     </select>
 
     <update id="updateMatchLoc">
@@ -283,5 +284,11 @@
         ON      s.score_no = m.win_team_score_no
         WHERE   m.match_hist_no = #{matchHistNo}
         AND     mt.is_leader = 'Y'
+    </select>
+
+    <select id="findMemberNo">
+        SELECT member_no
+        FROM member
+        WHERE member_id = #{member_id}
     </select>
 </mapper>

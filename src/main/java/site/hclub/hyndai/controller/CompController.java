@@ -15,9 +15,12 @@ import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.service.CompService;
+import site.hclub.hyndai.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,7 @@ public class CompController {
 
 
     private final CompService compService;
+    private final UserService userService;
 
     // 경쟁 메인 페이지로 이동
     @GetMapping("/main")
@@ -338,4 +342,13 @@ public class CompController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @GetMapping("/memberInfo")
+    public ResponseEntity<Long> getMemberInfo(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        String memberId = userService.getUserDetails(request);
+        log.info(memberId);
+
+        return ResponseEntity.ok(compService.findMemberNo(memberId));
+    }
 }

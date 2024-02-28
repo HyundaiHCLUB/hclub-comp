@@ -487,4 +487,8 @@ public class CompServiceImpl implements CompService {
         log.info("total settle info => " + response.toString());
         return response;
     }
+
+    public Long findMemberNo(String memberId) {
+        return compMapper.findMemberNo(memberId);
+    }
 }
