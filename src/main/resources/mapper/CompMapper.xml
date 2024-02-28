@@ -39,7 +39,7 @@
         WHERE match_hist_no = #{matchHistoryNo}
     </select>
 
-    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.domain.Team"
+    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.dto.response.GetTeamFromScoreNoResponse"
             parameterType="Long">
         SELECT team_no        AS teamNo
              , team_loc       AS teamLoc
