@@ -253,4 +253,16 @@
                products_price AS productPrice
         from products
     </select>
+
+    <select id="getLoseTeamSettleInfo" resultType="site.hclub.hyndai.dto.response.LoseTeamSettleResponse">
+        SELECT  s.products_no           AS  productsNo
+                ,s.settle_member_id     AS  settleMemberId
+                ,s.recipent_member_no   AS  recipentMemberNo
+                ,s.settle_amount        AS  settleAmount
+                ,p.products_name        AS  settleName
+        FROM    settlement s
+        JOIN    products p
+        ON      s.products_no = p.products_no
+        WHERE   s.match_hist_no = #{matchHistNo}
+    </select>
 </mapper>
