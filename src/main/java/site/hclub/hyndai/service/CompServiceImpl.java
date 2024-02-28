@@ -71,14 +71,17 @@ public class CompServiceImpl implements CompService {
         try {
             dto.setMatchHistoryNo(matchHistoryNo);
             Match vo = compMapper.getMatchVO(matchHistoryNo); // 여기서 vo null 리턴
+            log.info("Match(VO) : " + vo.toString());
             // matchVO 의 win_team_score_no, lose_team_score_no 로 팀 정보 참조
             Long winTeamScoreNo = vo.getWinTeamScoreNo();
-            Long loseTeamScoreNo = vo.getWinTeamScoreNo();
+            Long loseTeamScoreNo = vo.getLoseTeamScoreNo();
 
             // team1 정보
+            log.info("winTeamScoreNo : " + winTeamScoreNo);
             GetTeamFromScoreNoResponse team1 = compMapper.getTeamFromScoreNo(winTeamScoreNo);
             TeamDetailResponse team1DTO = setTeamDTO(team1);
             // team2 정보
+            log.info("loseTeamScoreNo : " + loseTeamScoreNo);
             GetTeamFromScoreNoResponse team2 = compMapper.getTeamFromScoreNo(loseTeamScoreNo);
             TeamDetailResponse team2DTO = setTeamDTO(team2);
             dto.setTeam1(team1DTO);
