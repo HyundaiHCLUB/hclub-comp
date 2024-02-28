@@ -152,8 +152,8 @@
         FROM TEAM
         WHERE team_no = #{teamNo}
     </select>
-    <select id="getMemberNameByTeamNo">
-        SELECT e.employee_name
+    <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
+        SELECT e.employee_name AS memberName  , m.member_no AS memberNo
         FROM TEAM t
                  JOIN MEMBER_TEAM mt ON t.team_no = mt.team_no
                  JOIN MEMBER m ON mt.member_no = m.member_no

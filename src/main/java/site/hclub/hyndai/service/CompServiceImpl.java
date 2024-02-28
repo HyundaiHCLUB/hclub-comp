@@ -190,7 +190,7 @@ public class CompServiceImpl implements CompService {
                 .teamLoc(team.getTeamLoc())
                 .teamGoods(team.getTeamGoods())
                 .matchType(team.getMatchType())
-                .memberList(teamDTO.getMemberList())
+                .memberList(compMapper.getMemberByTeamNo(teamNo))
                 .teamRating(teamRating)
                 .matchCapacity(team.getMatchCapacity()).build();
 
@@ -199,7 +199,7 @@ public class CompServiceImpl implements CompService {
 
     @Override
     public TeamDTO getTeamDetail(Long teamNo) {
-        List<String> memberList = compMapper.getMemberNameByTeamNo(teamNo);
+        List<MemberInfo> memberList = compMapper.getMemberByTeamNo(teamNo);
         TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
         teamDTO.setMemberList(memberList);
         // 파싱

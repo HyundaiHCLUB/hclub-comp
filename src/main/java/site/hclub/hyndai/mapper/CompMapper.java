@@ -40,7 +40,7 @@ public interface CompMapper {
 
     public TeamDTO getTeamByTeamNo(Long teamNo);
 
-    public List<String> getMemberNameByTeamNo(Long teamNo);
+    public List<MemberInfo> getMemberByTeamNo(Long teamNo);
 
     public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 

@@ -20,6 +20,6 @@ public class TeamDTO {
     private String matchAt;
     private String teamGoods;
     private String teamImage;
-    private List<String> memberList;
+    private List<MemberInfo> memberList;
 
 }
