@@ -382,6 +382,11 @@ public class CompServiceImpl implements CompService {
     }
 
     @Override
+    public List<GetProductResponse> getProducts() {
+        return compMapper.getProducts();
+    }
+
+    @Override
     public int insertSettle(SettleDTO sdto) {
 
         return settleMapper.insertSettle(sdto);

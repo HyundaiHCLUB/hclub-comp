@@ -18,6 +18,7 @@ public enum SuccessType {
     UPDATE_RATING_SUCCESS(HttpStatus.OK, "레이팅 변경 성공"),
     GET_TEAM_DETAIL_SUCCESS(HttpStatus.OK, "팀 상세보기 성공"),
     GET_MEMBER_DETAIL_SUCCESS(HttpStatus.OK, "멤버 리스트 가져오기 성공"),
+    GET_PRODUCT_DETAIL_SUCCESS(HttpStatus.OK,"상품 가져오기 성공"),
     GET_TEAM_LIST_SUCCESS(HttpStatus.OK, "팀 리스트 가져오기 성공"),
     GET_RANK_LIST_SUCCESS(HttpStatus.OK, "랭킹 리스트 조회 성공"),
     INSERT_SETTLE_SUCCESS(HttpStatus.OK, "결제 정보 삽입 성공"),

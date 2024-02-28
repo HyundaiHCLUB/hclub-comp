@@ -44,6 +44,7 @@ public interface CompService {
     // 3분 단위로 시간이 지난 경기를 제거합니다.
     public void updateMatchStatus();
 
+    public List<GetProductResponse> getProducts();
 
     /**
      * 작성자: 김은솔

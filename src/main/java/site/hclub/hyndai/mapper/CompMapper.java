@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.TeamDTO;
+import site.hclub.hyndai.dto.response.GetProductResponse;
 import site.hclub.hyndai.dto.response.MatchingResponse;
 import site.hclub.hyndai.dto.response.RankResponse;
 
@@ -54,6 +55,8 @@ public interface CompMapper {
     Long insertScore(Score score);
 
     void generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2, @Param("matchLoc") String matchLoc);
+
+    List<GetProductResponse> getProducts();
 
     @Update("UPDATE team SET ISMATCHED = 'Y' WHERE MATCH_DATE < SYSDATE")
     void updateMatchStatus();
