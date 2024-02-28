@@ -10,6 +10,8 @@ import site.hclub.hyndai.dto.response.*;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 public interface CompService {
 
     MatchDetailResponse getMatchDetail(Long matchHistoryNo);
@@ -42,6 +44,7 @@ public interface CompService {
     // 3분 단위로 시간이 지난 경기를 제거합니다.
     public void updateMatchStatus();
 
+    public List<GetProductResponse> getProducts();
 
     /**
      * 작성자: 김은솔
@@ -53,4 +56,10 @@ public interface CompService {
     List<Long> getTeamMemberList(Long teamNo);
     // 경기 장소 업데이트
     void updateMatchLocation(UpdateMatchLocationRequest request);
+
+    /**
+     * 작성자: 김은솔
+     * 처리 내용: 카카오페이 API를 호출한다.
+     */
+	String kakaopay(HttpSession session, SettleDTO sdto);
 }

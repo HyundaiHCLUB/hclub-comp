@@ -4,6 +4,9 @@ package site.hclub.hyndai.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,17 +24,28 @@ import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 import site.hclub.hyndai.mapper.SettleMapper;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@PropertySource("classpath:application.yml")
 public class CompServiceImpl implements CompService {
 
     private final MemberMapper memberMapper;
@@ -47,6 +61,9 @@ public class CompServiceImpl implements CompService {
     private final SettleMapper settleMapper;
 
     private final ParseService parseService;
+    
+    @Value("${kakao-admin}") 
+    private String kakaoAdmin;
 
     @Override
     public MatchDetailResponse getMatchDetail(Long matchHistoryNo) {
@@ -365,6 +382,11 @@ public class CompServiceImpl implements CompService {
     }
 
     @Override
+    public List<GetProductResponse> getProducts() {
+        return compMapper.getProducts();
+    }
+
+    @Override
     public int insertSettle(SettleDTO sdto) {
 
         return settleMapper.insertSettle(sdto);
@@ -384,4 +406,63 @@ public class CompServiceImpl implements CompService {
         String matchLoc = request.getMatchLoc();
         compMapper.updateMatchLoc(matchHistoryNo, matchLoc);
     }
+
+
+	@Override
+	public String kakaopay(HttpSession session, SettleDTO sdto) {
+		try {
+			
+			URL address = new URL("https://kapi.kakao.com/v1/payment/ready");
+				
+			HttpURLConnection connection = (HttpURLConnection) address.openConnection(); 
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Authorization", "KakaoAK "+kakaoAdmin);
+			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+			connection.setDoOutput(true);
+								
+			String parameter = "cid=TC0ONETIME" // 가맹점 코드
+					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
+					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
+					+ "&item_name="+sdto.getSettleName() // 상품명
+					+ "&quantity=1" // 상품 수량
+					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
+					+ "&vat_amount=0" // 부가세
+					+ "&tax_free_amount=0" // 상품 비과세 금액
+					+ "&approval_url=http://localhost" // 결제 성공 시
+					+ "&fail_url=http://localhost" // 결제 실패 시
+					+ "&cancel_url=http://localhost";
+				
+			OutputStream out = connection.getOutputStream();	
+			DataOutputStream data =new DataOutputStream(out);
+			data.writeBytes(parameter);
+					
+			data.close();			
+							
+			int  result = connection.getResponseCode();
+					
+			InputStream in;
+			if(result ==200) {
+				in = connection.getInputStream();
+				System.out.println("ajax 통신성공");
+			}
+			else {
+				in = connection.getErrorStream();
+				System.out.println("ajax 통신실패");
+			}
+			System.out.println("result값은 "+result);
+					
+			InputStreamReader inRead = new InputStreamReader(in); 
+			BufferedReader change = new BufferedReader(inRead);
+			System.out.println(parameter);
+			
+				return change.readLine();
+			} catch (MalformedURLException e) {
+					
+				e.printStackTrace();
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+						}	
+				return "";
+	}
 }

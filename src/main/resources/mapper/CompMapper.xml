@@ -237,4 +237,11 @@
         SET     match_loc = #{matchLoc}
         WHERE   match_hist_no = #{matchHistoryNo}
     </update>
+
+    <select id="getProducts" resultType="site.hclub.hyndai.dto.response.GetProductResponse">
+        SELECT products_no AS productNo,
+               products_name AS productName,
+               products_price AS productPrice
+        from products
+    </select>
 </mapper>

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
 
@@ -186,6 +188,13 @@ public class CompController {
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
 
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<List<GetProductResponse>>> getProducts() {
+
+
+        return ApiResponse.success(GET_PRODUCT_DETAIL_SUCCESS, compService.getProducts());
+    }
+
     // 상위 num 명의 랭크 (레이팅 순)
     @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
@@ -306,5 +315,12 @@ public class CompController {
             log.error(e);
         }
         return ApiResponse.success(UPDATE_MATCH_LOC_SUCCESS);
+    }
+    
+    @RequestMapping("/kakaopay")
+    public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session, @RequestBody SettleDTO sdto) {
+    	
+    	 return ApiResponse.success(GET_KAKAOPAY_CALL, compService.kakaopay(session, sdto));
+
     }
 }
