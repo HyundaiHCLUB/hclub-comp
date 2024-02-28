@@ -199,8 +199,9 @@ public class CompServiceImpl implements CompService {
 
     @Override
     public TeamDTO getTeamDetail(Long teamNo) {
-
+        List<String> memberList = compMapper.getMemberNameByTeamNo(teamNo);
         TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        teamDTO.setMemberList(memberList);
         // 파싱
 
         teamDTO.setMatchType(parseService.parseSportsToImage(teamDTO.getMatchType()));

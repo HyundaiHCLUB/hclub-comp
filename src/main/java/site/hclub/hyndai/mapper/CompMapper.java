@@ -40,6 +40,8 @@ public interface CompMapper {
 
     public TeamDTO getTeamByTeamNo(Long teamNo);
 
+    public List<String> getMemberNameByTeamNo(Long teamNo);
+
     public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 
     public void changeRating(@Param("teamNo") Long teamNo, @Param("ratingChange") Long ratingChange);

@@ -2,6 +2,8 @@ package site.hclub.hyndai.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -18,5 +20,6 @@ public class TeamDTO {
     private String matchAt;
     private String teamGoods;
     private String teamImage;
+    private List<String> memberList;
 
 }
