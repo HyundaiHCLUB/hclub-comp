@@ -69,7 +69,7 @@ public class MatchingService {
                 }});
     }
 
-    @Scheduled(fixedRate = 1000)
+//    @Scheduled(fixedRate = 1000)
     public void matchTeams() {
         if (!matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 1) {
 

@@ -71,15 +71,18 @@ public class CompServiceImpl implements CompService {
         try {
             dto.setMatchHistoryNo(matchHistoryNo);
             Match vo = compMapper.getMatchVO(matchHistoryNo); // 여기서 vo null 리턴
+            log.info("Match(VO) : " + vo.toString());
             // matchVO 의 win_team_score_no, lose_team_score_no 로 팀 정보 참조
             Long winTeamScoreNo = vo.getWinTeamScoreNo();
-            Long loseTeamScoreNo = vo.getWinTeamScoreNo();
+            Long loseTeamScoreNo = vo.getLoseTeamScoreNo();
 
             // team1 정보
-            Team team1 = compMapper.getTeamFromScoreNo(winTeamScoreNo);
+            log.info("winTeamScoreNo : " + winTeamScoreNo);
+            GetTeamFromScoreNoResponse team1 = compMapper.getTeamFromScoreNo(winTeamScoreNo);
             TeamDetailResponse team1DTO = setTeamDTO(team1);
             // team2 정보
-            Team team2 = compMapper.getTeamFromScoreNo(loseTeamScoreNo);
+            log.info("loseTeamScoreNo : " + loseTeamScoreNo);
+            GetTeamFromScoreNoResponse team2 = compMapper.getTeamFromScoreNo(loseTeamScoreNo);
             TeamDetailResponse team2DTO = setTeamDTO(team2);
             dto.setTeam1(team1DTO);
             dto.setTeam2(team2DTO);
@@ -98,7 +101,7 @@ public class CompServiceImpl implements CompService {
      * @작성자 : 송원선
      * Team(VO) -> TeamDetailResponse
      */
-    public TeamDetailResponse setTeamDTO(Team team) {
+    public TeamDetailResponse setTeamDTO(GetTeamFromScoreNoResponse team) {
         TeamDetailResponse dto = new TeamDetailResponse();
         // vo 에 있는 정보들
         dto.setTeamNo(team.getTeamNo());
@@ -281,8 +284,8 @@ public class CompServiceImpl implements CompService {
 
         HistoryDetailResponse response = new HistoryDetailResponse();
         Match match = compMapper.getMatch(matchHistNo);
-        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
-        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        GetTeamFromScoreNoResponse winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        GetTeamFromScoreNoResponse loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
         String imageUrl = compMapper.getHistoryImageUrl(matchHistNo);
         String matchDate = timeService.parseLocalDateTimeToString(match.getMatchDate());
         response.setMatchHistoryNo(matchHistNo);
@@ -313,8 +316,8 @@ public class CompServiceImpl implements CompService {
     public List<Long> updateRating(AfterMatchRatingRequest request) {
         // 경기 및 팀 정보
         Match match = compMapper.getMatch(request.getMatchHistNo());
-        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
-        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        GetTeamFromScoreNoResponse winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        GetTeamFromScoreNoResponse loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
         // 각 팀 기존 레이팅
         Long winTeamRating = winTeam.getTeamRating();
         Long loseTeamRating = loseTeam.getTeamRating();
@@ -432,7 +435,8 @@ public class CompServiceImpl implements CompService {
 					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
 					+ "&vat_amount=0" // 부가세
 					+ "&tax_free_amount=0" // 상품 비과세 금액
-					+ "&approval_url=http://localhost" // 결제 성공 시
+					//+ "&approval_url=http://localhost/competition/paySuccess" // 로컬 결제 성공 시
+					+ "&approval_url=https://www.h-club.site/competition/paySuccess" //서버 결제 성공 시
 					+ "&fail_url=http://localhost" // 결제 실패 시
 					+ "&cancel_url=http://localhost";
 

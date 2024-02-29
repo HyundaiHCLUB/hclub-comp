@@ -8,8 +8,8 @@ import site.hclub.hyndai.domain.Team;
 public class HistoryDetailResponse {
     private long                matchHistoryNo;
     private String              matchLoc;
-    private Team                winTeam;
-    private Team                loseTeam;
+    private GetTeamFromScoreNoResponse                winTeam;
+    private GetTeamFromScoreNoResponse                loseTeam;
     private String              imageUrl;
     private String              matchDate;
 }
