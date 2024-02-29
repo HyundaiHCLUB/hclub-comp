@@ -20,4 +20,5 @@ public class Team {
     private Long teamRating;
     private String isMatched;
     private LocalDateTime matchDate;
+    private Long productsNo;
 }

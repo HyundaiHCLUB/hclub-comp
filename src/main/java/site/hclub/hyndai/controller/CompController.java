@@ -3,6 +3,7 @@ package site.hclub.hyndai.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,12 @@ import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
 import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.service.CompService;
+import site.hclub.hyndai.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +39,7 @@ public class CompController {
 
 
     private final CompService compService;
+    private final UserService userService;
 
     // 경쟁 메인 페이지로 이동
     @GetMapping("/main")
@@ -246,10 +251,7 @@ public class CompController {
             // duplicates 리스트에 memberList2와 겹치는 원소만 남기기
             boolean hasDuplicates = duplicates.retainAll(memberList2); // 겹치는 원소 있다면 true
             if (hasDuplicates) {
-                /**
-                 *  중복된 팀원 있는 경우
-                 *  => 매칭 취소 로직 구현 필요 (예 : 레디스 큐에서 꺼내지 않는다)
-                 * */
+
                 log.info("두 팀에 중복된 팀원이 있습니다.");
                 log.info("중복된 팀원의 ID: " + duplicates);
             } else {
@@ -316,11 +318,36 @@ public class CompController {
         }
         return ApiResponse.success(UPDATE_MATCH_LOC_SUCCESS);
     }
-    
+
     @RequestMapping("/kakaopay")
     public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session, @RequestBody SettleDTO sdto) {
-    	
+
     	 return ApiResponse.success(GET_KAKAOPAY_CALL, compService.kakaopay(session, sdto));
 
+    }
+
+    // 패배팀 결제에 필요한 정보
+    @GetMapping(value = "settle/{matchHistNo}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
+        log.info("loseTeamSettleInfo => matchHistNo : " + matchHistNo);
+        SettleResponse response = new SettleResponse();
+        try {
+            response = compService.getSettleInfo(matchHistNo);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
+        }
+        // 아래 successType 변경 필요
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/memberInfo")
+    public ResponseEntity<Long> getMemberInfo(HttpServletRequest request) {
+        String memberId = userService.getUserDetails(request);
+        log.info(memberId);
+
+        return ResponseEntity.ok(compService.findMemberNo(memberId));
     }
 }

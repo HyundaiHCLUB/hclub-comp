@@ -1,6 +1,9 @@
 package site.hclub.hyndai.dto.response;
 
 import lombok.*;
+import site.hclub.hyndai.dto.MemberInfo;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,4 +20,6 @@ public class CreateTeamResponse {
     private String teamLoc;
     private String teamGoods;
     private Long matchCapacity;
+    private List<MemberInfo> memberList;
+    private Long teamRating;
 }

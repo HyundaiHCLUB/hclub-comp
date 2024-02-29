@@ -61,8 +61,8 @@ public class CompServiceImpl implements CompService {
     private final SettleMapper settleMapper;
 
     private final ParseService parseService;
-    
-    @Value("${kakao-admin}") 
+
+    @Value("${kakao-admin}")
     private String kakaoAdmin;
 
     @Override
@@ -71,15 +71,18 @@ public class CompServiceImpl implements CompService {
         try {
             dto.setMatchHistoryNo(matchHistoryNo);
             Match vo = compMapper.getMatchVO(matchHistoryNo); // 여기서 vo null 리턴
+            log.info("Match(VO) : " + vo.toString());
             // matchVO 의 win_team_score_no, lose_team_score_no 로 팀 정보 참조
             Long winTeamScoreNo = vo.getWinTeamScoreNo();
-            Long loseTeamScoreNo = vo.getWinTeamScoreNo();
+            Long loseTeamScoreNo = vo.getLoseTeamScoreNo();
 
             // team1 정보
-            Team team1 = compMapper.getTeamFromScoreNo(winTeamScoreNo);
+            log.info("winTeamScoreNo : " + winTeamScoreNo);
+            GetTeamFromScoreNoResponse team1 = compMapper.getTeamFromScoreNo(winTeamScoreNo);
             TeamDetailResponse team1DTO = setTeamDTO(team1);
             // team2 정보
-            Team team2 = compMapper.getTeamFromScoreNo(loseTeamScoreNo);
+            log.info("loseTeamScoreNo : " + loseTeamScoreNo);
+            GetTeamFromScoreNoResponse team2 = compMapper.getTeamFromScoreNo(loseTeamScoreNo);
             TeamDetailResponse team2DTO = setTeamDTO(team2);
             dto.setTeam1(team1DTO);
             dto.setTeam2(team2DTO);
@@ -98,7 +101,7 @@ public class CompServiceImpl implements CompService {
      * @작성자 : 송원선
      * Team(VO) -> TeamDetailResponse
      */
-    public TeamDetailResponse setTeamDTO(Team team) {
+    public TeamDetailResponse setTeamDTO(GetTeamFromScoreNoResponse team) {
         TeamDetailResponse dto = new TeamDetailResponse();
         // vo 에 있는 정보들
         dto.setTeamNo(team.getTeamNo());
@@ -160,6 +163,7 @@ public class CompServiceImpl implements CompService {
                 .matchDate(timeService.parseStringToLocalDateTime(teamDTO.getMatchDate()))
                 .teamImage(urlList.get(0))
                 .teamRating(teamRating)
+                .productsNo(teamDTO.getProductNo())
                 .matchType(teamDTO.getMatchType()).build();
 
         compMapper.addTeam(team);
@@ -189,6 +193,8 @@ public class CompServiceImpl implements CompService {
                 .teamLoc(team.getTeamLoc())
                 .teamGoods(team.getTeamGoods())
                 .matchType(team.getMatchType())
+                .memberList(compMapper.getMemberByTeamNo(teamNo))
+                .teamRating(teamRating)
                 .matchCapacity(team.getMatchCapacity()).build();
 
         return teamResponse;
@@ -196,8 +202,9 @@ public class CompServiceImpl implements CompService {
 
     @Override
     public TeamDTO getTeamDetail(Long teamNo) {
-
+        List<MemberInfo> memberList = compMapper.getMemberByTeamNo(teamNo);
         TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        teamDTO.setMemberList(memberList);
         // 파싱
 
         teamDTO.setMatchType(parseService.parseSportsToImage(teamDTO.getMatchType()));
@@ -277,8 +284,8 @@ public class CompServiceImpl implements CompService {
 
         HistoryDetailResponse response = new HistoryDetailResponse();
         Match match = compMapper.getMatch(matchHistNo);
-        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
-        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        GetTeamFromScoreNoResponse winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        GetTeamFromScoreNoResponse loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
         String imageUrl = compMapper.getHistoryImageUrl(matchHistNo);
         String matchDate = timeService.parseLocalDateTimeToString(match.getMatchDate());
         response.setMatchHistoryNo(matchHistNo);
@@ -309,8 +316,8 @@ public class CompServiceImpl implements CompService {
     public List<Long> updateRating(AfterMatchRatingRequest request) {
         // 경기 및 팀 정보
         Match match = compMapper.getMatch(request.getMatchHistNo());
-        Team winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
-        Team loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
+        GetTeamFromScoreNoResponse winTeam = compMapper.getTeamFromScoreNo(match.getWinTeamScoreNo());
+        GetTeamFromScoreNoResponse loseTeam = compMapper.getTeamFromScoreNo(match.getLoseTeamScoreNo());
         // 각 팀 기존 레이팅
         Long winTeamRating = winTeam.getTeamRating();
         Long loseTeamRating = loseTeam.getTeamRating();
@@ -411,15 +418,15 @@ public class CompServiceImpl implements CompService {
 	@Override
 	public String kakaopay(HttpSession session, SettleDTO sdto) {
 		try {
-			
+
 			URL address = new URL("https://kapi.kakao.com/v1/payment/ready");
-				
-			HttpURLConnection connection = (HttpURLConnection) address.openConnection(); 
+
+			HttpURLConnection connection = (HttpURLConnection) address.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Authorization", "KakaoAK "+kakaoAdmin);
 			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setDoOutput(true);
-								
+
 			String parameter = "cid=TC0ONETIME" // 가맹점 코드
 					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
 					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
@@ -432,15 +439,15 @@ public class CompServiceImpl implements CompService {
 					+ "&approval_url=https://www.h-club.site/competition/paySuccess" //서버 결제 성공 시
 					+ "&fail_url=http://localhost" // 결제 실패 시
 					+ "&cancel_url=http://localhost";
-				
-			OutputStream out = connection.getOutputStream();	
+
+			OutputStream out = connection.getOutputStream();
 			DataOutputStream data =new DataOutputStream(out);
 			data.writeBytes(parameter);
-					
-			data.close();			
-							
+
+			data.close();
+
 			int  result = connection.getResponseCode();
-					
+
 			InputStream in;
 			if(result ==200) {
 				in = connection.getInputStream();
@@ -451,19 +458,41 @@ public class CompServiceImpl implements CompService {
 				System.out.println("ajax 통신실패");
 			}
 			System.out.println("result값은 "+result);
-					
-			InputStreamReader inRead = new InputStreamReader(in); 
+
+			InputStreamReader inRead = new InputStreamReader(in);
 			BufferedReader change = new BufferedReader(inRead);
 			System.out.println(parameter);
-			
+
 				return change.readLine();
 			} catch (MalformedURLException e) {
-					
+
 				e.printStackTrace();
 			} catch (IOException e) {
-				
+
 				e.printStackTrace();
-						}	
+						}
 				return "";
 	}
+
+    @Override
+    public SettleResponse getSettleInfo(Long matchHistNo) {
+        SettleResponse response = new SettleResponse();
+        LoseTeamSettleResponse loseTeamResponse = compMapper.getLoseTeamSettleInfo(matchHistNo);
+        // 진팀의 상품명, 금액, 결제자
+        response.setProductsNo(loseTeamResponse.getProductsNo());
+        response.setSettleMemberId(loseTeamResponse.getSettleMemberId());
+        response.setSettleAmount(loseTeamResponse.getSettleAmount());
+        response.setSettleName(loseTeamResponse.getSettleName());
+        log.info("lose team settle info => " + loseTeamResponse.toString());
+        // 이긴팀 받는사람 번호
+        WinTeamSettleResponse winTeamResponse = compMapper.getWinTeamSettleInfo(matchHistNo);
+        response.setRecipentMemberNo(winTeamResponse.getRecipentMemberNo());
+        log.info("win team settle info=> " + winTeamResponse.toString());
+        log.info("total settle info => " + response.toString());
+        return response;
+    }
+
+    public Long findMemberNo(String memberId) {
+        return compMapper.findMemberNo(memberId);
+    }
 }

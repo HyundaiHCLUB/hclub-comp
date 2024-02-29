@@ -7,9 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.TeamDTO;
-import site.hclub.hyndai.dto.response.GetProductResponse;
-import site.hclub.hyndai.dto.response.MatchingResponse;
-import site.hclub.hyndai.dto.response.RankResponse;
+import site.hclub.hyndai.dto.response.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +18,7 @@ public interface CompMapper {
 
     Match getMatchVO(Long matchHistoryNo);
 
-    Team getTeamFromScoreNo(Long winTeamScoreNo);
+    GetTeamFromScoreNoResponse getTeamFromScoreNo(Long winTeamScoreNo);
 
     Member getLeader(Long teamNo);
 
@@ -39,6 +37,8 @@ public interface CompMapper {
     public String getHistoryImageUrl(Long matchHistNo);
 
     public TeamDTO getTeamByTeamNo(Long teamNo);
+
+    public List<MemberInfo> getMemberByTeamNo(Long teamNo);
 
     public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 
@@ -66,4 +66,10 @@ public interface CompMapper {
     List<MatchingResponse> getTeams();
 
     void updateMatchLoc(@Param("matchHistoryNo") Long matchHistoryNo, @Param("matchLoc") String matchLoc);
+
+    Long findMemberNo(String memberId);
+
+    LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
+
+    WinTeamSettleResponse getWinTeamSettleInfo(Long matchHistNo);
 }

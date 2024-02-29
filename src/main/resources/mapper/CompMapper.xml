@@ -39,7 +39,7 @@
         WHERE match_hist_no = #{matchHistoryNo}
     </select>
 
-    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.domain.Team"
+    <select id="getTeamFromScoreNo" resultType="site.hclub.hyndai.dto.response.GetTeamFromScoreNoResponse"
             parameterType="Long">
         SELECT team_no        AS teamNo
              , team_loc       AS teamLoc
@@ -76,10 +76,10 @@
         <selectKey keyProperty="teamNo" order="BEFORE" resultType="long">
             SELECT team_seq.NEXTVAL FROM DUAL
         </selectKey>
-        INSERT INTO team (team_no, team_loc, team_name, team_goods, created_at, match_type, match_capacity, team_image,
-        team_rating,match_date)
-        VALUES (#{teamNo}, #{teamLoc}, #{teamName}, #{teamGoods}, SYSDATE, #{matchType},
-        #{matchCapacity} , #{teamImage} ,#{teamRating},#{matchDate})
+        INSERT INTO team (team_no, team_loc, team_name, created_at, match_type, match_capacity, team_image,
+        team_rating,match_date,products_no)
+        VALUES (#{teamNo}, #{teamLoc}, #{teamName},  SYSDATE, #{matchType},
+        #{matchCapacity} , #{teamImage} ,#{teamRating},#{matchDate},#{productsNo})
     </insert>
 
     <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
@@ -147,10 +147,19 @@
              , team_loc                                                     AS teamLoc
              , team_goods                                                   AS teamGoods
              , TO_CHAR(match_capacity) || ' VS ' || TO_CHAR(match_capacity) AS teamCapacity
-             , TO_CHAR(match_date, 'YYYY/MM/DD HH24"시" MI"분"')              AS matchAt
+             , TO_CHAR(match_date, 'YYYY"년" MM"월" DD"일" HH24:MI')              AS matchAt
              , team_image                                                   AS teamImage
         FROM TEAM
         WHERE team_no = #{teamNo}
+    </select>
+    <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
+        SELECT e.employee_name AS memberName  , m.member_no AS memberNo
+        FROM TEAM t
+                 JOIN MEMBER_TEAM mt ON t.team_no = mt.team_no
+                 JOIN MEMBER m ON mt.member_no = m.member_no
+                 JOIN EMPLOYEE e ON m.employee_no = e.employee_no
+        WHERE t.team_no = #{teamNo}
+        ORDER BY CASE WHEN mt.is_leader = 'Y' THEN 0 ELSE 1 END
     </select>
 
     <select id="getMemberInfoWithMemberName"
@@ -230,6 +239,7 @@
         FROM Team t
                  JOIN
              Member_team mt ON t.team_no = mt.team_no
+        WHERE t.isMatched = 'N'
     </select>
 
     <update id="updateMatchLoc">
@@ -243,5 +253,42 @@
                products_name AS productName,
                products_price AS productPrice
         from products
+    </select>
+
+    <select id="getLoseTeamSettleInfo" resultType="site.hclub.hyndai.dto.response.LoseTeamSettleResponse">
+        SELECT  t.products_no       AS  productsNo
+                ,mt.member_no       AS  settleMemberId
+                ,p.products_price   AS  settleAmount
+                ,p.products_name    AS  settleName
+        FROM    team    t
+        JOIN    score   s
+        ON      t.team_no = s.team_no
+        JOIN    match   m
+        ON      s.score_no = m.lose_team_score_no
+        JOIN    member_team mt
+        ON      mt.team_no = t.team_no
+        JOIN    products    p
+        ON      t.products_no = p.products_no
+        WHERE   m.match_hist_no = #{matchHistNo}
+        AND     mt.is_leader = 'Y'
+    </select>
+
+    <select id="getWinTeamSettleInfo" resultType="site.hclub.hyndai.dto.response.WinTeamSettleResponse">
+        SELECT  mt.member_no     AS  recipentMemberNo
+        FROM    member_team mt
+        JOIN    team t
+        ON      mt.team_no = t.team_no
+        JOIN    score s
+        ON      t.team_no = s.team_no
+        JOIN    match m
+        ON      s.score_no = m.win_team_score_no
+        WHERE   m.match_hist_no = #{matchHistNo}
+        AND     mt.is_leader = 'Y'
+    </select>
+
+    <select id="findMemberNo">
+        SELECT member_no
+        FROM member
+        WHERE member_id = #{member_id}
     </select>
 </mapper>
