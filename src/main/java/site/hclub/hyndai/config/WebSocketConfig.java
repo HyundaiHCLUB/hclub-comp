@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
-                .addHandler(webSocketHandler, "/ws/chat") // 호출 path 지정
+                .addHandler(webSocketHandler, "/comp/ws/chat") // 호출 path 지정
                 .setAllowedOrigins("*"); // 허용 도메인
     }
 }
