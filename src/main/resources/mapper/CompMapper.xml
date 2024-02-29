@@ -165,7 +165,7 @@
     <select id="getMemberInfoWithMemberName"
             resultType="site.hclub.hyndai.dto.MemberInfo">
         SELECT m.member_no AS memberNo,
-        e.employee_name AS memberName
+        e.employee_name AS memberName, e.employee_dept AS memberDept, e.employee_position AS memberPosition
         FROM member m
         JOIN
         employee e ON m.employee_no = e.employee_no

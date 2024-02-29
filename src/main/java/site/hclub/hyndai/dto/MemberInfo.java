@@ -10,5 +10,7 @@ import lombok.*;
 public class MemberInfo {
     private Long memberNo;
     private String memberName;
+    private String memberDept;
+    private String memberPosition;
 
 }
