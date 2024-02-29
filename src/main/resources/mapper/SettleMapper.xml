@@ -5,8 +5,8 @@
 <mapper namespace="site.hclub.hyndai.mapper.SettleMapper">
     <insert id="insertSettle" parameterType="site.hclub.hyndai.dto.SettleDTO">
      INSERT INTO settlement 
-     ( match_hist_no, settle_amount, settle_name, settle_member_id)
+     ( match_hist_no, settle_amount, products_no, settle_member_id ,recipent_member_no )
      VALUES 
-    ( #{matchHistNo}, #{settleAmount}, #{settleName}, #{settleMemberId})
+    ( #{matchHistNo}, #{settleAmount}, #{productsNo}, #{settleMemberId}, #{recipentMemberNo})
     </insert>
 </mapper>
