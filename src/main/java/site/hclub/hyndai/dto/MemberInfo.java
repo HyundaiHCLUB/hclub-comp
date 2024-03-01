@@ -12,5 +12,6 @@ public class MemberInfo {
     private String memberName;
     private String memberDept;
     private String memberPosition;
+    private Long memberRating;
 
 }
