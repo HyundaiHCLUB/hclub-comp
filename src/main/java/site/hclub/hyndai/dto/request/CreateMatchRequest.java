@@ -11,4 +11,5 @@ public class CreateMatchRequest {
     private Long    team1No;
     private Long    team2No;
     private String  matchLoc;
+    private Long    matchHistoryNo;
 }

@@ -2,6 +2,7 @@ package site.hclub.hyndai.service;
 
 
 import org.springframework.web.multipart.MultipartFile;
+import site.hclub.hyndai.domain.Team;
 import site.hclub.hyndai.dto.SettleDTO;
 import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
@@ -71,4 +72,6 @@ public interface CompService {
 
     // (매치) 두 팀중 로그인 사용자가 속한 팀의 번호 리턴
     Long getMyTeamNo(ConfigureTeamRequest request);
+
+    Team getTeamInfo(Long teamNo);
 }
