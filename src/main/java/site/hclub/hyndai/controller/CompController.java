@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 import static site.hclub.hyndai.common.advice.ErrorType.MATCH_NOT_FOUND_ERROR;
 import static site.hclub.hyndai.common.response.SuccessType.*;
 
-
+//@CrossOrigin(origins = "http://localhost:8080")
 @Log4j
 @RestController
 @RequestMapping("/comp")
