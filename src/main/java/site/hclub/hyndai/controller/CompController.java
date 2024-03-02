@@ -19,6 +19,7 @@ import site.hclub.hyndai.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -342,5 +343,22 @@ public class CompController {
         log.info(memberId);
 
         return ResponseEntity.ok(compService.findMemberNo(memberId));
+    }
+
+
+    /* 두 팀중 로그인한 사용자가 속한 팀의 번호 리턴해주는 API */
+    @PostMapping(value = "/team/member", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> getMyTeamNo(@RequestBody ConfigureTeamRequest request) {
+        String memberId = request.getMemberId();
+        log.info("memberId => " + memberId);
+
+        Long myTeamNo = 0L;
+        try{
+            myTeamNo = compService.getMyTeamNo(request);
+            log.info("myTeamNo : " + myTeamNo);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return new ResponseEntity<>(myTeamNo, HttpStatus.OK);
     }
 }
