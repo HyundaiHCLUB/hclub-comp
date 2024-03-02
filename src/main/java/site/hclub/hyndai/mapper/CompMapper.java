@@ -54,7 +54,7 @@ public interface CompMapper {
 
     Long insertScore(Score score);
 
-    void generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2, @Param("matchLoc") String matchLoc);
+    Long generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2, @Param("matchLoc") String matchLoc);
 
     List<GetProductResponse> getProducts();
 

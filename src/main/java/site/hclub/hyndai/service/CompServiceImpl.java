@@ -360,9 +360,10 @@ public class CompServiceImpl implements CompService {
 
     // 경기 생성
     @Override
-    public void generateMatch(CreateMatchRequest request) {
+    public Long generateMatch(CreateMatchRequest request) {
         Long team1No = request.getTeam1No();
         Long team2No = request.getTeam2No();
+        Long matchHistoryNo = 0L;
         try {
             // 1. score 테이블에 추가
             Score score1 = new Score();
@@ -377,11 +378,11 @@ public class CompServiceImpl implements CompService {
             log.info("scoreNo1 : " + scoreNo1);
             log.info("scoreNo2 : " + scoreNo2);
             // 2. match 테이블에 연결
-            compMapper.generateMatch(scoreNo1, scoreNo2, request.getMatchLoc());
+            matchHistoryNo = compMapper.generateMatch(scoreNo1, scoreNo2, request.getMatchLoc());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-
+        return matchHistoryNo;
     }
 
     @Override

@@ -223,8 +223,11 @@
     </insert>
 
     <insert id="generateMatch">
+        <selectKey keyProperty="matchHistoryNo" resultType="Long" order="BEFORE">
+            SELECT score_seq.nextval FROM dual
+        </selectKey>
         INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
-        VALUES (match_seq.nextval, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
+        VALUES (#{matchHistoryNo}, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
     </insert>
 
     <select id="getTeamMemberList" resultType="Long">

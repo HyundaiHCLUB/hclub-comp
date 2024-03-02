@@ -40,7 +40,7 @@ public interface CompService {
 
     void updateMatchDate(String matchDate, Long matchHistNo);
 
-    void generateMatch(CreateMatchRequest request);
+    Long generateMatch(CreateMatchRequest request);
 
     // 3분 단위로 시간이 지난 경기를 제거합니다.
     public void updateMatchStatus();

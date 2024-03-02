@@ -239,10 +239,11 @@ public class CompController {
      *
      */
     @PostMapping("/match")
-    public ResponseEntity<ApiResponse<Void>> createMatch(@RequestBody CreateMatchRequest request) {
+    public ResponseEntity<ApiResponse<Long>> createMatch(@RequestBody CreateMatchRequest request) {
 
         log.info("[POST] /comp/match : 경기 생성 ===> ");
         log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " + request.getTeam2No());
+        Long matchHistoryNo = 0L;
         try {
             List<Long> memberList1 = compService.getTeamMemberList(request.getTeam1No()); // 1팀 명단
             List<Long> memberList2 = compService.getTeamMemberList(request.getTeam2No()); // 2팀 명단
@@ -253,12 +254,12 @@ public class CompController {
             log.info("TEAM 1 MEMBERS : " +  memberList1);
             log.info("TEAM 2 MEMBERS : " +  memberList2);
             log.info("matchLoc : " + matchLoc);
-            compService.generateMatch(request);
+            matchHistoryNo = compService.generateMatch(request);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
 
-        return ApiResponse.success(MATCH_CREATED);
+        return ApiResponse.success(MATCH_CREATED, matchHistoryNo);
     }
 
     @PostMapping("/settle")
