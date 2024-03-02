@@ -294,4 +294,12 @@
         FROM member
         WHERE member_id = #{member_id}
     </select>
+
+    <select id="getTeamMemberIds" parameterType="long" resultType="String">
+       SELECT   member_id
+       FROM     member m
+       JOIN     member_team mt
+       ON       m.member_no = mt.member_no
+       WHERE    mt.team_no = #{teamNo}
+    </select>
 </mapper>

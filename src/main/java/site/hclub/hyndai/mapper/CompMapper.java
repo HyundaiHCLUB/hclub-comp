@@ -72,4 +72,6 @@ public interface CompMapper {
     LoseTeamSettleResponse getLoseTeamSettleInfo(Long matchHistNo);
 
     WinTeamSettleResponse getWinTeamSettleInfo(Long matchHistNo);
+
+    List<String> getTeamMemberIds(Long teamNo);
 }

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
@@ -494,5 +495,20 @@ public class CompServiceImpl implements CompService {
 
     public Long findMemberNo(String memberId) {
         return compMapper.findMemberNo(memberId);
+    }
+
+    @Override
+    public Long getMyTeamNo(ConfigureTeamRequest request) {
+        Long team1No = request.getTeam1No();
+        Long team2No = request.getTeam2No();
+        String memberId = request.getMemberId();
+        List<String> team1memberList = compMapper.getTeamMemberIds(team1No);
+        List<String> team2memberList = compMapper.getTeamMemberIds(team2No);
+        if (team1memberList.contains(memberId)) {
+            return team1No;
+        } else if (team2memberList.contains(memberId)) {
+            return team2No;
+        }
+        return 0L;
     }
 }
