@@ -10,6 +10,7 @@ import site.hclub.hyndai.dto.response.*;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public interface CompService {
@@ -67,4 +68,7 @@ public interface CompService {
 	String kakaopay(HttpSession session, SettleDTO sdto);
 
     SettleResponse getSettleInfo(Long matchHistNo);
+
+    // (매치) 두 팀중 로그인 사용자가 속한 팀의 번호 리턴
+    Long getMyTeamNo(ConfigureTeamRequest request);
 }
