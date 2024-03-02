@@ -3,6 +3,7 @@ package site.hclub.hyndai.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.config.annotation.*;
 import site.hclub.hyndai.service.SocketHandler;
 
@@ -16,7 +17,7 @@ import site.hclub.hyndai.service.SocketHandler;
  * ===========================
  */
 @Configuration 
-@EnableWebSocket 
+@EnableWebSocket
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
     private final SocketHandler webSocketHandler;
@@ -33,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("*");
     }
 
     /**
