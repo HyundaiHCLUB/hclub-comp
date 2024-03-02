@@ -140,18 +140,20 @@
     </select>
 
     <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
-        SELECT team_no                                                      AS teamNo
-             , team_name                                                    AS teamName
-             , match_type                                                   AS matchType
-             , team_rating                                                  AS teamRating
-             , team_loc                                                     AS teamLoc
-             , team_goods                                                   AS teamGoods
-             , TO_CHAR(match_capacity) || ' VS ' || TO_CHAR(match_capacity) AS teamCapacity
-             , TO_CHAR(match_date, 'YYYY"년" MM"월" DD"일" HH24:MI')              AS matchAt
-             , team_image                                                   AS teamImage
-        FROM TEAM
-        WHERE team_no = #{teamNo}
+        SELECT t.team_no                                                      AS teamNo,
+               t.team_name                                                    AS teamName,
+               t.match_type                                                   AS matchType,
+               t.team_rating                                                  AS teamRating,
+               t.team_loc                                                     AS teamLoc,
+               p.products_name                                                AS teamGoods,
+               TO_CHAR(t.match_capacity) || ' VS ' || TO_CHAR(t.match_capacity) AS teamCapacity,
+               TO_CHAR(t.match_date, 'YYYY"년" MM"월" DD"일" HH24:MI')         AS matchAt,
+               t.team_image                                                   AS teamImage
+        FROM TEAM t
+                 JOIN PRODUCTS p ON t.products_no = p.products_no
+        WHERE t.team_no = #{teamNo}
     </select>
+
     <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
         SELECT e.employee_name AS memberName  , m.member_no AS memberNo
         FROM TEAM t
