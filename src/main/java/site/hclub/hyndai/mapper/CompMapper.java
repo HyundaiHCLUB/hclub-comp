@@ -54,7 +54,7 @@ public interface CompMapper {
 
     Long insertScore(Score score);
 
-    Long generateMatch(@Param("scoreNo1") Long scoreNo1, @Param("scoreNo2") Long scoreNo2, @Param("matchLoc") String matchLoc);
+    Long generateMatch(CreateMatchResponse response);
 
     List<GetProductResponse> getProducts();
 
@@ -74,4 +74,6 @@ public interface CompMapper {
     WinTeamSettleResponse getWinTeamSettleInfo(Long matchHistNo);
 
     List<String> getTeamMemberIds(Long teamNo);
+
+    Team getTeamInfo(Long teamNo);
 }

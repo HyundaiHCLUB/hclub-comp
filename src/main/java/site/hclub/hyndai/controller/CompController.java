@@ -247,8 +247,8 @@ public class CompController {
         try {
             List<Long> memberList1 = compService.getTeamMemberList(request.getTeam1No()); // 1팀 명단
             List<Long> memberList2 = compService.getTeamMemberList(request.getTeam2No()); // 2팀 명단
-            String loc1 = compService.getTeamDetail(request.getTeam1No()).getTeamLoc();
-            String loc2 = compService.getTeamDetail(request.getTeam2No()).getTeamLoc();
+            String loc1 = compService.getTeamInfo(request.getTeam1No()).getTeamLoc();
+            String loc2 = compService.getTeamInfo(request.getTeam2No()).getTeamLoc();
             String matchLoc = (Math.random() > 0.5) ? loc1 : loc2;
             request.setMatchLoc(matchLoc);
             log.info("TEAM 1 MEMBERS : " +  memberList1);
@@ -257,8 +257,9 @@ public class CompController {
             matchHistoryNo = compService.generateMatch(request);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
-
+        log.info("return matchHistoryNo : " + matchHistoryNo);
         return ApiResponse.success(MATCH_CREATED, matchHistoryNo);
     }
 

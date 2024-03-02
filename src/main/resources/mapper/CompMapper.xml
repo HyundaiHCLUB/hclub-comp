@@ -222,13 +222,14 @@
 
     </insert>
 
-    <insert id="generateMatch">
+    <insert id="generateMatch" parameterType="site.hclub.hyndai.dto.response.CreateMatchResponse">
         <selectKey keyProperty="matchHistoryNo" resultType="Long" order="BEFORE">
-            SELECT score_seq.nextval FROM dual
+            SELECT match_seq.nextval AS matchHistoryNo FROM dual
         </selectKey>
         INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
         VALUES (#{matchHistoryNo}, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
     </insert>
+
 
     <select id="getTeamMemberList" resultType="Long">
         SELECT member_no
@@ -304,5 +305,23 @@
        JOIN     member_team mt
        ON       m.member_no = mt.member_no
        WHERE    mt.team_no = #{teamNo}
+    </select>
+
+    <select id="getTeamInfo" parameterType="long"
+            resultType="site.hclub.hyndai.domain.Team">
+        SELECT  team_no     AS  teamNo
+                ,team_loc   AS  teamLoc
+                ,team_name  AS  teamName
+                ,team_goods AS  teamGoods
+                ,created_at AS  createdAt
+                ,match_type AS  matchType
+                ,team_image AS  teamImage
+                ,match_capacity AS  matchCapacity
+                ,team_rating    AS  teamRating
+                ,ismatched  AS  isMatched
+                ,match_date AS  matchDate
+                ,products_no    AS  productsNo
+        FROM    team
+        WHERE   team_no = #{teamNo}
     </select>
 </mapper>
