@@ -78,11 +78,10 @@ public class MatchingService {
         log.info("내팀="+myRealTeam);
         log.info("첫 큐 사이즈="+redisTemplate.opsForList().size("teamQueue"));
         // 매치 성공시 스케줄링 중지
-        if (matchingSuccess) {
+        if (matchingSuccess || myRealTeam == null) {
             return;
         }
 
-        if (myRealTeam != null && !matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 0) {
             MatchingRequest myTeam = myRealTeam;
 
             MatchingRequest matchingTeam = findMatchingTeam(myTeam);
@@ -104,7 +103,6 @@ public class MatchingService {
                         notifyFailure();
                         return;
                     }
-                }
             }
         }
     }
