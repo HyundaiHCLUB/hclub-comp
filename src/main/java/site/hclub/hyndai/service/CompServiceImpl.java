@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
@@ -359,9 +360,11 @@ public class CompServiceImpl implements CompService {
 
     // 경기 생성
     @Override
-    public void generateMatch(CreateMatchRequest request) {
+    public Long generateMatch(CreateMatchRequest request) {
         Long team1No = request.getTeam1No();
         Long team2No = request.getTeam2No();
+        Long matchHistoryNo = 0L;
+        CreateMatchResponse response = new CreateMatchResponse();
         try {
             // 1. score 테이블에 추가
             Score score1 = new Score();
@@ -372,15 +375,27 @@ public class CompServiceImpl implements CompService {
             compMapper.insertScore(score2);
             Long scoreNo1 = score1.getScoreNo();
             Long scoreNo2 = score2.getScoreNo();
+            response.setScoreNo1(score1.getScoreNo());
+            response.setScoreNo2(score2.getScoreNo());
+            response.setMatchLoc(request.getMatchLoc());
             log.info(" === Service ===");
             log.info("scoreNo1 : " + scoreNo1);
             log.info("scoreNo2 : " + scoreNo2);
             // 2. match 테이블에 연결
-            compMapper.generateMatch(scoreNo1, scoreNo2, request.getMatchLoc());
+            compMapper.generateMatch(response);
+            matchHistoryNo = response.getMatchHistoryNo();
+            log.info("matchHistoryNo ==> " + matchHistoryNo);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
+        return matchHistoryNo;
+    }
 
+    @Override
+    public Team getTeamInfo(Long teamNo) {
+        Team vo = compMapper.getTeamInfo(teamNo);
+        return vo;
     }
 
     @Override
@@ -494,5 +509,20 @@ public class CompServiceImpl implements CompService {
 
     public Long findMemberNo(String memberId) {
         return compMapper.findMemberNo(memberId);
+    }
+
+    @Override
+    public Long getMyTeamNo(ConfigureTeamRequest request) {
+        Long team1No = request.getTeam1No();
+        Long team2No = request.getTeam2No();
+        String memberId = request.getMemberId();
+        List<String> team1memberList = compMapper.getTeamMemberIds(team1No);
+        List<String> team2memberList = compMapper.getTeamMemberIds(team2No);
+        if (team1memberList.contains(memberId)) {
+            return team1No;
+        } else if (team2memberList.contains(memberId)) {
+            return team2No;
+        }
+        return 0L;
     }
 }

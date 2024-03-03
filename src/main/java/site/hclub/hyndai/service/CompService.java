@@ -2,6 +2,7 @@ package site.hclub.hyndai.service;
 
 
 import org.springframework.web.multipart.MultipartFile;
+import site.hclub.hyndai.domain.Team;
 import site.hclub.hyndai.dto.SettleDTO;
 import site.hclub.hyndai.dto.TeamDTO;
 import site.hclub.hyndai.dto.request.*;
@@ -10,6 +11,7 @@ import site.hclub.hyndai.dto.response.*;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public interface CompService {
@@ -39,7 +41,7 @@ public interface CompService {
 
     void updateMatchDate(String matchDate, Long matchHistNo);
 
-    void generateMatch(CreateMatchRequest request);
+    Long generateMatch(CreateMatchRequest request);
 
     // 3분 단위로 시간이 지난 경기를 제거합니다.
     public void updateMatchStatus();
@@ -67,4 +69,9 @@ public interface CompService {
 	String kakaopay(HttpSession session, SettleDTO sdto);
 
     SettleResponse getSettleInfo(Long matchHistNo);
+
+    // (매치) 두 팀중 로그인 사용자가 속한 팀의 번호 리턴
+    Long getMyTeamNo(ConfigureTeamRequest request);
+
+    Team getTeamInfo(Long teamNo);
 }

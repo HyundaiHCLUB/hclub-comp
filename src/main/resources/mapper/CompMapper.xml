@@ -140,18 +140,20 @@
     </select>
 
     <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
-        SELECT team_no                                                      AS teamNo
-             , team_name                                                    AS teamName
-             , match_type                                                   AS matchType
-             , team_rating                                                  AS teamRating
-             , team_loc                                                     AS teamLoc
-             , team_goods                                                   AS teamGoods
-             , TO_CHAR(match_capacity) || ' VS ' || TO_CHAR(match_capacity) AS teamCapacity
-             , TO_CHAR(match_date, 'YYYY"년" MM"월" DD"일" HH24:MI')              AS matchAt
-             , team_image                                                   AS teamImage
-        FROM TEAM
-        WHERE team_no = #{teamNo}
+        SELECT t.team_no                                                      AS teamNo,
+               t.team_name                                                    AS teamName,
+               t.match_type                                                   AS matchType,
+               t.team_rating                                                  AS teamRating,
+               t.team_loc                                                     AS teamLoc,
+               p.products_name                                                AS teamGoods,
+               TO_CHAR(t.match_capacity) || ' VS ' || TO_CHAR(t.match_capacity) AS teamCapacity,
+               TO_CHAR(t.match_date, 'YYYY"년" MM"월" DD"일" HH24:MI')         AS matchAt,
+               t.team_image                                                   AS teamImage
+        FROM TEAM t
+                 JOIN PRODUCTS p ON t.products_no = p.products_no
+        WHERE t.team_no = #{teamNo}
     </select>
+
     <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
         SELECT e.employee_name AS memberName  , m.member_no AS memberNo
         FROM TEAM t
@@ -220,10 +222,14 @@
 
     </insert>
 
-    <insert id="generateMatch">
+    <insert id="generateMatch" parameterType="site.hclub.hyndai.dto.response.CreateMatchResponse">
+        <selectKey keyProperty="matchHistoryNo" resultType="Long" order="BEFORE">
+            SELECT match_seq.nextval AS matchHistoryNo FROM dual
+        </selectKey>
         INSERT INTO match (match_hist_no, match_loc, win_team_score_no, lose_team_score_no, match_date)
-        VALUES (match_seq.nextval, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
+        VALUES (#{matchHistoryNo}, #{matchLoc}, #{scoreNo1}, #{scoreNo2}, sysdate)
     </insert>
+
 
     <select id="getTeamMemberList" resultType="Long">
         SELECT member_no
@@ -291,5 +297,31 @@
         SELECT member_no
         FROM member
         WHERE member_id = #{member_id}
+    </select>
+
+    <select id="getTeamMemberIds" parameterType="long" resultType="String">
+       SELECT   member_id
+       FROM     member m
+       JOIN     member_team mt
+       ON       m.member_no = mt.member_no
+       WHERE    mt.team_no = #{teamNo}
+    </select>
+
+    <select id="getTeamInfo" parameterType="long"
+            resultType="site.hclub.hyndai.domain.Team">
+        SELECT  team_no     AS  teamNo
+                ,team_loc   AS  teamLoc
+                ,team_name  AS  teamName
+                ,team_goods AS  teamGoods
+                ,created_at AS  createdAt
+                ,match_type AS  matchType
+                ,team_image AS  teamImage
+                ,match_capacity AS  matchCapacity
+                ,team_rating    AS  teamRating
+                ,ismatched  AS  isMatched
+                ,match_date AS  matchDate
+                ,products_no    AS  productsNo
+        FROM    team
+        WHERE   team_no = #{teamNo}
     </select>
 </mapper>

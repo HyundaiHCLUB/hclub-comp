@@ -19,6 +19,7 @@ import site.hclub.hyndai.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,27 +238,29 @@ public class CompController {
      * @reqyest 두 팀의 번호(team_no)
      *
      */
-    @PostMapping("/match")
-    public ResponseEntity<ApiResponse<Void>> createMatch(@RequestBody CreateMatchRequest request) {
+    @PostMapping(value = "/match", consumes =  MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<Long>> createMatch(@RequestBody CreateMatchRequest request) {
 
         log.info("[POST] /comp/match : 경기 생성 ===> ");
         log.info("TEAM 1 NO : " + request.getTeam1No() + " , TEAM 2 NO : " + request.getTeam2No());
+        Long matchHistoryNo = 0L;
         try {
             List<Long> memberList1 = compService.getTeamMemberList(request.getTeam1No()); // 1팀 명단
             List<Long> memberList2 = compService.getTeamMemberList(request.getTeam2No()); // 2팀 명단
-            String loc1 = compService.getTeamDetail(request.getTeam1No()).getTeamLoc();
-            String loc2 = compService.getTeamDetail(request.getTeam2No()).getTeamLoc();
+            String loc1 = compService.getTeamInfo(request.getTeam1No()).getTeamLoc();
+            String loc2 = compService.getTeamInfo(request.getTeam2No()).getTeamLoc();
             String matchLoc = (Math.random() > 0.5) ? loc1 : loc2;
             request.setMatchLoc(matchLoc);
             log.info("TEAM 1 MEMBERS : " +  memberList1);
             log.info("TEAM 2 MEMBERS : " +  memberList2);
             log.info("matchLoc : " + matchLoc);
-            compService.generateMatch(request);
+            matchHistoryNo = compService.generateMatch(request);
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
-
-        return ApiResponse.success(MATCH_CREATED);
+        log.info("return matchHistoryNo : " + matchHistoryNo);
+        return ApiResponse.success(MATCH_CREATED, matchHistoryNo);
     }
 
     @PostMapping("/settle")
@@ -342,5 +345,22 @@ public class CompController {
         log.info(memberId);
 
         return ResponseEntity.ok(compService.findMemberNo(memberId));
+    }
+
+
+    /* 두 팀중 로그인한 사용자가 속한 팀의 번호 리턴해주는 API */
+    @PostMapping(value = "/team/member", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> getMyTeamNo(@RequestBody ConfigureTeamRequest request) {
+        String memberId = request.getMemberId();
+        log.info("memberId => " + memberId);
+
+        Long myTeamNo = 0L;
+        try{
+            myTeamNo = compService.getMyTeamNo(request);
+            log.info("myTeamNo : " + myTeamNo);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return new ResponseEntity<>(myTeamNo, HttpStatus.OK);
     }
 }
