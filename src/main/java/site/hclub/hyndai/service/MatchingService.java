@@ -14,6 +14,7 @@ import site.hclub.hyndai.mapper.CompMapper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,6 +29,8 @@ public class MatchingService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+
 
     private volatile boolean matchingSuccess = false;
     private static MatchingRequest myRealTeam = null;
@@ -72,8 +75,14 @@ public class MatchingService {
 
     @Scheduled(fixedRate = 1000)
     public void matchTeams() {
-        if (myRealTeam != null && !matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 0) {
+        log.info("나의 팀 정보="+myRealTeam+"큐의 사이즈="+redisTemplate.opsForList().size("teamQueue"));
+        // 매치 성공시 스케줄링 중지
+        if (matchingSuccess) {
+            return;
+        }
 
+
+        if (myRealTeam != null && !matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 0) {
             MatchingRequest myTeam = myRealTeam;
             String myTeamJson = convertMatchingRequestToJson(myTeam);
 
@@ -85,15 +94,18 @@ public class MatchingService {
                 matchingSuccess = true;
             } else {
                 failureAttempts++;
+                log.info("실패 횟수="+failureAttempts);
 
                 if(failureAttempts >= MAX_FAILURE_ATTEMPTS){
                     notifyFailure();
+                    return;
                 } else {
                     String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
                     if (potentialMatchJson != null) {
                         redisTemplate.opsForList().leftPush("teamQueue", myTeamJson);
                     } else {
                         notifyFailure();
+                        return;
                     }
                 }
             }
