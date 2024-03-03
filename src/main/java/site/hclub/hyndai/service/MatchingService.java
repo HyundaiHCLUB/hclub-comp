@@ -30,6 +30,7 @@ public class MatchingService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    private ScheduledFuture<?> scheduledFuture;
 
 
     private volatile boolean matchingSuccess = false;
@@ -75,60 +76,53 @@ public class MatchingService {
 
     @Scheduled(fixedRate = 3000)
     public void matchTeams() {
-        log.info("내팀="+myRealTeam);
-        log.info("첫 큐 사이즈="+redisTemplate.opsForList().size("teamQueue"));
-        // 매치 성공시 스케줄링 중지
-        if (matchingSuccess || myRealTeam == null) {
-            return;
-        }
+        log.info("내팀=" + myRealTeam);
+        log.info("첫 큐 사이즈=" + redisTemplate.opsForList().size("teamQueue"));
 
-            MatchingRequest myTeam = myRealTeam;
+        MatchingRequest myTeam = myRealTeam;
+        MatchingRequest matchingTeam = null;
 
-            MatchingRequest matchingTeam = findMatchingTeam(myTeam);
-            System.out.println("성공="+matchingTeam);
+        if(myTeam != null) {
+            while (redisTemplate.opsForList().size("teamQueue") > 0) {
+                // Redis의 List에서 팀 정보 가져오기
+                String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
+                MatchingRequest potentialMatchFromRedis = convertJsonToMatchingRequest(potentialMatchJson);
+                log.info("myTeam=" + myTeam.getTeamNo() + " potential=" + potentialMatchFromRedis.getTeamNo());
+                if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
+                        !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
+                        myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
+                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 100) {
+                    continue;
+                }
+
+                if (myTeam.getTeamMemberNo().stream().anyMatch(potentialMatchFromRedis.getTeamMemberNo()::contains)) {
+                    continue;
+                }
+
+                matchingTeam = potentialMatchFromRedis;
+                break;
+            }
 
             if (matchingTeam != null) {
                 notifyMatch(myTeam, matchingTeam);
                 matchingSuccess = true;
+                myRealTeam = null;
             } else {
                 failureAttempts++;
-                log.info("실패 횟수="+failureAttempts);
+                log.info("실패 횟수=" + failureAttempts);
 
-                if(failureAttempts >= MAX_FAILURE_ATTEMPTS){
+                if (failureAttempts >= MAX_FAILURE_ATTEMPTS) {
                     notifyFailure();
-                    return;
                 } else {
                     String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
                     if (potentialMatchJson == null) {
                         notifyFailure();
-                        return;
                     }
+                }
             }
         }
     }
 
-    private MatchingRequest findMatchingTeam(MatchingRequest myTeam) {
-        while (redisTemplate.opsForList().size("teamQueue") > 0) {
-            // Redis의 List에서 팀 정보 가져오기
-            String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
-            MatchingRequest potentialMatchFromRedis = convertJsonToMatchingRequest(potentialMatchJson);
-            log.info("myTeam="+myTeam.getTeamNo()+" potential="+potentialMatchFromRedis.getTeamNo());
-            if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
-                    !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
-                    myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
-                    Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 100) {
-                continue;
-            }
-
-            if (myTeam.getTeamMemberNo().stream().anyMatch(potentialMatchFromRedis.getTeamMemberNo()::contains)) {
-                continue;
-            }
-
-            return potentialMatchFromRedis;
-        }
-
-        return null;
-    }
 
     private void notifyMatch(MatchingRequest myTeam, MatchingRequest matchingTeam) {
         messagingTemplate.convertAndSend("/topic/matches", myTeam.getTeamNo() + "," + matchingTeam.getTeamNo());
