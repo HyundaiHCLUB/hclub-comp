@@ -180,7 +180,7 @@
 
     <insert id="uploadImage">
         INSERT INTO image (image_no, upload_name, image_url)
-        VALUES (image_seq.nextval, ${fileName}, ${url})
+        VALUES (image_seq.nextval, #{fileName}, #{url})
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
