@@ -47,7 +47,7 @@ public class MatchingService {
                             .stream()
                             .map(this::convertJsonToMatchingRequest)
                             .anyMatch(existingTeam ->
-                                    existingTeam != null && existingTeam.getTeamNo().equals(teamNo))){
+                                    existingTeam != null && !existingTeam.getTeamNo().equals(teamNo))){
                     List<Long> teamMemberNoList = teamList.stream()
                             .map(MatchingResponse::getTeamMemberNo)
                             .collect(Collectors.toList());
@@ -63,7 +63,6 @@ public class MatchingService {
                     log.info("종목=" + matchingRequest.getMatchType());
                     log.info("경기인원수=" + teamMemberNoList.size());
 
-                    // Redis의 List에 팀 정보 저장
                     String teamJson = convertMatchingRequestToJson(matchingRequest);
                     redisTemplate.opsForList().leftPush("teamQueue", teamJson);
                 }});
@@ -73,7 +72,7 @@ public class MatchingService {
 
     @Scheduled(fixedRate = 1000)
     public void matchTeams() {
-        if (myRealTeam != null &&!matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 1) {
+        if (myRealTeam != null && !matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 0) {
 
             MatchingRequest myTeam = myRealTeam;
             String myTeamJson = convertMatchingRequestToJson(myTeam);
