@@ -238,7 +238,7 @@ public class CompController {
      * @reqyest 두 팀의 번호(team_no)
      *
      */
-    @PostMapping("/match")
+    @PostMapping(value = "/match", consumes =  MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Long>> createMatch(@RequestBody CreateMatchRequest request) {
 
         log.info("[POST] /comp/match : 경기 생성 ===> ");
