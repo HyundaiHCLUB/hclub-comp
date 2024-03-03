@@ -50,7 +50,7 @@ public class MatchingService {
                             .stream()
                             .map(this::convertJsonToMatchingRequest)
                             .anyMatch(existingTeam ->
-                                    existingTeam != null && !existingTeam.getTeamNo().equals(teamNo))){
+                                    existingTeam != null && existingTeam.getTeamNo().equals(teamNo))){
                     List<Long> teamMemberNoList = teamList.stream()
                             .map(MatchingResponse::getTeamMemberNo)
                             .collect(Collectors.toList());
@@ -73,18 +73,17 @@ public class MatchingService {
         myRealTeam = team;
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 3000)
     public void matchTeams() {
-        log.info("나의 팀 정보="+myRealTeam+"큐의 사이즈="+redisTemplate.opsForList().size("teamQueue"));
+        log.info("내팀="+myRealTeam);
+        log.info("첫 큐 사이즈="+redisTemplate.opsForList().size("teamQueue"));
         // 매치 성공시 스케줄링 중지
         if (matchingSuccess) {
             return;
         }
 
-
         if (myRealTeam != null && !matchingSuccess && redisTemplate.opsForList().size("teamQueue") > 0) {
             MatchingRequest myTeam = myRealTeam;
-            String myTeamJson = convertMatchingRequestToJson(myTeam);
 
             MatchingRequest matchingTeam = findMatchingTeam(myTeam);
             System.out.println("성공="+matchingTeam);
@@ -101,9 +100,7 @@ public class MatchingService {
                     return;
                 } else {
                     String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
-                    if (potentialMatchJson != null) {
-                        redisTemplate.opsForList().leftPush("teamQueue", myTeamJson);
-                    } else {
+                    if (potentialMatchJson == null) {
                         notifyFailure();
                         return;
                     }
@@ -113,7 +110,6 @@ public class MatchingService {
     }
 
     private MatchingRequest findMatchingTeam(MatchingRequest myTeam) {
-        log.info("큐 사이즈="+redisTemplate.opsForList().size("teamQueue"));
         while (redisTemplate.opsForList().size("teamQueue") > 0) {
             // Redis의 List에서 팀 정보 가져오기
             String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
