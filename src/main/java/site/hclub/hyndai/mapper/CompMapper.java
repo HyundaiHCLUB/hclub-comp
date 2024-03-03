@@ -76,4 +76,6 @@ public interface CompMapper {
     List<String> getTeamMemberIds(Long teamNo);
 
     Team getTeamInfo(Long teamNo);
+
+    void updateIsMatched(Long teamNo);
 }
