@@ -77,9 +77,9 @@
             SELECT team_seq.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO team (team_no, team_loc, team_name, created_at, match_type, match_capacity, team_image,
-        team_rating,match_date,products_no)
+        team_rating,team_goods ,match_date,products_no)
         VALUES (#{teamNo}, #{teamLoc}, #{teamName},  SYSDATE, #{matchType},
-        #{matchCapacity} , #{teamImage} ,#{teamRating},#{matchDate},#{productsNo})
+        #{matchCapacity} , #{teamImage} ,#{teamRating},#{teamGoods},#{matchDate},#{productsNo})
     </insert>
 
     <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
@@ -180,7 +180,7 @@
 
     <insert id="uploadImage">
         INSERT INTO image (image_no, upload_name, image_url)
-        VALUES (image_seq.nextval, ${fileName}, ${url})
+        VALUES (image_seq.nextval, #{fileName}, #{url})
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
@@ -324,4 +324,9 @@
         FROM    team
         WHERE   team_no = #{teamNo}
     </select>
+    <update id="updateIsMatched">
+        UPDATE TEAM
+        SET isMatched ='Y'
+        WHERE team_no = #{teamNo}
+    </update>
 </mapper>

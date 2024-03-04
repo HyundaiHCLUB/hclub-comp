@@ -384,6 +384,9 @@ public class CompServiceImpl implements CompService {
             compMapper.generateMatch(response);
             matchHistoryNo = response.getMatchHistoryNo();
             log.info("matchHistoryNo ==> " + matchHistoryNo);
+            // 3. isMatched = 'Y' 처리
+            compMapper.updateIsMatched(team1No);
+            compMapper.updateIsMatched(team2No);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
