@@ -1,10 +1,8 @@
 package site.hclub.hyndai.service;
 
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 import site.hclub.hyndai.mapper.SettleMapper;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,9 +34,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 
 @Slf4j
@@ -445,18 +444,20 @@ public class CompServiceImpl implements CompService {
 			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setDoOutput(true);
 
+			log.info("결제 "+ sdto.toString());
+			
 			String parameter = "cid=TC0ONETIME" // 가맹점 코드
 					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
 					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
-					+ "&item_name="+sdto.getSettleName() // 상품명
+					+ "&item_name="+URLEncoder.encode(sdto.getSettleName(), "UTF-8") // 상품명
 					+ "&quantity=1" // 상품 수량
 					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
 					+ "&vat_amount=0" // 부가세
 					+ "&tax_free_amount=0" // 상품 비과세 금액
 					//+ "&approval_url=http://localhost/competition/paySuccess" // 로컬 결제 성공 시
 					+ "&approval_url=https://www.h-club.site/competition/paySuccess" //서버 결제 성공 시
-					+ "&fail_url=http://localhost" // 결제 실패 시
-					+ "&cancel_url=http://localhost";
+					+ "&fail_url=https://www.h-club.site/competition/payFail" // 결제 실패 시
+					+ "&cancel_url=https://www.h-club.site/competition/payCancel";
 
 			OutputStream out = connection.getOutputStream();
 			DataOutputStream data =new DataOutputStream(out);

@@ -4,9 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="site.hclub.hyndai.mapper.SettleMapper">
     <insert id="insertSettle" parameterType="site.hclub.hyndai.dto.SettleDTO">
-     INSERT INTO settlement 
-     ( match_hist_no, settle_amount, products_no, settle_member_id ,recipent_member_no )
-     VALUES 
-    ( #{matchHistNo}, #{settleAmount}, #{productsNo}, #{settleMemberId}, #{recipentMemberNo})
+     DECLARE
+	    v_match_hist_no settlement.match_hist_no%TYPE := #{matchHistNo};
+	    v_settle_amount settlement.settle_amount%TYPE := #{settleAmount};
+	    v_products_no settlement.products_no%TYPE := #{productsNo};
+	    v_settle_member_id settlement.settle_member_id%TYPE := #{settleMemberId};
+	    v_recipent_member_no settlement.recipent_member_no%TYPE := #{recipentMemberNo};
+	BEGIN
+	    INSERT INTO settlement 
+	    (match_hist_no, settle_amount, products_no, settle_member_id, recipent_member_no)
+	    VALUES 
+	    (v_match_hist_no, v_settle_amount, v_products_no, v_settle_member_id, v_recipent_member_no);
+	    
+	    COMMIT;
+	END;
     </insert>
 </mapper>
