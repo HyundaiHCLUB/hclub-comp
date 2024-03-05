@@ -24,7 +24,7 @@ public interface CompService {
 
     public void updateScore(Long teamNo, Long score);
 
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException;
+    public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException;
 
     public HistoryDetailResponse getHistoryDetail(Long matchHistNo);
 
@@ -74,4 +74,5 @@ public interface CompService {
     Long getMyTeamNo(ConfigureTeamRequest request);
 
     Team getTeamInfo(Long teamNo);
+
 }

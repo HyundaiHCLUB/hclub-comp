@@ -135,7 +135,7 @@ public class CompController {
             compService.updateScore(request.getTeamANo(), request.getScoreA());
             compService.updateScore(request.getTeamBNo(), request.getScoreB());
             // 2. 경기 사진 등록
-            compService.uploadHistoryImage(multipartFile);
+            compService.uploadHistoryImage(matchHistNo, multipartFile);
             // 3. 경기 일자 등록
             compService.updateMatchDate(request.getMatchDate(), request.getMatchHistNo());
         } catch (IOException e) {
