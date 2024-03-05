@@ -250,8 +250,8 @@ public class CompServiceImpl implements CompService {
      * 경기 스코어 score 테이블에 기록(팀별)
      * */
     @Override
-    public void updateScore(Long teamNo, Long score) {
-        Long teamScoreNo = compMapper.getTeamScoreNo(teamNo);
+    public void updateScore(Long matchHistoryNo, Long teamNo, Long score) {
+        Long teamScoreNo = compMapper.getTeamScoreNo(matchHistoryNo, teamNo);
         compMapper.updateScore(teamScoreNo, score);
     }
 
@@ -358,7 +358,7 @@ public class CompServiceImpl implements CompService {
     @Override
     public void updateMatchDate(String matchDateString, Long matchHistNo) {
         LocalDateTime matchDate = timeService.parseStringToLocalDateTime(matchDateString);
-
+        log.info("(Service) matchHistNo -> " + matchHistNo);
         compMapper.updateMatchDate(matchDate, matchHistNo);
     }
 

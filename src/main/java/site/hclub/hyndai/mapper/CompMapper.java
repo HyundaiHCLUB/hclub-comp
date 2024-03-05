@@ -45,7 +45,7 @@ public interface CompMapper {
 
     public void changeRating(@Param("teamNo") Long teamNo, @Param("ratingChange") Long ratingChange);
 
-    public Long getTeamScoreNo(Long teamNo);
+    public Long getTeamScoreNo(@Param("matchHistoryNo") Long matchHistoryNo, @Param("teamNo") Long teamNo);
 
     public Long uploadImage(UploadImageRequest request);
 
@@ -82,3 +82,4 @@ public interface CompMapper {
 
     void updateMatchImage(@Param("matchHistoryNo") Long matchHistoryNo, @Param("imageNo") Long imageNo);
 }
+

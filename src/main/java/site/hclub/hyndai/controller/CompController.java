@@ -132,12 +132,14 @@ public class CompController {
         try {
             // 1. 경기 스코어 등록
             Long matchHistNo = request.getMatchHistNo();
-            compService.updateScore(request.getTeamANo(), request.getScoreA());
-            compService.updateScore(request.getTeamBNo(), request.getScoreB());
+            compService.updateScore(matchHistNo, request.getTeamANo(), request.getScoreA());
+            compService.updateScore(matchHistNo, request.getTeamBNo(), request.getScoreB());
             // 2. 경기 사진 등록
             compService.uploadHistoryImage(matchHistNo, multipartFile);
             // 3. 경기 일자 등록
-            compService.updateMatchDate(request.getMatchDate(), request.getMatchHistNo());
+            log.info("matchDate from Request => " + request.getMatchDate());
+            log.info("matchHistoryNo from Request => " + request.getMatchHistNo());
+            compService.updateMatchDate(request.getMatchDate(), matchHistNo);
         } catch (IOException e) {
             log.error("사진 업로드 실패 : " + e.getMessage());
             e.printStackTrace();
