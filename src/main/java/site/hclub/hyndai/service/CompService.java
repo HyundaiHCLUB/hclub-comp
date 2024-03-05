@@ -22,7 +22,7 @@ public interface CompService {
 
     public TeamDTO getTeamDetail(Long teamNo);
 
-    public void updateScore(Long teamNo, Long score);
+    public void updateScore(Long matchHistoryNo, Long teamNo, Long score);
 
     public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException;
 

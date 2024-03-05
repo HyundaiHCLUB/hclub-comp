@@ -134,9 +134,13 @@
     </update>
 
     <select id="getTeamScoreNo" resultType="long">
-        SELECT score_no
-        FROM score
-        WHERE team_no = #{team_no}
+        SELECT  s.score_no
+        FROM    score  s
+        JOIN    match  m
+        ON      s.score_no = m.win_team_score_no
+        OR      s.score_no = m.lose_team_score_no
+        WHERE   team_no = #{teamNo}
+        AND     m.match_hist_no = #{matchHistoryNo}
     </select>
 
     <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
@@ -212,7 +216,7 @@
 
     <update id="updateMatchDate">
         UPDATE match
-        SET match_date = ${matchDate}
+        SET match_date = #{matchDate}
         WHERE match_hist_no = #{matchHistNo}
     </update>
 
