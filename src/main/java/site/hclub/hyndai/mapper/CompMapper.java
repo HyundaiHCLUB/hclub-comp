@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import site.hclub.hyndai.domain.*;
 import site.hclub.hyndai.dto.MemberInfo;
 import site.hclub.hyndai.dto.TeamDTO;
+import site.hclub.hyndai.dto.request.UploadImageRequest;
 import site.hclub.hyndai.dto.response.*;
 
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ public interface CompMapper {
 
     public Long getTeamScoreNo(Long teamNo);
 
-    public void uploadImage(@Param("fileName") String fileName, @Param("url") String url);
+    public Long uploadImage(UploadImageRequest request);
 
     public List<RankResponse> getRankList(int num);
 
@@ -78,4 +79,6 @@ public interface CompMapper {
     Team getTeamInfo(Long teamNo);
 
     void updateIsMatched(Long teamNo);
+
+    void updateMatchImage(@Param("matchHistoryNo") Long matchHistoryNo, @Param("imageNo") Long imageNo);
 }

@@ -178,9 +178,12 @@
 
     </select>
 
-    <insert id="uploadImage">
+    <insert id="uploadImage" parameterType="site.hclub.hyndai.dto.request.UploadImageRequest">
+        <selectKey keyProperty="imageNo" order="BEFORE" resultType="long">
+            SELECT image_seq.NEXTVAL FROM DUAL
+        </selectKey>
         INSERT INTO image (image_no, upload_name, image_url)
-        VALUES (image_seq.nextval, #{fileName}, #{url})
+        VALUES (#{imageNo}, #{fileName}, #{url})
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
@@ -329,4 +332,8 @@
         SET isMatched ='Y'
         WHERE team_no = #{teamNo}
     </update>
+    <insert id="updateMatchImage">
+        INSERT INTO match_image (match_image_no, match_hist_no, image_no)
+        VALUES (match_image_seq.nextval, #{matchHistoryNo}, #{imageNo})
+    </insert>
 </mapper>

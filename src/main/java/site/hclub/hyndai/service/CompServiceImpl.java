@@ -257,7 +257,7 @@ public class CompServiceImpl implements CompService {
 
     // 경기 기록 이미지 업로드
     @Override
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException {
+    public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException {
         String url;
         /* S3 에 파일 업로드 */
         if (multipartFile == null) { // 이미지 null 인 경우 -> 기본 이미지로 대체
@@ -274,8 +274,13 @@ public class CompServiceImpl implements CompService {
         log.info(url);
         /* DB 에 파일 URL 업로드*/
         String fileName = multipartFile.getOriginalFilename();
-        compMapper.uploadImage(fileName, url);
-        System.out.println("url -> : " + url);
+        UploadImageRequest request = new UploadImageRequest();
+        request.setFileName(fileName);
+        request.setUrl(url);
+        compMapper.uploadImage(request);
+        log.info("inserted imageNo : " + request.getImageNo());
+        /* match_image 테이블 업데이트*/
+        compMapper.updateMatchImage(matchHistoryNo,request.getImageNo());
     }
 
     // 경기 상세 기록 조회
