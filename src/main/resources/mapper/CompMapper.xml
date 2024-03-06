@@ -159,7 +159,7 @@
     </select>
 
     <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
-        SELECT e.employee_name AS memberName  , m.member_no AS memberNo
+        SELECT e.employee_name AS memberName  , m.member_no AS memberNo , e.employee_dept AS memberDept, e.employee_position AS memberPosition
         FROM TEAM t
                  JOIN MEMBER_TEAM mt ON t.team_no = mt.team_no
                  JOIN MEMBER m ON mt.member_no = m.member_no
