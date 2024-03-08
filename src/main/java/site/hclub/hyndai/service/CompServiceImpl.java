@@ -330,10 +330,11 @@ public class CompServiceImpl implements CompService {
         String result = "";
         if (request.getWinTeamScore() == request.getLoseTeamScore()) {
             result = "DRAW";
-        } else {
+        } else if (request.getWinTeamScore() > request.getLoseTeamScore()){
             result = "WIN";
+        } else if (request.getWinTeamScore() < request.getLoseTeamScore()) {
+            result = "LOSE";
         }
-        log.info("match result ==> " + request.getWinTeamNo() + " team " + result);
         Long ratingChange = eloService.getRatingChange(winTeamRating, loseTeamRating, result);
         Long winTeamChange = ratingChange - winTeamRating;
         Long loseTeamChange = (ratingChange - loseTeamRating) * (-1);
