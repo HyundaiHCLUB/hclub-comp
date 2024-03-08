@@ -18,8 +18,5 @@ public class ParseService {
         }
         return null;
     }
-
-    public String parseCapacityToString(Long teamCapacity) {
-        return teamCapacity + " ON " + teamCapacity;
-    }
+    
 }

@@ -13,7 +13,7 @@ public class ScheduledTasks {
 
     private final CompService compService;
 
-    // 3분 단위로 시간이 지난 경기를 제거합니다.
+    // 1분 단위로 시간이 지난 경기를 제거합니다.
     @Scheduled(cron = "0 0/1 * * * ?")
     public void updateTeamMatchStatus() {
         compService.updateMatchStatus();
