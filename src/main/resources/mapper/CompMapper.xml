@@ -226,7 +226,6 @@
         </selectKey>
         INSERT INTO score(score_no, team_no, score_amount)
         VALUES (#{scoreNo}, #{teamNo}, 0)
-
     </insert>
 
     <insert id="generateMatch" parameterType="site.hclub.hyndai.dto.response.CreateMatchResponse">

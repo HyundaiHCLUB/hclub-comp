@@ -189,7 +189,6 @@ public class CompController {
     @PostMapping(value = "/rating",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<Long>>> updateRating(@RequestBody AfterMatchRatingRequest request) {
-        log.info("updateRating ====> ");
         // 레이팅 변경하고 변동값을 리턴
         List<Long> ratingChange = compService.updateRating(request);
         log.info("레이팅 변동 : " + ratingChange);
@@ -208,7 +207,6 @@ public class CompController {
     public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
 
         List<RankResponse> list = compService.getRankList(num);
-        log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }
 
