@@ -204,6 +204,7 @@ public class CompServiceImpl implements CompService {
     public TeamDTO getTeamDetail(Long teamNo) {
         List<MemberInfo> memberList = compMapper.getMemberByTeamNo(teamNo);
         TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        teamDTO.setMatchKind(teamDTO.getMatchType());
         teamDTO.setMemberList(memberList);
         // 파싱
 
