@@ -20,6 +20,8 @@
                 #{gameType, jdbcType=VARCHAR, mode=IN},
                 #{players, jdbcType=NUMERIC, mode=IN},
                 #{date, jdbcType=VARCHAR, mode=IN},
+                #{minRating, jdbcType=NUMERIC, mode=IN},
+                #{maxRating, jdbcType=NUMERIC, mode=IN},
                 #{sortOption, jdbcType=VARCHAR, mode=IN},
                 #{keyword, jdbcType=VARCHAR, mode=IN},
                 #{key, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=teamResultMap}
@@ -141,7 +143,7 @@
         AND     m.match_hist_no = #{matchHistoryNo}
     </select>
 
-    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
+    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.response.TeamDetailDTOResponse">
         SELECT t.team_no                                                      AS teamNo,
                t.team_name                                                    AS teamName,
                t.match_type                                                   AS matchType,
