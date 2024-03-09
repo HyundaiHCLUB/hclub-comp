@@ -1,6 +1,7 @@
-package site.hclub.hyndai.dto;
+package site.hclub.hyndai.dto.response;
 
 import lombok.*;
+import site.hclub.hyndai.dto.MemberInfo;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class TeamDTO {
+public class TeamDetailDTOResponse {
     private Long teamNo;
     private String teamName;
     private String teamCapacity;
@@ -21,5 +22,6 @@ public class TeamDTO {
     private String teamGoods;
     private String teamImage;
     private List<MemberInfo> memberList;
+    private String matchKind;
 
 }

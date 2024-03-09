@@ -87,7 +87,7 @@ public class CompController {
     }
 
     @GetMapping("/{teamNo}")
-    public ResponseEntity<ApiResponse<TeamDTO>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
+    public ResponseEntity<ApiResponse<TeamDetailDTOResponse>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
         log.info("getTeamInfo=======>");
 
 

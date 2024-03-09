@@ -37,7 +37,7 @@ public interface CompMapper {
 
     public String getHistoryImageUrl(Long matchHistNo);
 
-    public TeamDTO getTeamByTeamNo(Long teamNo);
+    public TeamDetailDTOResponse getTeamByTeamNo(Long teamNo);
 
     public List<MemberInfo> getMemberByTeamNo(Long teamNo);
 
