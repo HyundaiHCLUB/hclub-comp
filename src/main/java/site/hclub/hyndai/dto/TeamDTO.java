@@ -21,5 +21,6 @@ public class TeamDTO {
     private String teamGoods;
     private String teamImage;
     private List<MemberInfo> memberList;
+    private String matchKind;
 
 }

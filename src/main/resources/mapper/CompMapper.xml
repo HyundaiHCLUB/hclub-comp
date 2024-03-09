@@ -20,8 +20,6 @@
                 #{gameType, jdbcType=VARCHAR, mode=IN},
                 #{players, jdbcType=NUMERIC, mode=IN},
                 #{date, jdbcType=VARCHAR, mode=IN},
-                #{minRating, jdbcType=NUMERIC, mode=IN},
-                #{maxRating, jdbcType=NUMERIC, mode=IN},
                 #{sortOption, jdbcType=VARCHAR, mode=IN},
                 #{keyword, jdbcType=VARCHAR, mode=IN},
                 #{key, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=teamResultMap}
@@ -226,7 +224,6 @@
         </selectKey>
         INSERT INTO score(score_no, team_no, score_amount)
         VALUES (#{scoreNo}, #{teamNo}, 0)
-
     </insert>
 
     <insert id="generateMatch" parameterType="site.hclub.hyndai.dto.response.CreateMatchResponse">
