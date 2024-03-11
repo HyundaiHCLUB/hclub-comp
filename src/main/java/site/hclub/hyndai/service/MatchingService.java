@@ -84,7 +84,7 @@ public class MatchingService {
                 if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
                         !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
                         myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
-                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 300) {
+                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 500) {
                     continue;
                 }
 
