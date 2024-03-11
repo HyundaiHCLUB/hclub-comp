@@ -64,8 +64,6 @@ public class MatchingService {
                             .teamRating(teamList.get(0).getTeamRating())
                             .build();
 
-                    log.info("종목=" + matchingRequest.getMatchType());
-                    log.info("경기인원수=" + teamMemberNoList.size());
 
                     String teamJson = convertMatchingRequestToJson(matchingRequest);
                     redisTemplate.opsForList().leftPush("teamQueue", teamJson);
@@ -76,22 +74,17 @@ public class MatchingService {
 
     @Scheduled(fixedRate = 3000)
     public void matchTeams() {
-        log.info("내팀=" + myRealTeam);
-        log.info("첫 큐 사이즈=" + redisTemplate.opsForList().size("teamQueue"));
-
         MatchingRequest myTeam = myRealTeam;
         MatchingRequest matchingTeam = null;
 
         if(myTeam != null) {
             while (redisTemplate.opsForList().size("teamQueue") > 0) {
-                // Redis의 List에서 팀 정보 가져오기
                 String potentialMatchJson = redisTemplate.opsForList().rightPop("teamQueue");
                 MatchingRequest potentialMatchFromRedis = convertJsonToMatchingRequest(potentialMatchJson);
-                log.info("myTeam=" + myTeam.getTeamNo() + " potential=" + potentialMatchFromRedis.getTeamNo());
                 if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
                         !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
                         myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
-                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 100) {
+                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 500) {
                     continue;
                 }
 
@@ -109,7 +102,6 @@ public class MatchingService {
                 myRealTeam = null;
             } else {
                 failureAttempts++;
-                log.info("실패 횟수=" + failureAttempts);
 
                 if (failureAttempts >= MAX_FAILURE_ATTEMPTS) {
                     notifyFailure();
@@ -138,7 +130,6 @@ public class MatchingService {
         try {
             return new ObjectMapper().writeValueAsString(team);
         } catch (JsonProcessingException e) {
-            log.error("Error converting MatchingRequest to JSON", e);
             return null;
         }
     }
