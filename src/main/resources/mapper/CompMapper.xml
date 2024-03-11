@@ -77,9 +77,9 @@
             SELECT team_seq.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO team (team_no, team_loc, team_name, created_at, match_type, match_capacity, team_image,
-        team_rating,match_date,products_no)
+        team_rating,team_goods ,match_date,products_no)
         VALUES (#{teamNo}, #{teamLoc}, #{teamName},  SYSDATE, #{matchType},
-        #{matchCapacity} , #{teamImage} ,#{teamRating},#{matchDate},#{productsNo})
+        #{matchCapacity} , #{teamImage} ,#{teamRating},#{teamGoods},#{matchDate},#{productsNo})
     </insert>
 
     <insert id="addTeamMemberToTeam" parameterType="MemberTeam">
@@ -134,12 +134,16 @@
     </update>
 
     <select id="getTeamScoreNo" resultType="long">
-        SELECT score_no
-        FROM score
-        WHERE team_no = #{team_no}
+        SELECT  s.score_no
+        FROM    score  s
+        JOIN    match  m
+        ON      s.score_no = m.win_team_score_no
+        OR      s.score_no = m.lose_team_score_no
+        WHERE   team_no = #{teamNo}
+        AND     m.match_hist_no = #{matchHistoryNo}
     </select>
 
-    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.TeamDTO">
+    <select id="getTeamByTeamNo" parameterType="long" resultType="site.hclub.hyndai.dto.response.TeamDetailDTOResponse">
         SELECT t.team_no                                                      AS teamNo,
                t.team_name                                                    AS teamName,
                t.match_type                                                   AS matchType,
@@ -155,7 +159,7 @@
     </select>
 
     <select id="getMemberByTeamNo" resultType="site.hclub.hyndai.dto.MemberInfo">
-        SELECT e.employee_name AS memberName  , m.member_no AS memberNo
+        SELECT e.employee_name AS memberName  , m.member_no AS memberNo , e.employee_dept AS memberDept, e.employee_position AS memberPosition
         FROM TEAM t
                  JOIN MEMBER_TEAM mt ON t.team_no = mt.team_no
                  JOIN MEMBER m ON mt.member_no = m.member_no
@@ -178,9 +182,12 @@
 
     </select>
 
-    <insert id="uploadImage">
+    <insert id="uploadImage" parameterType="site.hclub.hyndai.dto.request.UploadImageRequest">
+        <selectKey keyProperty="imageNo" order="BEFORE" resultType="long">
+            SELECT image_seq.NEXTVAL FROM DUAL
+        </selectKey>
         INSERT INTO image (image_no, upload_name, image_url)
-        VALUES (image_seq.nextval, ${fileName}, ${url})
+        VALUES (#{imageNo}, #{fileName}, #{url})
     </insert>
 
     <select id="getRankList" resultType="site.hclub.hyndai.dto.response.RankResponse">
@@ -209,7 +216,7 @@
 
     <update id="updateMatchDate">
         UPDATE match
-        SET match_date = ${matchDate}
+        SET match_date = #{matchDate}
         WHERE match_hist_no = #{matchHistNo}
     </update>
 
@@ -219,7 +226,6 @@
         </selectKey>
         INSERT INTO score(score_no, team_no, score_amount)
         VALUES (#{scoreNo}, #{teamNo}, 0)
-
     </insert>
 
     <insert id="generateMatch" parameterType="site.hclub.hyndai.dto.response.CreateMatchResponse">
@@ -324,4 +330,13 @@
         FROM    team
         WHERE   team_no = #{teamNo}
     </select>
+    <update id="updateIsMatched">
+        UPDATE TEAM
+        SET isMatched ='Y'
+        WHERE team_no = #{teamNo}
+    </update>
+    <insert id="updateMatchImage">
+        INSERT INTO match_image (match_image_no, match_hist_no, image_no)
+        VALUES (match_image_seq.nextval, #{matchHistoryNo}, #{imageNo})
+    </insert>
 </mapper>

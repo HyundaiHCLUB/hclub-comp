@@ -1,10 +1,8 @@
 package site.hclub.hyndai.service;
 
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import site.hclub.hyndai.dto.response.*;
 import site.hclub.hyndai.mapper.CompMapper;
 import site.hclub.hyndai.mapper.MemberMapper;
 import site.hclub.hyndai.mapper.SettleMapper;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,9 +34,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 
 @Slf4j
@@ -202,9 +201,10 @@ public class CompServiceImpl implements CompService {
     }
 
     @Override
-    public TeamDTO getTeamDetail(Long teamNo) {
+    public TeamDetailDTOResponse getTeamDetail(Long teamNo) {
         List<MemberInfo> memberList = compMapper.getMemberByTeamNo(teamNo);
-        TeamDTO teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        TeamDetailDTOResponse teamDTO = compMapper.getTeamByTeamNo(teamNo);
+        teamDTO.setMatchKind(teamDTO.getMatchType());
         teamDTO.setMemberList(memberList);
         // 파싱
 
@@ -251,14 +251,14 @@ public class CompServiceImpl implements CompService {
      * 경기 스코어 score 테이블에 기록(팀별)
      * */
     @Override
-    public void updateScore(Long teamNo, Long score) {
-        Long teamScoreNo = compMapper.getTeamScoreNo(teamNo);
+    public void updateScore(Long matchHistoryNo, Long teamNo, Long score) {
+        Long teamScoreNo = compMapper.getTeamScoreNo(matchHistoryNo, teamNo);
         compMapper.updateScore(teamScoreNo, score);
     }
 
     // 경기 기록 이미지 업로드
     @Override
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException {
+    public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException {
         String url;
         /* S3 에 파일 업로드 */
         if (multipartFile == null) { // 이미지 null 인 경우 -> 기본 이미지로 대체
@@ -275,8 +275,13 @@ public class CompServiceImpl implements CompService {
         log.info(url);
         /* DB 에 파일 URL 업로드*/
         String fileName = multipartFile.getOriginalFilename();
-        compMapper.uploadImage(fileName, url);
-        System.out.println("url -> : " + url);
+        UploadImageRequest request = new UploadImageRequest();
+        request.setFileName(fileName);
+        request.setUrl(url);
+        compMapper.uploadImage(request);
+        log.info("inserted imageNo : " + request.getImageNo());
+        /* match_image 테이블 업데이트*/
+        compMapper.updateMatchImage(matchHistoryNo,request.getImageNo());
     }
 
     // 경기 상세 기록 조회
@@ -326,10 +331,11 @@ public class CompServiceImpl implements CompService {
         String result = "";
         if (request.getWinTeamScore() == request.getLoseTeamScore()) {
             result = "DRAW";
-        } else {
+        } else if (request.getWinTeamScore() > request.getLoseTeamScore()){
             result = "WIN";
+        } else if (request.getWinTeamScore() < request.getLoseTeamScore()) {
+            result = "LOSE";
         }
-        log.info("match result ==> " + request.getWinTeamNo() + " team " + result);
         Long ratingChange = eloService.getRatingChange(winTeamRating, loseTeamRating, result);
         Long winTeamChange = ratingChange - winTeamRating;
         Long loseTeamChange = (ratingChange - loseTeamRating) * (-1);
@@ -354,7 +360,7 @@ public class CompServiceImpl implements CompService {
     @Override
     public void updateMatchDate(String matchDateString, Long matchHistNo) {
         LocalDateTime matchDate = timeService.parseStringToLocalDateTime(matchDateString);
-
+        log.info("(Service) matchHistNo -> " + matchHistNo);
         compMapper.updateMatchDate(matchDate, matchHistNo);
     }
 
@@ -385,6 +391,9 @@ public class CompServiceImpl implements CompService {
             compMapper.generateMatch(response);
             matchHistoryNo = response.getMatchHistoryNo();
             log.info("matchHistoryNo ==> " + matchHistoryNo);
+            // 3. isMatched = 'Y' 처리
+            compMapper.updateIsMatched(team1No);
+            compMapper.updateIsMatched(team2No);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
@@ -442,18 +451,20 @@ public class CompServiceImpl implements CompService {
 			connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setDoOutput(true);
 
+			log.info("결제 "+ sdto.toString());
+			
 			String parameter = "cid=TC0ONETIME" // 가맹점 코드
 					+ "&partner_order_id=partner_order_id" // 가맹점 주문번호
 					+ "&partner_user_id=partner_user_id" // 가맹점 회원 id
-					+ "&item_name="+sdto.getSettleName() // 상품명
+					+ "&item_name="+URLEncoder.encode(sdto.getSettleName(), "UTF-8") // 상품명
 					+ "&quantity=1" // 상품 수량
 					+ "&total_amount="+sdto.getSettleAmount() // 총 금액
 					+ "&vat_amount=0" // 부가세
 					+ "&tax_free_amount=0" // 상품 비과세 금액
 					//+ "&approval_url=http://localhost/competition/paySuccess" // 로컬 결제 성공 시
 					+ "&approval_url=https://www.h-club.site/competition/paySuccess" //서버 결제 성공 시
-					+ "&fail_url=http://localhost" // 결제 실패 시
-					+ "&cancel_url=http://localhost";
+					+ "&fail_url=https://www.h-club.site/competition/payFail" // 결제 실패 시
+					+ "&cancel_url=https://www.h-club.site/competition/payCancel";
 
 			OutputStream out = connection.getOutputStream();
 			DataOutputStream data =new DataOutputStream(out);

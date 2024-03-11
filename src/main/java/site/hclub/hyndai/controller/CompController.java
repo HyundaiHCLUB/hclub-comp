@@ -87,7 +87,7 @@ public class CompController {
     }
 
     @GetMapping("/{teamNo}")
-    public ResponseEntity<ApiResponse<TeamDTO>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
+    public ResponseEntity<ApiResponse<TeamDetailDTOResponse>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
         log.info("getTeamInfo=======>");
 
 
@@ -132,12 +132,14 @@ public class CompController {
         try {
             // 1. 경기 스코어 등록
             Long matchHistNo = request.getMatchHistNo();
-            compService.updateScore(request.getTeamANo(), request.getScoreA());
-            compService.updateScore(request.getTeamBNo(), request.getScoreB());
+            compService.updateScore(matchHistNo, request.getTeamANo(), request.getScoreA());
+            compService.updateScore(matchHistNo, request.getTeamBNo(), request.getScoreB());
             // 2. 경기 사진 등록
-            compService.uploadHistoryImage(multipartFile);
+            compService.uploadHistoryImage(matchHistNo, multipartFile);
             // 3. 경기 일자 등록
-            compService.updateMatchDate(request.getMatchDate(), request.getMatchHistNo());
+            log.info("matchDate from Request => " + request.getMatchDate());
+            log.info("matchHistoryNo from Request => " + request.getMatchHistNo());
+            compService.updateMatchDate(request.getMatchDate(), matchHistNo);
         } catch (IOException e) {
             log.error("사진 업로드 실패 : " + e.getMessage());
             e.printStackTrace();
@@ -187,7 +189,6 @@ public class CompController {
     @PostMapping(value = "/rating",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<Long>>> updateRating(@RequestBody AfterMatchRatingRequest request) {
-        log.info("updateRating ====> ");
         // 레이팅 변경하고 변동값을 리턴
         List<Long> ratingChange = compService.updateRating(request);
         log.info("레이팅 변동 : " + ratingChange);
@@ -206,7 +207,6 @@ public class CompController {
     public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
 
         List<RankResponse> list = compService.getRankList(num);
-        log.info("Top 10 ranking ==> " + list.toString());
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }
 

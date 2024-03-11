@@ -185,12 +185,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	*/
     public void sendMessageToMeAllBrowser(JSONObject obj) {
         String idx = ""+obj.get("otherUseridx");
+        log.info("sendMessageToMeAllBrowser idx: "+ idx);
         for (WebSocketSession session : sessionSet) {
             try {
                 if (session.isOpen()) {
                     Map<String, Object> m = session.getAttributes();   
                     //세션에 있는 유저중, 내가 찾는 유저에게만 메시지 전송
                     if( m.get("userIdx") != null && (""+m.get("userIdx")).compareTo(idx) ==0 ){
+                    	log.info("idx: "+idx+" , text: "+obj.toString());
                         session.sendMessage(new TextMessage(obj.toString()));
                     }
                 }
@@ -219,7 +221,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             //웹소켓 세션 -> n번의 회원번호를 가진 회원임을 설정
 			Map<String, Object> m = session.getAttributes();
             m.put("userIdx", userIdx);
-			//m.put("level", level);//일반회원			
+			//m.put("level", level);//일반회원	
+            
         } catch (Exception e) {
         }
     }
@@ -260,12 +263,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             
             //상대방대화내역 디비에 저장(추후추가)
             
-            
             JSONObject newObj=new JSONObject();
             newObj.put("protocol", "sendChat");
             newObj.put("chatMsg", chatMsg);
             newObj.put("fromUser", userIdx);
             newObj.put("toUser", otherUseridx);
+            newObj.put("otherUseridx", otherUseridx);
             
             //상대방대화내역 put하기
             //newObj.put("toUser", otherUseridx);
@@ -278,6 +281,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             // 분과 초를 잘라서 필요한 형식으로 변환합니다.
             String time = now.format(DateTimeFormatter.ofPattern("h:mm a"));
             newObj.put("time",time);
+            
             this.sendMessageToMeAllBrowser(newObj);	//상대방에게 전송
             this.sendMessageToMe(session, newObj);//나에게 전송
         } catch (Exception e) {

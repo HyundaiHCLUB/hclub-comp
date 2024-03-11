@@ -20,11 +20,11 @@ public interface CompService {
 
     public CreateTeamResponse makeTeam(CreateTeamRequest teamDTO, MultipartFile multipartFile) throws IOException;
 
-    public TeamDTO getTeamDetail(Long teamNo);
+    public TeamDetailDTOResponse getTeamDetail(Long teamNo);
 
-    public void updateScore(Long teamNo, Long score);
+    public void updateScore(Long matchHistoryNo, Long teamNo, Long score);
 
-    public void uploadHistoryImage(MultipartFile multipartFile) throws IOException;
+    public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException;
 
     public HistoryDetailResponse getHistoryDetail(Long matchHistNo);
 
@@ -74,4 +74,5 @@ public interface CompService {
     Long getMyTeamNo(ConfigureTeamRequest request);
 
     Team getTeamInfo(Long teamNo);
+
 }
