@@ -42,22 +42,7 @@ public class CompController {
     private final CompService compService;
     private final UserService userService;
 
-    // 경쟁 메인 페이지로 이동
-    @GetMapping("/main")
-    public ModelAndView goCompMain() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/compMain");
-        return mav;
-    }
-
-    /* 매칭 상세페이지로 이동 */
-    @GetMapping("/matchDetail")
-    public ModelAndView goMatchDetailPage() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/MatchDetail");
-        return mav;
-    }
-
+    
     /**
      * @author : 송원선
      * @description :경기 상세 정보 조회 API
