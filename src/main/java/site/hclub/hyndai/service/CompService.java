@@ -16,6 +16,10 @@ import javax.servlet.http.HttpSession;
 
 public interface CompService {
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 상세정보 보기
+     */
     MatchDetailResponse getMatchDetail(Long matchHistoryNo);
 
     /**
@@ -30,14 +34,34 @@ public interface CompService {
      */
     public TeamDetailDTOResponse getTeamDetail(Long teamNo);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  점수 수정
+     */
     public void updateScore(Long matchHistoryNo, Long teamNo, Long score);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 이미지 업로드
+     */
     public void uploadHistoryImage(Long matchHistoryNo, MultipartFile multipartFile) throws IOException;
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 기록 상세보기
+     */
     public HistoryDetailResponse getHistoryDetail(Long matchHistNo);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 기록 수정
+     */
     public void modifyMatchHistory(HistoryModifyRequest request);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  레이팅 변경
+     */
     public List<Long> updateRating(AfterMatchRatingRequest request);
 
     /**
@@ -53,11 +77,22 @@ public interface CompService {
      */
     List<TeamDTO> getTeamList(PageRequestDTO pageRequestDTO);
 
-
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  랭킹 리스트
+     */
     List<RankResponse> getRankList(int num);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 일자 수정
+     */
     void updateMatchDate(String matchDate, Long matchHistNo);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 생성
+     */
     Long generateMatch(CreateMatchRequest request);
 
     /**
@@ -78,11 +113,21 @@ public interface CompService {
      */
     int insertSettle(SettleDTO sdto);
 
-    // 팀의 멤버 목록 리턴
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  팀의 멤버 목록(번호) 리턴
+     */
     List<Long> getTeamMemberList(Long teamNo);
-    // 경기 장소 업데이트
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  경기 장소 업데이트
+     */
     void updateMatchLocation(UpdateMatchLocationRequest request);
 
+    /**
+     * 작성자: 이혜연
+     * 처리 내용:  사용자의 번호(PK) 찾기
+     */
     Long findMemberNo(String memberId);
 
 
@@ -92,11 +137,21 @@ public interface CompService {
      */
 	String kakaopay(HttpSession session, SettleDTO sdto);
 
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  결제 필요 정보 리턴
+     */
     SettleResponse getSettleInfo(Long matchHistNo);
 
-    // (매치) 두 팀중 로그인 사용자가 속한 팀의 번호 리턴
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  (매치) 두 팀중 로그인 사용자가 속한 팀의 번호 리턴
+     */
     Long getMyTeamNo(ConfigureTeamRequest request);
-
+    /**
+     * 작성자: 송원선
+     * 처리 내용:  팀 정보 조회
+     */
     Team getTeamInfo(Long teamNo);
 
 }
