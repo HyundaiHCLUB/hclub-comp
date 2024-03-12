@@ -16,7 +16,15 @@ import springfox.documentation.swagger.web.OperationsSorter;
 import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
+/**
+ * @author 김동욱
+ * @description: Swagger Config File
+ * ===========================
+AUTHOR      NOTE
+ * ---------------------------
+ *    김동욱        최초생성
+ * ===========================
+ */
 @EnableSwagger2
 @Configuration
 public class SwaggerConfig implements WebMvcConfigurer {

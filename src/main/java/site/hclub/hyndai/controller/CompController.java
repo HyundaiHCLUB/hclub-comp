@@ -42,22 +42,6 @@ public class CompController {
     private final CompService compService;
     private final UserService userService;
 
-    // 경쟁 메인 페이지로 이동
-    @GetMapping("/main")
-    public ModelAndView goCompMain() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/compMain");
-        return mav;
-    }
-
-    /* 매칭 상세페이지로 이동 */
-    @GetMapping("/matchDetail")
-    public ModelAndView goMatchDetailPage() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/MatchDetail");
-        return mav;
-    }
-
     /*
      * @작성자 : 송원선
      * 경기 상세 정보 조회 API
@@ -75,25 +59,36 @@ public class CompController {
         return ApiResponse.success(GET_MATCH_DETAIL_SUCCESS, response);
     }
 
-
+    /**
+     @author: 김동욱
+     @description: 경쟁 - 팀을 생성
+     @request : teamDTO
+     @response : team 정보
+     */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<CreateTeamResponse>> makeTeam(@RequestPart(value = "teamDTO") CreateTeamRequest teamDTO,
                                                                     @RequestPart(value = "multipartFile") MultipartFile multipartFile) throws IOException {
-        log.info("createTeam=======>");
-        log.info(teamDTO.toString());
-        log.info(multipartFile);
+
         return ApiResponse.success(CREATE_TEAM_SUCCESS, compService.makeTeam(teamDTO, multipartFile));
     }
-
+    /**
+     @author: 김동욱
+     @description: 경쟁 - 팀 상세보기
+     @request : teamNo
+     @response : team 정보
+     */
     @GetMapping("/{teamNo}")
     public ResponseEntity<ApiResponse<TeamDetailDTOResponse>> getTeamInfo(@PathVariable(value = "teamNo") Long teamNo) {
-        log.info("getTeamInfo=======>");
-
 
         return ApiResponse.success(GET_TEAM_DETAIL_SUCCESS, compService.getTeamDetail(teamNo));
     }
-
+    /**
+     @author: 김동욱
+     @description: 경쟁 - 멤버 검색하기
+     @request : memberName(멤버 이름)
+     @response : MemberDTO
+     */
     @GetMapping("/member")
     public ResponseEntity<ApiResponse<GetMemberInfoResponse>> getMemberInfo(@RequestParam(value = "memberName") String memberName) {
         log.info("getMemberInfo=======>");
@@ -101,7 +96,12 @@ public class CompController {
 
         return ApiResponse.success(GET_MEMBER_DETAIL_SUCCESS, compService.getMemberInfo(memberName));
     }
-
+    /**
+     @author: 김동욱
+     @description: 경쟁 - 팀 리스트 조회하기
+     @request : (Optional) 게임 종류, 참여 인원, 날짜, 최소 레이팅, 최대 레이팅, 정렬 기준, 검색 키워드
+     @response : teamListDTO
+     */
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<TeamDTO>>> getTeamList(@RequestParam(value = "gameType", required = false, defaultValue = "ALL") String gameType,
                                                                   @RequestParam(value = "players", required = false, defaultValue = "0") Long players,
@@ -112,7 +112,7 @@ public class CompController {
                                                                   @RequestParam(value = "keyword", required = false, defaultValue = "NONE") String keyword) {
         PageRequestDTO pageRequestDTO = new PageRequestDTO(gameType, players, date, minRating, maxRating, sortOption, keyword);
 
-        log.info("getTeamList=======>");
+
 
 
         return ApiResponse.success(GET_TEAM_LIST_SUCCESS, compService.getTeamList(pageRequestDTO));
@@ -194,7 +194,12 @@ public class CompController {
         log.info("레이팅 변동 : " + ratingChange);
         return ApiResponse.success(UPDATE_RATING_SUCCESS, ratingChange);
     }
-
+    /**
+     @author: 김동욱
+     @description: 경쟁 - 내기 상품 불러오기
+     @request : N/A
+     @response : ProductList
+     */
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<List<GetProductResponse>>> getProducts() {
 

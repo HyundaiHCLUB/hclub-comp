@@ -1,7 +1,15 @@
 package site.hclub.hyndai.common.util;
 
 import org.springframework.stereotype.Service;
-
+/**
+ * @author 김동욱
+ * @description: 프론트 데이터 파싱 관련 Service
+ * ===========================
+      AUTHOR      NOTE
+ * ---------------------------
+ *    김동욱        최초생성
+ * ===========================
+ */
 @Service
 public class ParseService {
 
