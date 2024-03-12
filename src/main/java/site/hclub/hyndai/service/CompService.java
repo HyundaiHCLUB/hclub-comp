@@ -17,14 +17,16 @@ import javax.servlet.http.HttpSession;
 public interface CompService {
 
     MatchDetailResponse getMatchDetail(Long matchHistoryNo);
+
     /**
-     @author: 김동욱
-     @description: 경쟁 - 팀 생성
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 팀 생성
      */
     public CreateTeamResponse makeTeam(CreateTeamRequest teamDTO, MultipartFile multipartFile) throws IOException;
+
     /**
-     @author: 김동욱
-     @description: 경쟁 - 팀 상세보기
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 팀 상세보기
      */
     public TeamDetailDTOResponse getTeamDetail(Long teamNo);
 
@@ -37,16 +39,19 @@ public interface CompService {
     public void modifyMatchHistory(HistoryModifyRequest request);
 
     public List<Long> updateRating(AfterMatchRatingRequest request);
+
     /**
-     @author: 김동욱
-     @description: 경쟁 - 멤버 정보 조회
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 멤버 정보 조회
      */
-    public GetMemberInfoResponse getMemberInfo(String memberName);
+
+    GetMemberInfoResponse getMemberInfo(String memberName);
+
     /**
-     @author: 김동욱
-     @description: 경쟁 - 팀 목록 조회
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 팀 목록 조회
      */
-    public List<TeamDTO> getTeamList(PageRequestDTO pageRequestDTO);
+    List<TeamDTO> getTeamList(PageRequestDTO pageRequestDTO);
 
 
     List<RankResponse> getRankList(int num);
@@ -56,15 +61,16 @@ public interface CompService {
     Long generateMatch(CreateMatchRequest request);
 
     /**
-     @author: 김동욱
-     @description: 경쟁 - 만료된 팀 처리
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 만료된 팀 처리
      */
-    public void updateMatchStatus();
+    void updateMatchStatus();
+
     /**
-     @author: 김동욱
-     @description: 경쟁 - 상품 목록 조회
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 - 상품 목록 조회
      */
-    public List<GetProductResponse> getProducts();
+    List<GetProductResponse> getProducts();
 
     /**
      * 작성자: 김은솔
