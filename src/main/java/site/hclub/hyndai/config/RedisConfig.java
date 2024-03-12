@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author 김동욱
  * @description: Redis Config File
  * ===========================
-AUTHOR      NOTE
+        AUTHOR      NOTE
  * ---------------------------
  *    김동욱        최초생성
  * ===========================

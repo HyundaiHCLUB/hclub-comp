@@ -16,9 +16,10 @@ import java.util.Map;
 
 @Mapper
 public interface CompMapper {
+
     /**
-     @author: 김동욱
-     @description: 매치 기록 정보를 불러옵니다.
+     * 작성자: 김동욱
+     * 처리 내용: 매치 기록 정보를 불러옵니다.
      */
     Match getMatchVO(Long matchHistoryNo);
 
@@ -27,42 +28,48 @@ public interface CompMapper {
     Member getLeader(Long teamNo);
 
     List<Member> getMembers(Long teamNo);
+
     /**
-     @author: 김동욱
-     @description: 경쟁 팀을 생성합니다.
+     * 작성자: 김동욱
+     * 처리 내용: 경쟁 팀을 생성합니다.
      */
-    public Long addTeam(Team team);
+    Long addTeam(Team team);
+
     /**
-     @author: 김동욱
-     @description: 생성된 팀에 멤버들을 삽입합니다.
+     * 작성자: 김동욱
+     * 처리 내용: 생성된 팀에 멤버들을 삽입합니다.
      */
-    public void addTeamMemberToTeam(MemberTeam memberTeam);
+    void addTeamMemberToTeam(MemberTeam memberTeam);
 
     public void updateScore(@Param("teamScoreNo") Long teamScoreNo, @Param("scoreAmount") Long scoreAmount);
+
     /**
-     @author: 김동욱
-     @description: 팀 목록 리스트를 불러옵니다.
+     * 작성자: 김동욱
+     * 처리 내용: 팀 목록 리스트를 불러옵니다.
      */
-    public void getTeamList(Map<String, Object> map);
+    void getTeamList(Map<String, Object> map);
 
     public Match getMatch(Long matchHistNo);
 
     public String getHistoryImageUrl(Long matchHistNo);
+
     /**
-     @author: 김동욱
-     @description: 팀 정보를 불러옵니다.
+     * 작성자: 김동욱
+     * 처리 내용: 팀 정보를 불러옵니다.
      */
-    public TeamDetailDTOResponse getTeamByTeamNo(Long teamNo);
+    TeamDetailDTOResponse getTeamByTeamNo(Long teamNo);
+
     /**
-     @author: 김동욱
-     @description: 팀에 해당하는 멤버 리스트를 불러옵니다.
+     * 작성자: 김동욱
+     * 처리 내용:  팀에 해당하는 멤버 리스트를 불러옵니다.
      */
-    public List<MemberInfo> getMemberByTeamNo(Long teamNo);
+    List<MemberInfo> getMemberByTeamNo(Long teamNo);
+
     /**
-     @author: 김동욱
-     @description: 멤버 정보를 불러옵니다.
+     * 작성자: 김동욱
+     * 처리 내용:  멤버 정보를 불러옵니다.
      */
-    public List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
+    List<MemberInfo> getMemberInfoWithMemberName(String memberNameInput);
 
     public void changeRating(@Param("teamNo") Long teamNo, @Param("ratingChange") Long ratingChange);
 
@@ -79,9 +86,10 @@ public interface CompMapper {
     Long generateMatch(CreateMatchResponse response);
 
     List<GetProductResponse> getProducts();
+
     /**
-     @author: 김동욱
-     @description: 경기가 날짜가 현재 날짜보다 지난 팀들을 만료 처리해줍니다.
+     * 작성자: 김동욱
+     * 처리 내용:  경기가 날짜가 현재 날짜보다 지난 팀들을 만료 처리해줍니다.
      */
     @Update("UPDATE team SET ISMATCHED = 'Y' WHERE MATCH_DATE < SYSDATE")
     void updateMatchStatus();
@@ -101,9 +109,10 @@ public interface CompMapper {
     List<String> getTeamMemberIds(Long teamNo);
 
     Team getTeamInfo(Long teamNo);
+
     /**
-     @author: 김동욱
-     @description: 팀끼리 매칭되었을때 매칭 처리해줍니다.
+     * 작성자: 김동욱
+     * 처리 내용: 팀끼리 매칭되었을때 매칭 처리해줍니다.
      */
     void updateIsMatched(Long teamNo);
 
