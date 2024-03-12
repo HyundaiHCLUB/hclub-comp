@@ -17,6 +17,15 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
+/**
+ * @author 이혜연
+ * @description: WebSocket, Redis Queue, Scheduler를 활용한 매치
+ * ===========================
+      AUTHOR      NOTE
+ * ---------------------------
+ *    이혜연       최초 생성
+ * ===========================
+ */
 @Slf4j
 @Service
 public class MatchingService {
@@ -38,10 +47,11 @@ public class MatchingService {
     private int failureAttempts = 0;
     private static final int MAX_FAILURE_ATTEMPTS = 3;
 
+    /**
+     * 작성자: 이혜연
+     * 처리 내용:  Redis Queue를 통해 큐에 없는 팀을 추가
+     */
     public void addToQueue(MatchingRequest team) {
-        log.info(String.valueOf(team.getTeamNo()));
-        log.info(team.getMatchType());
-
         List<MatchingResponse> teams = compMapper.getTeams();
 
         teams.stream()
@@ -72,6 +82,10 @@ public class MatchingService {
         myRealTeam = team;
     }
 
+    /**
+     * 작성자: 이혜연
+     * 처리 내용:  3초에 한 번씩 스케줄링을 돌며 WebSocket을 통해 매치 결과를 프론트에 알림
+     */
     @Scheduled(fixedRate = 3000)
     public void matchTeams() {
         MatchingRequest myTeam = myRealTeam;
@@ -84,7 +98,7 @@ public class MatchingService {
                 if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
                         !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
                         myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
-                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 500) {
+                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 100) {
                     continue;
                 }
 

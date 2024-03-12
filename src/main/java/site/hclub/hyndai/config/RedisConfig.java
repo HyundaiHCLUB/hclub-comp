@@ -9,11 +9,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 /**
  * @author 김동욱
- * @description: Redis Config File
+ * @description: Redis 설정 파일
  * ===========================
         AUTHOR      NOTE
  * ---------------------------
- *    김동욱        최초생성
+ *    이혜연        최초생성
  * ===========================
  */
 @Configuration

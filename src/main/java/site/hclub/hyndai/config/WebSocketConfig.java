@@ -13,6 +13,7 @@ import site.hclub.hyndai.service.SocketHandler;
 	   AUTHOR      NOTE
  * ---------------------------
  *    김은솔         최초생성
+ *    이혜연         MessageBroker 및 엔드포인트 설정
  * ===========================
  */
 @Configuration 
