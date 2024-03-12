@@ -42,9 +42,25 @@ public class CompController {
     private final CompService compService;
     private final UserService userService;
 
-    /*
-     * @작성자 : 송원선
-     * 경기 상세 정보 조회 API
+    // 경쟁 메인 페이지로 이동
+    @GetMapping("/main")
+    public ModelAndView goCompMain() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("comp/compMain");
+        return mav;
+    }
+
+    /* 매칭 상세페이지로 이동 */
+    @GetMapping("/matchDetail")
+    public ModelAndView goMatchDetailPage() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("comp/MatchDetail");
+        return mav;
+    }
+
+    /**
+     * @author : 송원선
+     * @description :경기 상세 정보 조회 API
      * @request  : 경기번호 (match_hist_no)
      * @response : 경기 정보 (MatchDetailRespnse -> 안에 Team1 Team2 정보 담겨있음)
      *
@@ -118,11 +134,11 @@ public class CompController {
         return ApiResponse.success(GET_TEAM_LIST_SUCCESS, compService.getTeamList(pageRequestDTO));
     }
 
-    /*
-     * @작성자 : 송원선
-     * 경기 결과 기록 API
-     * @request : RequestBody
-     *
+    /**
+     * @author : 송원선
+     * @description: 경기 결과 기록 API
+     * @request : RequestPart (MultipartFile)
+     * @request : RequestPart (CompHistoryRequest)
      */
     @PostMapping(value = "/history",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -151,10 +167,11 @@ public class CompController {
     }
 
 
-    /*
-    경기 기록 조회 API
-    @request : 경기 번호
-    @ response : MatchDetailResponse
+    /**
+     * @author : 송원선 
+    * @description:경기 기록 조회 API
+    * @request : 경기 번호
+    * @ response : MatchDetailResponse
      */
     @GetMapping(value = "/history/{match_hist_no}",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -165,8 +182,9 @@ public class CompController {
         return ApiResponse.success(GET_HISTORY_DETAIL_SUCCESS, response);
     }
 
-    /*
-     * 경기 기록 수정 API -> 변경 가능 정보 : 점수 only
+    /**
+     * @author: 송원선
+     * @description: 경기 기록 수정 API -> 변경 가능 정보 : 점수 only
      * @request : 이긴 팀 번호&점수, 진 팀 번호&점수
      * */
     @PatchMapping(value = "/history",
@@ -179,8 +197,9 @@ public class CompController {
         return ApiResponse.success(UPDATE_HISTORY_RECORD_SUCCESS);
     }
 
-    /*
-     * 레이팅 반영 API (경기 종료후 결과 입력 -> Elo 알고리즘에 따라 개인 레이팅 변경)
+    /**
+     * @author : 송원선
+     * @description : 레이팅 반영 API (경기 종료후 결과 입력 -> Elo 알고리즘에 따라 개인 레이팅 변경)
      * @request : AfterMatchRatingRequest
      * - Long matchHistNo : 경기 번호
      * - winTeamNo / winTeamScore : 이긴 팀 번호 및 점수
@@ -207,7 +226,10 @@ public class CompController {
         return ApiResponse.success(GET_PRODUCT_DETAIL_SUCCESS, compService.getProducts());
     }
 
-    // 상위 num 명의 랭크 (레이팅 순)
+    /**
+     @author: 송원선
+     @description: 상위 num 명의 랭킹 리턴(레이팅 기준)
+     */
     @GetMapping(value = "/rank", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<RankResponse>>> getRankingList(@RequestParam("num") int num) {
 
@@ -237,7 +259,8 @@ public class CompController {
 
 
     /**
-     * 팀 매칭 API
+     * @author : 송원선
+     * @description: 팀 매칭 API
      * (웹 소켓 or 레디스) -> 2개의 팀 정보 꺼내면 -> match 테이블에 추가
      * + 두 팀에 같은 사람 있으면 매칭 안되게 하는 로직 추가
      * @reqyest 두 팀의 번호(team_no)
@@ -276,39 +299,14 @@ public class CompController {
         return ApiResponse.success(INSERT_SETTLE_SUCCESS);
     }
 
-    /* 경기 기록 페이지로 이동*/
-    @GetMapping("/matchRecord")
-    public ModelAndView goMatchRecordPage() {
-        ModelAndView mav = new ModelAndView();
-
-        mav.setViewName("comp/matchRecord");
-        return mav;
-    }
-
-    /* 메인페이지 - 오늘의 TOP10 랭킹 페이지로 이동 */
-    @GetMapping("/todayRanking")
-    public ModelAndView goTodayRanking() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/todayRanking");
-        return mav;
-    }
-
-    /****** 마이페이지 뷰 이동 ******/
-    /* 마이페이지로 이동 */
-    @GetMapping("/mypage")
-    public ModelAndView goMyPage(){
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("comp/mypageMain");
-        return mav;
-    }
-    /* 회원정보 수정페이지로 이동*/
-    @GetMapping("/updateProfileView")
-    public ModelAndView goUpdateProfileView(){
-        return new ModelAndView("comp/updateProfile");
-    }
-
-
-    // 경기 상세 정보 페이지 -> 경기 기록 페이지 넘어갈 때 경기 장소(matchLoc) DB에 저장하는 API
+   
+    /** 
+     * @author : 송원선
+     * @description
+     * 경기 상세 정보 페이지 -> 
+     * 경기 기록 페이지 넘어갈 때 경기 장소(matchLoc) DB에 저장
+     * @request : UpdateMatchLocationRequest
+     * */
     @PostMapping(value= "matchLocation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<UpdateMatchLocationRequest>> setMatchLocation(@RequestBody UpdateMatchLocationRequest request){
         log.info("request.matchLoc -> " + request.toString());
@@ -327,7 +325,13 @@ public class CompController {
 
     }
 
-    // 패배팀 결제에 필요한 정보
+    /**
+     * @author : 송원선
+     * @description
+     * 패배팀 결제에 필요한 정보
+     * @request : 경기 번호 (matchHistNo)
+     * @return : SettleResponse
+     * */
     @GetMapping(value = "settle/{matchHistNo}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SettleResponse> getSettleInfo(@PathVariable("matchHistNo")Long matchHistNo) {
         log.info("loseTeamSettleInfo => matchHistNo : " + matchHistNo);
@@ -353,7 +357,13 @@ public class CompController {
     }
 
 
-    /* 두 팀중 로그인한 사용자가 속한 팀의 번호 리턴해주는 API */
+    /**
+     * @author : 송원선
+     * @description : 
+     *  두 팀중 로그인한 사용자가 속한 팀의 번호 리턴
+     * @request : ConfigureTeamRequest
+     * @response : 로그인한 사용자가 속한 팀 번호
+     *  */
     @PostMapping(value = "/team/member", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> getMyTeamNo(@RequestBody ConfigureTeamRequest request) {
         String memberId = request.getMemberId();
