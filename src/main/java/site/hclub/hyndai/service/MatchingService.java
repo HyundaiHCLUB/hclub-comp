@@ -84,9 +84,9 @@ public class MatchingService {
 
     /**
      * 작성자: 이혜연
-     * 처리 내용:  3초에 한 번씩 스케줄링을 돌며 WebSocket을 통해 매치 결과를 프론트에 알림
+     * 처리 내용:  5초에 한 번씩 스케줄링을 돌며 WebSocket을 통해 매치 결과를 프론트에 알림
      */
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRate = 5000)
     public void matchTeams() {
         MatchingRequest myTeam = myRealTeam;
         MatchingRequest matchingTeam = null;
