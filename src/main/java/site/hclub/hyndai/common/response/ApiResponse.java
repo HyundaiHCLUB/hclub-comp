@@ -12,7 +12,15 @@ import lombok.Getter;
 import site.hclub.hyndai.common.advice.BusinessExceptionType;
 import site.hclub.hyndai.common.advice.ErrorType;
 
-
+/**
+ * @author 이혜연
+ * @description: 공통응답클래스
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -4,7 +4,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
+/**
+ * @author 이혜연
+ * @description: SuccessType
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SuccessType {

@@ -1,6 +1,15 @@
 package site.hclub.hyndai.common.advice;
 import lombok.Getter;
 
+/**
+ * @author 이혜연
+ * @description: BusinessException
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Getter
 public class BusinessException extends RuntimeException {
 
