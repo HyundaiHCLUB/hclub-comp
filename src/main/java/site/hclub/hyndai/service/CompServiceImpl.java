@@ -140,14 +140,14 @@ public class CompServiceImpl implements CompService {
             urlList.add("https://h-clubbucket.s3.ap-northeast-2.amazonaws.com/default/team.png");
         } else {
             multipartFileList.add(multipartFile);
-            log.info(multipartFileList.toString());
+
             urlList = amazonS3Service.uploadFiles("team", multipartFileList);
         }
         // 팀 레이팅 계산
         ArrayList<Long> memberList = teamDTO.getMemberList();
         Long memberRatingSum = 0L;
         for (Long memberNo : memberList) {
-            log.info(memberNo + " --");
+
             Long rating = memberMapper.getMemberRating(memberNo);
             memberRatingSum += rating;
 
@@ -168,7 +168,7 @@ public class CompServiceImpl implements CompService {
 
         compMapper.addTeam(team);
         Long teamNo = team.getTeamNo();
-        log.info(teamNo + "==================");
+
 
         // 멤버 삽입
 
@@ -220,13 +220,11 @@ public class CompServiceImpl implements CompService {
         return res;
     }
 
-    // 팀 페이지 네이션
+
     @Override
     public List<TeamDTO> getTeamList(PageRequestDTO pageRequestDTO) {
         log.info("PageRequestDTO " + pageRequestDTO.toString());
-        //GetTeamListResponse teamListResponse = new GetTeamListResponse();
-        //teamListResponse.setTeamList(compMapper.getTeamList(pageRequestDTO));
-        // pagination set
+
         // PL/SQL Map 오브젝트 Set
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("gameType", pageRequestDTO.getGameType());
@@ -239,7 +237,8 @@ public class CompServiceImpl implements CompService {
         log.info(map.toString());
         compMapper.getTeamList(map);
         List<TeamDTO> list = (List<TeamDTO>) map.get("key");
-        log.info("==========" + list.size() + "");
+
+        // 데이터 파싱
         for (TeamDTO t : list) {
             t.setMatchType(parseService.parseSportsToImage(t.getMatchType()));
         }

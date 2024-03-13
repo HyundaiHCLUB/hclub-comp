@@ -1,5 +1,13 @@
 package site.hclub.hyndai.config;
-
+/**
+ * @author 김동욱
+ * @description: AWS S3 파일 업로드 Config File
+ * ===========================
+AUTHOR      NOTE
+ * ---------------------------
+ *    김동욱        최초생성
+ * ===========================
+ */
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;

@@ -1,5 +1,13 @@
 package site.hclub.hyndai.common.util;
-
+/**
+ * @author 김동욱
+ * @description: String <-> LocalDateTime
+ * ===========================
+AUTHOR      NOTE
+ * ---------------------------
+ *    김동욱        최초생성
+ * ===========================
+ */
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

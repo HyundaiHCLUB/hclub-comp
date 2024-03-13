@@ -6,6 +6,15 @@ import org.springframework.stereotype.Controller;
 import site.hclub.hyndai.dto.request.MatchingRequest;
 import site.hclub.hyndai.service.MatchingService;
 
+/**
+ * @author 이혜연
+ * @description: 메시지 매핑 메서드 정의
+ * ===========================
+      AUTHOR      NOTE
+ * ---------------------------
+ *    이혜연       최초 생성
+ * ===========================
+ */
 @Controller
 public class WebSocketController {
 
