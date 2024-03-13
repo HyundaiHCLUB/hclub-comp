@@ -287,7 +287,8 @@
     </select>
 
     <select id="getWinTeamSettleInfo" resultType="site.hclub.hyndai.dto.response.WinTeamSettleResponse">
-        SELECT  mt.member_no     AS  recipentMemberNo
+        SELECT  mt.member_no        AS  recipentMemberNo
+                ,p.products_price   AS  settleAmount
         FROM    member_team mt
         JOIN    team t
         ON      mt.team_no = t.team_no
@@ -295,6 +296,8 @@
         ON      t.team_no = s.team_no
         JOIN    match m
         ON      s.score_no = m.win_team_score_no
+        JOIN    products    p
+        ON      t.products_no = p.products_no
         WHERE   m.match_hist_no = #{matchHistNo}
         AND     mt.is_leader = 'Y'
     </select>

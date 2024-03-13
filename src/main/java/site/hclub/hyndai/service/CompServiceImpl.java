@@ -508,7 +508,8 @@ public class CompServiceImpl implements CompService {
         response.setProductsNo(loseTeamResponse.getProductsNo());
 //        response.setSettleMemberId(loseTeamResponse.getSettleMemberId());
         response.setSettleMemberId(winTeamResponse.getRecipentMemberNo());
-        response.setSettleAmount(loseTeamResponse.getSettleAmount());
+//        response.setSettleAmount(loseTeamResponse.getSettleAmount());
+        response.setSettleAmount(winTeamResponse.getSettleAmount());
         response.setSettleName(loseTeamResponse.getSettleName());
         log.info("lose team settle info => " + loseTeamResponse.toString());
         // 이긴팀 받는사람 번호
