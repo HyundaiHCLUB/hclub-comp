@@ -8,5 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class WinTeamSettleResponse {
-    private Long    recipentMemberNo;
+    private Long      recipentMemberNo;
+    private String    settleAmount;
 }
