@@ -6,6 +6,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @author 이혜연
+ * @description: 에러 타입 커스텀
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ErrorType {

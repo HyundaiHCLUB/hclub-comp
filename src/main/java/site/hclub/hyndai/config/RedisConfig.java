@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 /**
- * @author 김동욱
+ * @author 이혜연
  * @description: Redis 설정 파일
  * ===========================
         AUTHOR      NOTE

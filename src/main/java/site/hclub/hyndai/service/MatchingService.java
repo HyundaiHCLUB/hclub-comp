@@ -86,7 +86,7 @@ public class MatchingService {
      * 작성자: 이혜연
      * 처리 내용:  5초에 한 번씩 스케줄링을 돌며 WebSocket을 통해 매치 결과를 프론트에 알림
      */
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     public void matchTeams() {
         MatchingRequest myTeam = myRealTeam;
         MatchingRequest matchingTeam = null;
@@ -97,8 +97,7 @@ public class MatchingService {
                 MatchingRequest potentialMatchFromRedis = convertJsonToMatchingRequest(potentialMatchJson);
                 if (myTeam.getTeamNo() == potentialMatchFromRedis.getTeamNo() ||
                         !myTeam.getMatchType().equals(potentialMatchFromRedis.getMatchType()) ||
-                        myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity() ||
-                        Math.abs(myTeam.getTeamRating() - potentialMatchFromRedis.getTeamRating()) > 100) {
+                        myTeam.getMatchCapacity() != potentialMatchFromRedis.getMatchCapacity()) {
                     continue;
                 }
 

@@ -3,6 +3,15 @@ package site.hclub.hyndai.common.advice;
 import lombok.Data;
 import org.springframework.http.HttpStatus;  // 추가
 
+/**
+ * @author 이혜연
+ * @description: 에러응답클래스
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Data
 public class ErrorResponse {
     HttpStatus code;  // HttpStatus로 수정

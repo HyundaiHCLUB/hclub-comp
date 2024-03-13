@@ -22,7 +22,15 @@ import java.util.Map;
 
 import static site.hclub.hyndai.common.advice.CommonExceptionType.*;
 import static site.hclub.hyndai.common.advice.ErrorType.*;
-
+/**
+ * @author 이혜연
+ * @description: 에러 헨들링
+ * ===========================
+ * AUTHOR      NOTE
+ * ---------------------------
+ * 이혜연       최초 생성
+ * ===========================
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
