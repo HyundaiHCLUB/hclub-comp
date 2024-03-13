@@ -505,12 +505,12 @@ public class CompServiceImpl implements CompService {
         LoseTeamSettleResponse loseTeamResponse = compMapper.getLoseTeamSettleInfo(matchHistNo);
         WinTeamSettleResponse winTeamResponse = compMapper.getWinTeamSettleInfo(matchHistNo);
         // 진팀의 상품명, 금액, 결제자
-        response.setProductsNo(loseTeamResponse.getProductsNo());
+        response.setProductsNo(winTeamResponse.getProductsNo());
 //        response.setSettleMemberId(loseTeamResponse.getSettleMemberId());
         response.setSettleMemberId(winTeamResponse.getRecipentMemberNo());
 //        response.setSettleAmount(loseTeamResponse.getSettleAmount());
         response.setSettleAmount(winTeamResponse.getSettleAmount());
-        response.setSettleName(loseTeamResponse.getSettleName());
+        response.setSettleName(winTeamResponse.getSettleName());
         log.info("lose team settle info => " + loseTeamResponse.toString());
         // 이긴팀 받는사람 번호
 //        response.setRecipentMemberNo(winTeamResponse.getRecipentMemberNo());

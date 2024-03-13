@@ -287,8 +287,10 @@
     </select>
 
     <select id="getWinTeamSettleInfo" resultType="site.hclub.hyndai.dto.response.WinTeamSettleResponse">
-        SELECT  mt.member_no        AS  recipentMemberNo
+        SELECT   t.products_no       AS  productsNo
+                ,mt.member_no        AS  recipentMemberNo
                 ,p.products_price   AS  settleAmount
+                ,p.products_name    AS  settleName
         FROM    member_team mt
         JOIN    team t
         ON      mt.team_no = t.team_no
