@@ -287,7 +287,11 @@ public class CompController {
         }
         return ApiResponse.success(UPDATE_MATCH_LOC_SUCCESS);
     }
-
+    /** 
+     * @author : 김은솔
+     * @description : 카카오페이 결제 진행API
+     * @request : HttpSession, 결제정보 SettleDTO
+     * */
     @RequestMapping("/kakaopay")
     public ResponseEntity<ApiResponse<String>> kakaopay(HttpSession session, @RequestBody SettleDTO sdto) {
 
@@ -317,7 +321,11 @@ public class CompController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
+    /** 
+     * @author : 김은솔
+     * @description : 멤버정보를 가져오는 메소드
+     * @request : HttpServletRequest
+     * */
     @GetMapping("/memberInfo")
     public ResponseEntity<Long> getMemberInfo(HttpServletRequest request) {
         String memberId = userService.getUserDetails(request);
