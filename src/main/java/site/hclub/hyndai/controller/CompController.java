@@ -222,27 +222,6 @@ public class CompController {
         return ApiResponse.success(GET_RANK_LIST_SUCCESS, list);
     }
 
-    @RequestMapping(value = "/chatPage")
-    public ModelAndView getChatViewPage(ModelAndView mav) {
-        mav.setViewName("chatPage");
-        return mav;
-    }
-
-    @RequestMapping(value = "/chatPage2")
-    public ModelAndView getChatViewPage2(ModelAndView mav) {
-        mav.setViewName("chatPage2");
-        return mav;
-    }
-
-    @RequestMapping(value = "/test")
-    public ModelAndView getTest(ModelAndView mav) {
-        System.out.println("show page");
-        mav.setViewName("testPage");
-        return mav;
-    }
-
-
-
     /**
      * @author : 송원선
      * @description: 팀 매칭 API
@@ -275,7 +254,13 @@ public class CompController {
         log.info("return matchHistoryNo : " + matchHistoryNo);
         return ApiResponse.success(MATCH_CREATED, matchHistoryNo);
     }
-
+    /**
+     * @author : 김은솔
+     * @description :경기 상세 정보 조회 API
+     * @request  : 결제정보 (SettleDTO)
+     * @response :
+     *
+     */
     @PostMapping("/settle")
     public ResponseEntity<ApiResponse<Void>> insertSettle(@RequestBody SettleDTO sdto) {
 
